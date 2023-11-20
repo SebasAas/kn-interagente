@@ -12,7 +12,7 @@ export default async function RestrictedPage() {
 
   // redirect to signin if there is no session.
   if (!session) {
-    const url = new URL("login", "http://localhost:3000");
+    const url = new URL("login", "https://kn-interagente.vercel.app");
     url.searchParams.append("callbackUrl", "/restricted");
     redirect(url.toString());
   }

@@ -12,7 +12,7 @@ export default async function LoginPage() {
   if (session) {
     const url = new URL(
       "/",
-      isDev ? "http://localhost:3000" : "https://codevo.vercel.app"
+      isDev ? "http://localhost:3000" : "https://kn-interagente.vercel.app"
     );
     redirect(url.toString());
   }
