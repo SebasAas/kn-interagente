@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 // Dynamic import LineChart
 const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
@@ -14,13 +15,15 @@ export default async function Home() {
   const { data: session } = useSession();
   // redirect to signin if there is no session.
 
-  if (!session) {
-    console.log("session", session);
+  useEffect(() => {
+    if (!session) {
+      console.log("session", session);
 
-    const url = new URL("/login", "https://kn-interagente.vercel.app");
-    url.searchParams.append("callbackUrl", "/");
-    redirect(url.toString());
-  }
+      const url = new URL("/login", "https://kn-interagente.vercel.app");
+      url.searchParams.append("callbackUrl", "/");
+      redirect(url.toString());
+    }
+  }, [session]);
 
   return (
     <main className="h-[100vh]">
