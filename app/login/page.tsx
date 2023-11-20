@@ -1,5 +1,6 @@
-import { nextauthOptions } from "@/lib/nextauthOptions";
-import { getServerSession } from "next-auth/next";
+"use client";
+
+import { useSession } from "next-auth/react";
 
 import { redirect } from "next/navigation";
 import Login from "./form";
@@ -7,10 +8,10 @@ import { getBaseUrl } from "../_helpers/env";
 import { useEffect } from "react";
 
 export default async function LoginPage() {
-  const session = await getServerSession(nextauthOptions);
+  const { data: session } = useSession();
 
   useEffect(() => {
-    if (session) {
+    if (!session) {
       const url = new URL("/", getBaseUrl());
       redirect(url.toString());
     }
