@@ -1,8 +1,9 @@
+"use client";
+
 import dynamic from "next/dynamic";
 
-import { nextauthOptions } from "@/lib/nextauthOptions";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // Dynamic import LineChart
 const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
@@ -10,7 +11,7 @@ const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
 });
 
 export default async function Home() {
-  const session = await getServerSession(nextauthOptions);
+  const { data: session } = useSession();
   // redirect to signin if there is no session.
 
   if (!session) {
