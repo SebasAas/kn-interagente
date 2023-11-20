@@ -7,7 +7,7 @@ import Login from "./form";
 import { getBaseUrl } from "../_helpers/env";
 import { useEffect } from "react";
 
-export default async function LoginPage() {
+export default function LoginPage() {
   const { data: session } = useSession();
 
   useEffect(() => {

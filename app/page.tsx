@@ -11,9 +11,8 @@ const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
   ssr: false,
 });
 
-export default async function Home() {
+export default function Home() {
   const { data: session } = useSession();
-  // redirect to signin if there is no session.
 
   useEffect(() => {
     if (!session) {
