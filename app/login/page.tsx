@@ -3,19 +3,18 @@ import { getServerSession } from "next-auth/next";
 
 import { redirect } from "next/navigation";
 import Login from "./form";
+import { getBaseUrl } from "../_helpers/env";
+import { useEffect } from "react";
 
 export default async function LoginPage() {
   const session = await getServerSession(nextauthOptions);
 
-  const isDev = process.env.NODE_ENV === "development";
-
-  if (session) {
-    const url = new URL(
-      "/",
-      isDev ? "http://localhost:3000" : "https://kn-interagente.vercel.app"
-    );
-    redirect(url.toString());
-  }
+  useEffect(() => {
+    if (session) {
+      const url = new URL("/", getBaseUrl());
+      redirect(url.toString());
+    }
+  }, [session]);
 
   return (
     <section className="text-black w-full h-screen overflow-hidden flex flex-col text-dark-gray">
