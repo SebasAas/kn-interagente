@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { getBaseUrl } from "./_helpers/env";
 
 // Dynamic import LineChart
 const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
@@ -12,17 +13,16 @@ const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
 });
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (!session) {
-      console.log("session", session);
-
-      const url = new URL("/login", "https://kn-interagente.vercel.app");
+    if (!session && status === "unauthenticated") {
+      console.log("session", session, "status", status);
+      const url = new URL("/login", getBaseUrl());
       url.searchParams.append("callbackUrl", "/");
       redirect(url.toString());
     }
-  }, [session]);
+  }, [session, status]);
 
   return (
     <main className="h-[100vh]">

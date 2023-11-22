@@ -8,10 +8,11 @@ import { getBaseUrl } from "../_helpers/env";
 import { useEffect } from "react";
 
 export default function LoginPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (!session) {
+    if (session) {
+      console.log("session", session);
       const url = new URL("/", getBaseUrl());
       redirect(url.toString());
     }
