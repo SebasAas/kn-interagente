@@ -1,56 +1,28 @@
-"use client";
 import React from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
+  Filler,
+  ScriptableContext,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
-
-// export const options = {
-//   plugins: {
-//     legend: {
-//       position: "top" as const,
-//       align: "start" as const,
-//       labels: {
-//         boxWidth: 3,
-//         usePointStyle: true,
-//         pointStyle: "circle",
-//       },
-//       title: {
-//         text: "Sales Report",
-//         display: true,
-//         color: "#000",
-//         font: {
-//           size: 18,
-//         },
-//       },
-//     },
-//   },
-
-//   scales: {
-//     xAxis: {
-//       display: false,
-//     },
-//     yAxis: {
-//       max: 1,
-//     },
-//   },
-// };
 
 export const options = {
   plugins: {
@@ -67,7 +39,7 @@ export const options = {
       pointStyle: "circle" as const,
     },
     title: {
-      text: "Sales Report",
+      text: "Produtividade",
       display: true,
       color: "#000",
       font: {
@@ -75,77 +47,71 @@ export const options = {
       },
     },
   },
-  maintainAspectRatio: false,
-  options: {
-    scales: {
-      yAxes: [
-        {
-          labels: ["A", "B", "C", "A", "B", "C", "A", "B", "C"],
-        },
-        {
-          ticks: {
-            min: 0,
-            max: 80,
-            stepSize: 20,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: "Percent (%)",
-          },
-        },
-      ],
-      xAxes: [
-        {
-          gridLines: {
-            drawOnChartArea: false,
-          },
-        },
-      ],
-    },
-  },
+  options: {},
 };
 
-const labels = [
-  "24/09",
-  "25/09",
-  "26/09",
-  "27/09",
-  "28/09",
-  "29/09",
-  "30/09",
-  "01/10",
-  "01/10",
-  "02/10",
-  "03/10",
-  "04/10",
-];
-
-export const data = {
-  labels,
+const data = {
+  labels: [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dez",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dez",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dez",
+  ],
   datasets: [
     {
-      label: "Productividade Potencial",
-      yAxisID: "yAxis1",
-      stack: "Stack 0",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: "rgb(62,149,205)",
-      borderColor: "#3e95cd",
-      borderWidth: 1,
-    },
-    {
-      label: "Demanda Prvista",
-      yAxisID: "yAxis1",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      stack: "Stack 1",
-      borderColor: "#ffa500",
-      backgroundColor: "#ffa500",
-      borderWidth: 1,
+      label: "First dataset",
+      data: [
+        33, 53, 85, 41, 44, 65, 23, 76, 43, 65, 23, 76, 55, 35, 84, 23, 76, 43,
+        65, 10, 33, 53, 85, 41, 44, 65, 23, 76, 43, 65, 23, 76, 55, 35, 84, 23,
+      ],
+      fill: true,
+      lineTension: 0.1,
+      backgroundColor: (context: ScriptableContext<"line">) => {
+        const ctx = context.chart.ctx;
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, "rgba(0, 153, 218, 1)");
+        gradient.addColorStop(1, "rgba(0, 153, 218, 0)");
+        return gradient;
+      },
+      borderColor: "rgba(0, 131, 187, 1)",
     },
   ],
 };
 
 function LineChart() {
-  return <Bar options={options} data={data} height={400} />;
+  return <Line options={options} data={data} height={80} />;
 }
 
 export default LineChart;

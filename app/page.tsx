@@ -7,8 +7,8 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { getBaseUrl } from "./_helpers/env";
 
-// Dynamic import LineChart
-const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
+// Dynamic import BarChart
+const BarChart = dynamic(() => import("@/components/Chart/BarChart"), {
   ssr: false,
 });
 
@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <main className="h-[100vh]">
       <div className="w-full">
-        <LineChart />
+        <BarChart />
       </div>
     </main>
   );

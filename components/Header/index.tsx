@@ -14,13 +14,14 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-import { DashboardIcon } from "@/app/_assets/Dashboard";
 
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
 const Header = ({ activePath }: { activePath: string }) => {
   const { data: session, status } = useSession();
   const user = session?.user;
+
+  console.log("status", status);
 
   return (
     <header className="top-0 fixed bg-white opacity-80 h-12 w-full text-black border-b-2 border-blue-900 rounded-b-3xl">
