@@ -1,5 +1,7 @@
 import React from "react";
-import Chart from "react-apexcharts";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const dates = ["24/10", "25/10", "26/10"];
 const shifts = ["1° turno", "2° turno", "3° turno"];
