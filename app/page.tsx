@@ -15,10 +15,6 @@ import { getBaseUrl } from "./(helpers)/env";
 import Chart from "./(components)/Chart";
 import Alerts from "./(components)/Alerts";
 
-const BarChart = dynamic(() => import("./(components)/Chart/BarChart"), {
-  ssr: false,
-});
-
 export default function Home() {
   const { data: session, status } = useSession();
 

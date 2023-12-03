@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const dates = ["24/10", "25/10", "26/10"];
 const shifts = ["1° turno", "2° turno", "3° turno"];
