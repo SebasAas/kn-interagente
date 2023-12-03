@@ -9,13 +9,13 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // Components
-import Table from "@/components/Table";
+import Table from "../(components)/Table";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 
 // Helpers
-import { getBaseUrl } from "../_helpers/env";
+import { getBaseUrl } from "../(helpers)/env";
 
-const LineChart = dynamic(() => import("@/components/Chart/LineChart"), {
+const LineChart = dynamic(() => import("../(components)/Chart/LineChart"), {
   ssr: false,
 });
 

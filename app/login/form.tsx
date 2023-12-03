@@ -12,9 +12,9 @@ import Image from "next/image";
 import { Input, Card, CardBody, Progress } from "@nextui-org/react";
 
 // Assets
-import { MailIcon } from "../_assets/MailIcon";
-import { EyeSlashFilledIcon } from "../_assets/EyeSlashFilledIcon";
-import { EyeFilledIcon } from "../_assets/EyeFilledIcon";
+import { MailIcon } from "../(assets)/MailIcon";
+import { EyeSlashFilledIcon } from "../(assets)/EyeSlashFilledIcon";
+import { EyeFilledIcon } from "../(assets)/EyeFilledIcon";
 
 const Login: NextPage = () => {
   const router = useRouter();

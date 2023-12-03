@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Providers } from "./providers";
 // CSS
 import "./globals.css";
-import Header from "@/components/Header";
+import Header from "./(components)/Header";
 
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
@@ -28,8 +28,9 @@ export default function RootLayout({
                 ? "pt-16 px-8"
                 : ""
             }
-          ></section>
-          {children}
+          >
+            {children}
+          </section>
         </Providers>
       </body>
     </html>
