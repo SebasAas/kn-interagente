@@ -10,13 +10,35 @@ import { useSession } from "next-auth/react";
 
 // Components
 import Table from "../(components)/Table";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import {
+  Avatar,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+} from "@nextui-org/react";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
+import Subtitle from "../(components)/Text/Subtitle";
+import Text from "../(components)/Text/Text";
+import Loader from "../(components)/Loader";
+import Medal from "../(assets)/MedalIcon";
+import UserCard from "../(components)/Productivity/UserCard";
 
-const LineChart = dynamic(() => import("../(components)/Chart/LineChart"), {
+const AreaChart = dynamic(() => import("../(components)/Chart/AreaChart"), {
   ssr: false,
+  loading: () => (
+    <Loader className="h-[350px] flex justify-center items-center" />
+  ),
+});
+
+const RadarChart = dynamic(() => import("../(components)/Chart/RadarChart"), {
+  ssr: false,
+  loading: () => (
+    <Loader className="h-[350px] flex justify-center items-center" />
+  ),
 });
 
 export default function Productivity() {
@@ -35,40 +57,93 @@ export default function Productivity() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <Card className="p-4 w-full">
-          <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-            <div className="flex w-full justify-between">
-              <p className="text-tiny uppercase font-bold">Ranking</p>
-              <p className="text-tiny uppercase font-bold">2023</p>
-            </div>
-          </CardHeader>
-          <CardBody className="overflow-visible py-2 gap-6">
-            <div className="flex gap-4 mt-5">
-              <Card className="p-4">1</Card>
-              <Card className="p-4">2</Card>
-              <Card className="p-4">3</Card>
-            </div>
-            <div>
-              <Table />
-            </div>
-          </CardBody>
-        </Card>
-        <Card className="p-4 h-fit ">
-          <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-            <h2 className="">Base Produtividade</h2>
-          </CardHeader>
+        <Card className="p-4 h-full flex-col flex-1">
           <CardBody className="overflow-visible">
-            <div className="flex w-full rounded-3xl h-min bg-sky-500">
-              <p>Adicionar base</p>
+            <div>
+              <Subtitle>Produtividade</Subtitle>
+              <Text className="text-gray-400">Peso Liquido</Text>
             </div>
+            <AreaChart />
+            {/* <Loader className="h-[350px] flex justify-center items-center" /> */}
           </CardBody>
         </Card>
+        <div className="flex flex-col h-full gap-6">
+          <Card className="p-4 h-fit ">
+            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+              <h2 className="">Base Produtividade</h2>
+            </CardHeader>
+            <CardBody className="overflow-visible">
+              <div className="flex w-full rounded-3xl h-min bg-sky-500">
+                <p>Adicionar base</p>
+              </div>
+            </CardBody>
+          </Card>
+          <Card className="p-4 h-fit ">
+            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+              <h2 className="">Base Produtividade</h2>
+            </CardHeader>
+            <CardBody className="overflow-visible">
+              <div className="flex w-full rounded-3xl h-min bg-sky-500">
+                <p>Adicionar base</p>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
       </div>
-      <Card className="p-4 h-full flex-col">
-        <CardBody className="overflow-visible">
-          <LineChart />
-        </CardBody>
-      </Card>
+      <div className="flex flex-row gap-4 mt-4">
+        <div className="w-1/2">
+          <Card className="p-4 w-full">
+            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+              <div className="flex w-full justify-between">
+                <div>
+                  <Subtitle>Ranking</Subtitle>
+                  <Text className="text-gray-400">Usuarios</Text>
+                </div>
+                <p className="text-tiny uppercase font-bold">2023</p>
+              </div>
+            </CardHeader>
+            <CardBody className="overflow-visible py-2 gap-6">
+              <div className="flex gap-4 mt-5 flex-wrap justify-around">
+                <UserCard
+                  name="Guillherme"
+                  position={1}
+                  medal="gold"
+                  avatar="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+                  score={100}
+                />
+                <UserCard
+                  name="João"
+                  position={2}
+                  medal="silver"
+                  avatar="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+                  score={90}
+                />
+                <UserCard
+                  name="Diogo"
+                  position={3}
+                  medal="bronze"
+                  avatar="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                  score={87}
+                />
+              </div>
+              <div>
+                <Table />
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+        <div className="flex flex-1 w-full">
+          <Card className="p-4 w-full">
+            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+              <Subtitle>Informações do Usuario</Subtitle>
+              <Text className="text-gray-400">John Doe</Text>
+            </CardHeader>
+            <CardBody>
+              <RadarChart />
+            </CardBody>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 
 // Components
-import BarChartApex from "./BarChartApex";
-import MixedChart from "./MixedChart";
 import LineChartApex from "./LineChartApex";
 import LineChart2Apex from "./LineChart2Apex";
 
