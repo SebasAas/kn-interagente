@@ -73,18 +73,18 @@ export default function Productivity() {
               <h2 className="">Base Produtividade</h2>
             </CardHeader>
             <CardBody className="overflow-visible">
-              <div className="flex w-full rounded-3xl h-min bg-sky-500">
-                <p>Adicionar base</p>
+              <div className="flex w-full rounded-3xl h-6 bg-sky-500 items-center justify-center">
+                <p className="text-white">Adicionar base</p>
               </div>
             </CardBody>
           </Card>
           <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <h2 className="">Base Produtividade</h2>
+              <h2 className="">Base Demanda</h2>
             </CardHeader>
             <CardBody className="overflow-visible">
-              <div className="flex w-full rounded-3xl h-min bg-sky-500">
-                <p>Adicionar base</p>
+              <div className="flex w-full rounded-3xl h-6 bg-sky-500 items-center justify-center">
+                <p className="text-white">Adicionar base</p>
               </div>
             </CardBody>
           </Card>

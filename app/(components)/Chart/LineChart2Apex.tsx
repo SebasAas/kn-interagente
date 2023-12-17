@@ -18,7 +18,7 @@ const categories = dates.reduce((acc: any, date: any) => {
 
 const series = [
   {
-    name: "productividade potencial",
+    name: "produtividade potencial",
     type: "bar",
     data: [
       {

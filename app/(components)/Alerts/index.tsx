@@ -31,7 +31,16 @@ function Alerts() {
   return (
     <Card className="p-4 h-fit ">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-        <h2 className="">Alertas</h2>
+        <div className="w-full flex justify-between">
+          <h2 className="">Alertas</h2>
+          <div className="w-1/3 flex justify-end items-center">
+            <label>Ordernar por: </label>
+            <select className="ml-2 rounded-3xl p-1 w-2/5">
+              <option>Data</option>
+              <option>Turno</option>
+            </select>
+          </div>
+        </div> 
       </CardHeader>
       <CardBody className="overflow-visible flex flex-row px-4 gap-4">
         {arr.map((item) => (
