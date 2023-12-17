@@ -38,6 +38,7 @@ function Alerts() {
             <select className="ml-2 rounded-3xl p-1 w-2/5">
               <option>Data</option>
               <option>Turno</option>
+              <option>Relevância</option>
             </select>
           </div>
         </div> 
