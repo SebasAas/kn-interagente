@@ -17,8 +17,8 @@ function UserCard({
   score: number;
 }) {
   return (
-    <Card className="p-2 overflow-visible bg-[#F1F0F9]">
-      <CardBody className="flex flex-row justify-center items-center gap-4">
+    <Card className="p-2 overflow-visible bg-[#F1F0F9] w-1/3 ">
+      <CardBody className="flex flex-row justify-center items-center gap-4 overflow-hidden">
         <div>
           <Text className="uppercase text-sm font-medium">{name}</Text>
           <div className="flex gap-1 mt-1 justify-center items-center">

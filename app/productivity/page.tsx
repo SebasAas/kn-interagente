@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 // Auth
 import { useSession } from "next-auth/react";
-
+  
 // Components
 import Table from "../(components)/Table";
 import {
@@ -18,6 +18,7 @@ import {
   CardHeader,
   Divider,
 } from "@nextui-org/react";
+import DateFilter from "../(components)/DateFilter/DateFilter";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -95,17 +96,17 @@ export default function Productivity() {
           <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <div className="flex w-full justify-between">
-                <div>
+                <div className="w-1/5">
                   <Subtitle>Ranking</Subtitle>
                   <Text className="text-gray-400">Usuarios</Text>
                 </div>
-                <p className="text-tiny uppercase font-bold">2023</p>
+                <DateFilter />
               </div>
             </CardHeader>
             <CardBody className="overflow-visible py-2 gap-6">
-              <div className="flex gap-4 mt-5 flex-wrap justify-around">
+              <div className="flex gap-4 mt-5 justify-around">
                 <UserCard
-                  name="Guillherme"
+                  name="Guilherme"
                   position={1}
                   medal="gold"
                   avatar="https://i.pravatar.cc/150?u=a04258a2462d826712d"
