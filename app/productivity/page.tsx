@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 // Auth
 import { useSession } from "next-auth/react";
-  
+
 // Components
 import Table from "../(components)/Table";
 import {
@@ -19,6 +19,7 @@ import {
   Divider,
 } from "@nextui-org/react";
 import DateFilter from "../(components)/DateFilter/DateFilter";
+import UserProfile from "../(components)/Productivity/UserProfile";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -137,7 +138,15 @@ export default function Productivity() {
           <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
-              <Text className="text-gray-400">John Doe</Text>
+              <UserProfile
+                photo="https://i.pravatar.cc/150?u=a04258114e29026302d"
+                rankingPosition={4}
+                name="John Doe"
+                age={31}
+                sector="Unilever"
+                indicators={10, 20, 15, 5, 30}
+              />
+              {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
             <CardBody>
               <RadarChart />
