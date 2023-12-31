@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // Next
 import dynamic from "next/dynamic";
@@ -28,6 +28,7 @@ import Text from "../(components)/Text/Text";
 import Loader from "../(components)/Loader";
 import Medal from "../(assets)/MedalIcon";
 import UserCard from "../(components)/Productivity/UserCard";
+import Dropzone from "../(components)/Dropzone";
 
 const AreaChart = dynamic(() => import("../(components)/Chart/AreaChart"), {
   ssr: false,
@@ -46,6 +47,9 @@ const RadarChart = dynamic(() => import("../(components)/Chart/RadarChart"), {
 export default function Productivity() {
   const { data: session, status } = useSession();
 
+  const [productivityFile, setProductivityFile] = useState<File | null>(null);
+  const [demandFile, setDemandFile] = useState<File | null>(null);
+
   useEffect(() => {
     if (!session && status === "unauthenticated") {
       console.log("session", session, "status", status);
@@ -54,6 +58,8 @@ export default function Productivity() {
       redirect(url.toString());
     }
   }, [session, status]);
+
+  console.log("productivityFile", productivityFile);
 
   // display the page
   return (
@@ -69,25 +75,21 @@ export default function Productivity() {
             {/* <Loader className="h-[350px] flex justify-center items-center" /> */}
           </CardBody>
         </Card>
-        <div className="flex flex-col h-full gap-6">
+        <div className="flex flex-col h-full max-w-[23%] gap-6">
           <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <h2 className="">Base Produtividade</h2>
             </CardHeader>
-            <CardBody className="overflow-visible">
-              <div className="flex w-full rounded-3xl h-6 bg-sky-500 items-center justify-center">
-                <p className="text-white">Adicionar base</p>
-              </div>
+            <CardBody className="overflow-visible !p-0 !pt-2">
+              <Dropzone file={productivityFile} setFile={setProductivityFile} />
             </CardBody>
           </Card>
           <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <h2 className="">Base Demanda</h2>
             </CardHeader>
-            <CardBody className="overflow-visible">
-              <div className="flex w-full rounded-3xl h-6 bg-sky-500 items-center justify-center">
-                <p className="text-white">Adicionar base</p>
-              </div>
+            <CardBody className="overflow-visible !p-0 !pt-2">
+              <Dropzone file={demandFile} setFile={setDemandFile} />
             </CardBody>
           </Card>
         </div>
@@ -144,7 +146,7 @@ export default function Productivity() {
                 name="John Doe"
                 age={31}
                 sector="Unilever"
-                indicators={10, 20, 15, 5, 30}
+                indicators={[10, 20, 15, 5, 30]}
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
