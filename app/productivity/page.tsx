@@ -141,12 +141,9 @@ export default function Productivity() {
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
               <UserProfile
-                photo="https://i.pravatar.cc/150?u=a04258114e29026302d"
                 rankingPosition={4}
-                name="John Doe"
-                age={31}
-                sector="Unilever"
-                indicators={[10, 20, 15, 5, 30]}
+                id="LOTPZJSL"
+                indicators={[88, 14, 60, 8, 30, 52]}
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
