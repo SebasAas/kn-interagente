@@ -21,7 +21,7 @@ const state = {
 
 function RadarChart() {
   return (
-    <div className="mixed-chart mt-5">
+    <div className="mixed-chart mt-4">
       <Chart
         // @ts-ignore
         options={state.options}

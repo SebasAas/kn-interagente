@@ -20,6 +20,7 @@ import {
 } from "@nextui-org/react";
 import DateFilter from "../(components)/DateFilter/DateFilter";
 import UserProfile from "../(components)/Productivity/UserProfile";
+import UserTable from "../(components)/Productivity/UserTable";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -147,7 +148,8 @@ export default function Productivity() {
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
-            <CardBody>
+            <CardBody className="flex flex-row justify-between">
+              <UserTable />
               <RadarChart />
             </CardBody>
           </Card>

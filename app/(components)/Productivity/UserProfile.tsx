@@ -1,6 +1,12 @@
 import React from "react";
 
-const UserProfile = (user: any) => {
+interface User {
+    rankingPosition: number;
+    id: string;
+    indicators: number[];
+}
+
+const UserProfile = (user: User) => {
   const { rankingPosition, id, indicators } = user;
 
   return (
