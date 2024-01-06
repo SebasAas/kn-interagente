@@ -30,6 +30,7 @@ import Loader from "../(components)/Loader";
 import Medal from "../(assets)/MedalIcon";
 import UserCard from "../(components)/Productivity/UserCard";
 import Dropzone from "../(components)/Dropzone";
+import VerticalDivider from "../(assets)/VerticalDivider";
 
 const AreaChart = dynamic(() => import("../(components)/Chart/AreaChart"), {
   ssr: false,
@@ -150,6 +151,7 @@ export default function Productivity() {
             </CardHeader>
             <CardBody className="flex flex-row justify-between">
               <UserTable />
+              <VerticalDivider />
               <RadarChart />
             </CardBody>
           </Card>
