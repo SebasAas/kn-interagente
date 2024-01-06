@@ -111,24 +111,21 @@ export default function Productivity() {
             <CardBody className="overflow-visible py-2 gap-6">
               <div className="flex gap-4 mt-5 justify-around">
                 <UserCard
-                  name="Guilherme"
+                  name="LOZTPABC"
                   position={1}
                   medal="gold"
-                  avatar="https://i.pravatar.cc/150?u=a04258a2462d826712d"
                   score={100}
                 />
                 <UserCard
-                  name="João"
+                  name="LOZTPBCA"
                   position={2}
                   medal="silver"
-                  avatar="https://i.pravatar.cc/150?u=a042581f4e29026024d"
                   score={90}
                 />
                 <UserCard
-                  name="Diogo"
+                  name="LOZTPCAB"
                   position={3}
                   medal="bronze"
-                  avatar="https://i.pravatar.cc/150?u=a04258114e29026302d"
                   score={87}
                 />
               </div>
