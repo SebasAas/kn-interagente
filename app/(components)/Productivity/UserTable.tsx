@@ -15,7 +15,7 @@ const UserTable = () => {
       <table className="h-full w-full">
         <tbody>
           {Object.entries(dados).map(([chave, valor], index) => (
-            <tr className={`text-sm ${index % 2 === 0 ? 'bg-gray-200' : 'bg-white'}`} key={chave}>
+            <tr className={`text-sm ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`} key={chave}>
               <td className="pl-2 pr-12">{chave}</td>
               <td className="ml-auto pr-2">{valor}</td>
             </tr>
