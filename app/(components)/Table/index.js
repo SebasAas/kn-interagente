@@ -27,7 +27,7 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "expectedWork", "score"];
+const INITIAL_VISIBLE_COLUMNS = ["id", "name", "expectedWork", "score"];
 
 export default function App() {
   const [filterValue, setFilterValue] = React.useState("");
@@ -92,8 +92,6 @@ export default function App() {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
             name={cellValue}
           >
             {user.email}
