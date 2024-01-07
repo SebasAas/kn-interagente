@@ -29,8 +29,12 @@ import Loader from "../(components)/Loader";
 import Medal from "../(assets)/MedalIcon";
 import UserCard from "../(components)/Productivity/UserCard";
 import Dropzone from "../(components)/Dropzone";
+import {
+  stateProductionxResources,
+  stateProductivityxHour,
+} from "../(helpers)/mockedData";
 
-const AreaChart = dynamic(() => import("../(components)/Chart/AreaChart"), {
+const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
   loading: () => (
     <Loader className="h-[350px] flex justify-center items-center" />
@@ -65,18 +69,32 @@ export default function Productivity() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <Card className="p-4 h-full flex-col flex-1">
-          <CardBody className="overflow-visible">
-            <div>
-              <Subtitle>Produtividade</Subtitle>
-              <Text className="text-gray-400">Peso Liquido</Text>
-            </div>
-            <AreaChart />
-            {/* <Loader className="h-[350px] flex justify-center items-center" /> */}
-          </CardBody>
-        </Card>
+        <div className="flex flex-1 flex-col">
+          <Card className="p-4 h-full flex-col w-full">
+            <CardBody className="overflow-visible">
+              <div>
+                {/* <Subtitle>Produtividade</Subtitle> */}
+                <Text className="font-medium">
+                  Produção x Recurso em atividade
+                </Text>
+              </div>
+              <MixedChart state={stateProductionxResources} />
+            </CardBody>
+          </Card>
+          <Card className="p-4 h-full flex-col w-full">
+            <CardBody className="overflow-visible">
+              <div>
+                {/* <Subtitle>Produtividade</Subtitle> */}
+                <Text className="font-medium">
+                  Produtividade x Horas diretas
+                </Text>
+              </div>
+              <MixedChart state={stateProductivityxHour} />
+            </CardBody>
+          </Card>
+        </div>
         <div className="flex flex-col h-full max-w-[23%] gap-6">
-          <Card className="p-4 h-fit ">
+          {/* <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <h2 className="">Base Produtividade</h2>
             </CardHeader>
@@ -90,6 +108,52 @@ export default function Productivity() {
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
               <Dropzone file={demandFile} setFile={setDemandFile} />
+            </CardBody>
+          </Card> */}
+          <Card className="p-4 h-fit">
+            <CardHeader className="p-0 pb-2 flex-col items-start">
+              <Text className="font-medium">Filtros</Text>
+            </CardHeader>
+            <CardBody className="overflow-visible !p-0 !pt-2 gap-3">
+              {/* Create two select with the years 2023, 2024 and a select with the months */}
+              <select
+                name="shift"
+                id=""
+                className="p-1 bg-[#F1F0F9] rounded-md text-sm"
+              >
+                <option value="1">1° turno</option>
+                <option value="2">2° turno</option>
+                <option value="3">3° turno</option>
+              </select>
+              <div className="flex justify-between gap-2">
+                <select
+                  name="year"
+                  className="p-1 rounded-md text-sm bg-[#F1F0F9]"
+                >
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                </select>
+                <select
+                  name="month"
+                  className="p-1 rounded-md text-sm bg-[#F1F0F9]"
+                >
+                  <option value="jan">Janeiro</option>
+                  <option value="fev">Fevereiro</option>
+                  <option value="mar">Março</option>
+                  <option value="apr">Abril</option>
+                  <option value="may">Maio</option>
+                  <option value="jun">Junho</option>
+                  <option value="jul">Julho</option>
+                  <option value="aug">Agosto</option>
+                  <option value="sept">Setembro</option>
+                  <option value="oct">Outubro</option>
+                  <option value="nov">Novembro</option>
+                  <option value="dec">Dezembro</option>
+                </select>
+              </div>
+              <button className="px-2 py-1 rounded-md bg-blue-900 text-white text-sm font-medium mt-2">
+                Buscar
+              </button>
             </CardBody>
           </Card>
         </div>

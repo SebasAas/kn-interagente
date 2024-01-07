@@ -34,7 +34,7 @@ export default function Home() {
 
   return (
     <main className="h-[100vh]">
-      <div className="w-full flex flex-col gap-14">
+      {/* <div className="w-full flex flex-col gap-14">
         <Chart />
         <div className="flex gap-20">
           <Alerts />
@@ -61,7 +61,7 @@ export default function Home() {
           </Card>
         </div>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }
