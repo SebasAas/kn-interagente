@@ -33,6 +33,8 @@ import {
   stateProductionxResources,
   stateProductivityxHour,
 } from "../(helpers)/mockedData";
+import VerticalDivider from "../(assets)/VerticalDivider";
+import UserTable from "../(components)/Productivity/UserTable";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -173,24 +175,21 @@ export default function Productivity() {
             <CardBody className="overflow-visible py-2 gap-6">
               <div className="flex gap-4 mt-5 justify-around">
                 <UserCard
-                  name="Guilherme"
+                  name="LOZTPABC"
                   position={1}
                   medal="gold"
-                  avatar="https://i.pravatar.cc/150?u=a04258a2462d826712d"
                   score={100}
                 />
                 <UserCard
-                  name="João"
+                  name="LOZTPBCA"
                   position={2}
                   medal="silver"
-                  avatar="https://i.pravatar.cc/150?u=a042581f4e29026024d"
                   score={90}
                 />
                 <UserCard
-                  name="Diogo"
+                  name="LOZTPCAB"
                   position={3}
                   medal="bronze"
-                  avatar="https://i.pravatar.cc/150?u=a04258114e29026302d"
                   score={87}
                 />
               </div>
@@ -205,16 +204,15 @@ export default function Productivity() {
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
               <UserProfile
-                photo="https://i.pravatar.cc/150?u=a04258114e29026302d"
-                rankingPosition={4}
-                name="John Doe"
-                age={31}
-                sector="Unilever"
-                indicators={[10, 20, 15, 5, 30]}
+               rankingPosition={4}
+               id="LOTPZJSL"
+               indicators={[88, 14, 60, 8, 30, 52]}
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
-            <CardBody>
+            <CardBody className="flex flex-row justify-between">
+              <UserTable />
+              <VerticalDivider />
               <RadarChart />
             </CardBody>
           </Card>
