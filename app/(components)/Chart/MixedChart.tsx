@@ -12,7 +12,7 @@ function BarChartApex({ state }: { state: any }) {
         options={state.options}
         series={state.series}
         type="line"
-        height="480"
+        height="280"
       />
     </div>
   );

@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 import { Providers } from "./providers";
 // CSS
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import Header from "./(components)/Header";
+import { Flip, ToastContainer } from "react-toastify";
 
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
@@ -21,6 +24,19 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            transition={Flip}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
           <Header activePath={pathname || ""} />
           <section
             className={

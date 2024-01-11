@@ -33,6 +33,8 @@ import {
   stateProductionxResources,
   stateProductivityxHour,
 } from "../(helpers)/mockedData";
+import { uploadFiles } from "../(services)/productivity";
+import { toast } from "react-toastify";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -52,6 +54,7 @@ export default function Productivity() {
   const { data: session, status } = useSession();
 
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
+
   const [demandFile, setDemandFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -63,13 +66,47 @@ export default function Productivity() {
     }
   }, [session, status]);
 
-  console.log("productivityFile", productivityFile);
+  // Handler for file upload
+  const handleFileUpload = async (file: File) => {
+    if (file) {
+      const toastPromise = toast.promise(uploadFiles([file]), {
+        pending: "Enviando arquivo...",
+      });
+
+      await toastPromise
+        .then((res: any) => {
+          if (res.error) {
+            toast.error(
+              <div>
+                <h2>Algo deu errado, tente novamente!</h2>
+                <p className="text-xs"> {res?.error?.data?.code} </p>
+              </div>
+            );
+            setProductivityFile(null);
+          } else {
+            toast.success("Arquivos enviados com sucesso!");
+          }
+        })
+        .catch((err) => {
+          toast.error("Algo deu errado, tente novamente!");
+          setProductivityFile(null);
+        });
+    }
+  };
+
+  // Trigger the upload process when the file is selected
+  const onFileSelect = (file: File | null) => {
+    setProductivityFile(file);
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
 
   // display the page
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col gap-6">
           <Card className="p-4 h-full flex-col w-full">
             <CardBody className="overflow-visible">
               <div>
@@ -79,11 +116,8 @@ export default function Productivity() {
                 </Text>
               </div>
               <MixedChart state={stateProductionxResources} />
-            </CardBody>
-          </Card>
-          <Card className="p-4 h-full flex-col w-full">
-            <CardBody className="overflow-visible">
-              <div>
+              <Divider />
+              <div className="mt-3">
                 {/* <Subtitle>Produtividade</Subtitle> */}
                 <Text className="font-medium">
                   Produtividade x Horas diretas
@@ -93,23 +127,7 @@ export default function Productivity() {
             </CardBody>
           </Card>
         </div>
-        <div className="flex flex-col h-full max-w-[23%] gap-6">
-          {/* <Card className="p-4 h-fit ">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <h2 className="">Base Produtividade</h2>
-            </CardHeader>
-            <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={productivityFile} setFile={setProductivityFile} />
-            </CardBody>
-          </Card>
-          <Card className="p-4 h-fit ">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <h2 className="">Base Demanda</h2>
-            </CardHeader>
-            <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={demandFile} setFile={setDemandFile} />
-            </CardBody>
-          </Card> */}
+        <div className="flex flex-col h-full w-[20%] gap-6">
           <Card className="p-4 h-fit">
             <CardHeader className="p-0 pb-2 flex-col items-start">
               <Text className="font-medium">Filtros</Text>
@@ -128,14 +146,14 @@ export default function Productivity() {
               <div className="flex justify-between gap-2">
                 <select
                   name="year"
-                  className="p-1 rounded-md text-sm bg-[#F1F0F9]"
+                  className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
                 >
                   <option value="2023">2023</option>
                   <option value="2024">2024</option>
                 </select>
                 <select
                   name="month"
-                  className="p-1 rounded-md text-sm bg-[#F1F0F9]"
+                  className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
                 >
                   <option value="jan">Janeiro</option>
                   <option value="fev">Fevereiro</option>
@@ -156,6 +174,22 @@ export default function Productivity() {
               </button>
             </CardBody>
           </Card>
+          <Card className="p-4 h-fit ">
+            <CardHeader className="p-0 pb-2 flex-col items-start">
+              <Text className="font-medium">Base Produtividade</Text>
+            </CardHeader>
+            <CardBody className="overflow-visible !p-0 !pt-2">
+              <Dropzone file={productivityFile} setFile={onFileSelect} />
+            </CardBody>
+          </Card>
+          {/* <Card className="p-4 h-fit ">
+            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+              <h2 className="">Base Demanda</h2>
+            </CardHeader>
+            <CardBody className="overflow-visible !p-0 !pt-2">
+              <Dropzone file={demandFile} setFile={setDemandFile} />
+            </CardBody>
+          </Card> */}
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4">
