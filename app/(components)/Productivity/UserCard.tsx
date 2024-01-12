@@ -7,13 +7,11 @@ function UserCard({
   name,
   position,
   medal,
-  avatar,
   score,
 }: {
   name: string;
   position: number;
   medal: "gold" | "silver" | "bronze";
-  avatar: string;
   score: number;
 }) {
   return (
@@ -25,9 +23,6 @@ function UserCard({
             <Text className="text-3xl font-semibold">{position}°</Text>
             <Medal color={medal} />
           </div>
-        </div>
-        <div>
-          <Avatar radius="sm" size="lg" src={avatar} />
         </div>
       </CardBody>
       <Divider />

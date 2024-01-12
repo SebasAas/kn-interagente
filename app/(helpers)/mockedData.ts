@@ -47,24 +47,24 @@ const handleChangeLineChart = () => {
     const lineEstimateProductivity = document.querySelectorAll(
         'g[seriesname="produçãoxestimada"]'
     );
-    const linePotentialProductivity = document.querySelectorAll(
-        'g[seriesname="produçãoxpotencial"]'
-    );
+    // const linePotentialProductivity = document.querySelectorAll(
+    //     'g[seriesname="produçãoxpotencial"]'
+    // );
 
     // Loop through all SVG elements on the page
     if (
         !lineProductivity ||
-        !lineEstimateProductivity ||
-        !linePotentialProductivity
+        !lineEstimateProductivity
+        // || !linePotentialProductivity
     ) {
         handleChangeLineChart();
     } else {
         // get first child of lineProductivity
-        const lineProductivityFirstChild: any = lineProductivity[0].firstChild;
+        const lineProductivityFirstChild: any = lineProductivity[0]?.firstChild;
         const lineEstimateProductivityFirstChild: any =
-            lineEstimateProductivity[0].firstChild;
-        const linePotentialProductivityFirstChild: any =
-            linePotentialProductivity[0].firstChild;
+            lineEstimateProductivity[0]?.firstChild;
+        // const linePotentialProductivityFirstChild: any =
+        //     linePotentialProductivity[0].firstChild;
 
         // change stoke color to hex orange
         if (lineProductivityFirstChild) {
@@ -76,22 +76,25 @@ const handleChangeLineChart = () => {
             lineEstimateProductivityFirstChild.setAttribute("stroke-width", "2");
             lineEstimateProductivityFirstChild.setAttribute("stroke-dasharray", "7");
         }
-        if (linePotentialProductivityFirstChild) {
-            linePotentialProductivityFirstChild.setAttribute("stroke", "#FF0000");
-            linePotentialProductivityFirstChild.setAttribute("stroke-width", "2");
-            // dashed line
-            linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
-        }
+        // if (linePotentialProductivityFirstChild) {
+        //     linePotentialProductivityFirstChild.setAttribute("stroke", "#FF0000");
+        //     linePotentialProductivityFirstChild.setAttribute("stroke-width", "2");
+        //     // dashed line
+        //     linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
+        // }
     }
 };
 
 const handleChangeLineChartProductivityByHour = () => {
     // Change productivity line stroke color
     const lineProductivity = document.querySelectorAll(
-        'g[seriesname="mediaxhorasxdiretas"]'
+        'g[seriesname="médiaxhorasxdiretas"]'
+    );
+    const lineEstimatedAvgDirectHours = document.querySelectorAll(
+        'g[seriesname="médiaxhorasxdiretasxestimadas"]'
     );
     const lineEstimateProductivity = document.querySelectorAll(
-        'g[seriesname="targetxhorasxdirectas"]'
+        'g[seriesname="targetxhorasxdiretas"]'
     );
     const linePotentialProductivity = document.querySelectorAll(
         'g[seriesname="targetxprodutividade"]'
@@ -101,16 +104,19 @@ const handleChangeLineChartProductivityByHour = () => {
     if (
         !lineProductivity ||
         !lineEstimateProductivity ||
-        !linePotentialProductivity
+        !linePotentialProductivity ||
+        !lineEstimatedAvgDirectHours
     ) {
         handleChangeLineChart();
     } else {
         // get first child of lineProductivity
-        const lineProductivityFirstChild: any = lineProductivity[0].firstChild;
+        const lineProductivityFirstChild: any = lineProductivity[0]?.firstChild;
         const lineEstimateProductivityFirstChild: any =
-            lineEstimateProductivity[0].firstChild;
+            lineEstimateProductivity[0]?.firstChild;
         const linePotentialProductivityFirstChild: any =
-            linePotentialProductivity[0].firstChild;
+            linePotentialProductivity[0]?.firstChild;
+        const lineEstimatedAvgDirectHoursFirstChild: any =
+            lineEstimatedAvgDirectHours[0]?.firstChild;
 
         // change stoke color to hex orange
         if (lineProductivityFirstChild) {
@@ -127,6 +133,12 @@ const handleChangeLineChartProductivityByHour = () => {
             linePotentialProductivityFirstChild.setAttribute("stroke-width", "2");
             // dashed line
             linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
+        }
+        if (lineEstimatedAvgDirectHoursFirstChild) {
+            lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#FF0000");
+            lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "2");
+            // dashed line
+            lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-dasharray", "7");
         }
     }
 };
@@ -191,7 +203,7 @@ export const stateProductionxResources = {
             {
                 seriesName: "produtividade potencial",
                 title: {
-                    text: "Produção",
+                    text: "Recursos",
                     style: {
                         color: "#CCCCCC",
                         fontSize: "14px",
@@ -213,7 +225,7 @@ export const stateProductionxResources = {
                 seriesName: "produção",
                 opposite: true,
                 title: {
-                    text: "Recursos",
+                    text: "Produção",
                     style: {
                         color: "#CCCCCC",
                         fontSize: "14px",
@@ -240,19 +252,6 @@ export const stateProductionxResources = {
                 show: false,
             },
         ],
-        tooltip: {
-            //   custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
-            //     return (
-            //       '<div class="arrow_box">' +
-            //       "<span>" +
-            //       w.globals.labels[dataPointIndex] +
-            //       ": " +
-            //       series[seriesIndex][dataPointIndex] +
-            //       "</span>" +
-            //       "</div>"
-            //     );
-            //   },
-        },
         dataLabels: {
             enabled: true,
             enabledOnSeries: [0],
@@ -287,14 +286,6 @@ export const stateProductionxResources = {
         },
         colors: [
             function (props: any) {
-                // Column with alert
-                // if (
-                //   (props.seriesIndex === 0 && props.dataPointIndex === 3) ||
-                //   (props.seriesIndex === 1 && props.dataPointIndex === 3)
-                // ) {
-                //   return "#FF0000";
-                // }
-
                 // First column
                 if (props.seriesIndex === 0) {
                     return "#6AB187";
@@ -308,6 +299,9 @@ export const stateProductionxResources = {
                     return "#DBAE58";
                 }
                 if (props.seriesIndex === 3) {
+                    return "#FF0000";
+                }
+                if (props.seriesIndex === 4) {
                     return "#FF0000";
                 }
             },
@@ -333,7 +327,7 @@ export const stateProductionxResources = {
     },
     series: [
         {
-            name: "produtividade potencial",
+            name: "recursos",
             type: "bar",
             data: [
                 15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58,
@@ -459,18 +453,6 @@ export const stateProductivityxHour = {
                 },
                 tickAmount: 5, // number of lines
                 labels: {
-                    // formatter: (value: string) => {
-                    //     console.log("value", value);
-
-                    //     return value;
-
-                    //     if (value.length === 3) {
-                    //         value = '0' + value;
-                    //     }
-
-                    //     // Insert ':' after the second character for both cases
-                    //     return value?.substring(0, 2) + ':' + value?.substring(2);
-                    // },
                     formatter: function (value: number) {
                         // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
                         const minutes = value?.toString().substring(0, 1);
@@ -520,19 +502,6 @@ export const stateProductivityxHour = {
             },
 
         ],
-        tooltip: {
-            //   custom: function ({ series, seriesIndex, dataPointIndex, w }: any) {
-            //     return (
-            //       '<div class="arrow_box">' +
-            //       "<span>" +
-            //       w.globals.labels[dataPointIndex] +
-            //       ": " +
-            //       series[seriesIndex][dataPointIndex] +
-            //       "</span>" +
-            //       "</div>"
-            //     );
-            //   },
-        },
         dataLabels: {
             enabled: true,
             enabledOnSeries: [0],
@@ -567,14 +536,6 @@ export const stateProductivityxHour = {
         },
         colors: [
             function (props: any) {
-                // Column with alert
-                // if (
-                //   (props.seriesIndex === 0 && props.dataPointIndex === 3) ||
-                //   (props.seriesIndex === 1 && props.dataPointIndex === 3)
-                // ) {
-                //   return "#FF0000";
-                // }
-
                 // First column
                 if (props.seriesIndex === 0) {
                     return "#003369";
@@ -621,6 +582,7 @@ export const stateProductivityxHour = {
             ],
         },
         {
+            // Pedir para Joao mandar as horas assim... 
             name: "media horas diretas",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe

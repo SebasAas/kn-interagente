@@ -33,8 +33,9 @@ import {
   stateProductionxResources,
   stateProductivityxHour,
 } from "../(helpers)/mockedData";
-import { uploadFiles } from "../(services)/productivity";
+import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
 import { toast } from "react-toastify";
+import { fetchRanking } from "../(services)/ranking";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -50,12 +51,41 @@ const RadarChart = dynamic(() => import("../(components)/Chart/RadarChart"), {
   ),
 });
 
+interface ChartData {
+  indicator: string;
+  data: number[];
+  label: number[];
+}
+
+interface Series {
+  name: string;
+  type: string;
+  data: (number | null)[];
+}
+
 export default function Productivity() {
   const { data: session, status } = useSession();
+  const [chartDataProdByResource, setChartDataProdByResource] = useState<any>({
+    options: {},
+    series: [],
+  });
+  const [chartDataProductivityByHour, setChartDataProductivityByHour] =
+    useState<any>({
+      options: {},
+      series: [],
+    });
+
+  const [rankingData, setRankingData] = useState<any[]>([]);
+
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
-
   const [demandFile, setDemandFile] = useState<File | null>(null);
+  const [dateInfo, setDateInfo] = useState({
+    year: "2023",
+    month: "11",
+    shift: "0",
+  });
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -102,6 +132,306 @@ export default function Productivity() {
     }
   };
 
+  const handleGetInfoByData = async () => {
+    // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
+    const toastPromiseGraph = toast.promise(
+      fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
+      {
+        pending: "Obtendo dados dos graficos...",
+      }
+    );
+
+    await toastPromiseGraph
+      .then((res: any) => {
+        console.log("res", res);
+
+        if (res.error) {
+          toast.error(
+            <div>
+              <h2>Algo deu errado obtendo graficos, tente novamente!</h2>
+              {/* <p className="text-xs"> {res?.error?.data?.code} </p> */}
+            </div>
+          );
+          setProductivityFile(null);
+        } else {
+          // toast.success("Arquivos enviados com sucesso!");
+          handleBuildChart(res);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Algo deu errado obtendo graficos, tente novamente!");
+        setProductivityFile(null);
+      });
+
+    const toastPromiseRanking = toast.promise(
+      fetchRanking(dateInfo.month, dateInfo.year, dateInfo.shift),
+      {
+        pending: "Obtendo dados dos ranking...",
+      }
+    );
+
+    await toastPromiseRanking
+      .then((res: any) => {
+        console.log("res", res);
+
+        if (res.error) {
+          toast.error(
+            <div>
+              <h2>Algo deu errado obtendo ranking, tente novamente!</h2>
+              {/* <p className="text-xs"> {res?.error?.data?.code} </p> */}
+            </div>
+          );
+          setProductivityFile(null);
+        } else {
+          // toast.success("Arquivos enviados com sucesso!");
+          // handleBuildChart(res);
+          console.log("res", res);
+          setRankingData(res);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Algo deu errado obtendo ranking, tente novamente!");
+        setProductivityFile(null);
+      });
+  };
+
+  const filterSeriesByIndicators = (
+    series: Series[],
+    indicators: string[]
+  ): Series[] => {
+    return series.filter((s) => indicators.includes(s.name));
+  };
+
+  const mergeArrays = (
+    series: Series[],
+    name: string,
+    seriesName: string
+  ): Series => {
+    const recursos = series.find((s) => s.name === name)?.data || [];
+    const recursosEstimados =
+      series.find((s) => s.name === seriesName)?.data || [];
+
+    // Replace nulls in 'recursos' with values from 'recursos estimados'
+    for (let i = 0; i < recursos.length; i++) {
+      if (recursos[i] === null && recursosEstimados[i] !== undefined) {
+        recursos[i] = recursosEstimados[i];
+      }
+    }
+
+    // Append any remaining 'recursos estimados' values to 'recursos'
+    if (recursosEstimados.length > recursos.length) {
+      const additionalData = recursosEstimados.slice(recursos.length);
+      recursos.push(...additionalData);
+    }
+
+    return {
+      name: name,
+      type: "bar",
+      data: recursos,
+    };
+  };
+
+  const handleBuildChart = (data: ChartData[]) => {
+    const totalLabels = Math.max(...data.flatMap((obj) => obj.label));
+
+    const getMergedLabels = (
+      regularIndicator: string,
+      estimatedIndicator: string
+    ): number[] => {
+      const regularLabels =
+        data.find((obj) => obj.indicator.toLowerCase() === regularIndicator)
+          ?.label || [];
+      const estimatedLabels =
+        data.find((obj) => obj.indicator.toLowerCase() === estimatedIndicator)
+          ?.label || [];
+
+      console.log("[...regularLabels, ...estimatedLabels]", [
+        ...regularLabels,
+        ...estimatedLabels,
+      ]);
+
+      return [...regularLabels, ...estimatedLabels];
+    };
+
+    // Adjusts data array by filling with nulls up to the total number of labels
+    const adjustDataArray = (
+      dataArray: number[],
+      totalLabels: number
+    ): (number | null)[] => {
+      const adjustedArray: (number | null)[] = [...dataArray];
+      while (adjustedArray.length < totalLabels) {
+        adjustedArray.push(null); // Append nulls without removing existing data
+      }
+      return adjustedArray;
+    };
+
+    const prependNullsToEstimatedData = (
+      estimatedData: number[],
+      regularDataLength: number
+    ): (number | null)[] => {
+      const nullArray = Array(regularDataLength).fill(null);
+      return [...nullArray, ...estimatedData];
+    };
+
+    // Combines regular and estimated data for an indicator
+    const getAdjustedEstimatedData = (
+      estimatedIndicator: string,
+      regularIndicator: string
+    ): (number | null)[] => {
+      const regularData =
+        data.find((obj) => obj.indicator === regularIndicator)?.data || [];
+      const estimatedData =
+        data.find((obj) => obj.indicator === estimatedIndicator)?.data || [];
+      return prependNullsToEstimatedData(estimatedData, regularData.length);
+    };
+
+    // Process each indicator
+    const series: Series[] = data.map((indicatorData) => {
+      let combinedData: (number | null)[];
+
+      if (
+        indicatorData.indicator.endsWith("estimada") ||
+        indicatorData.indicator.endsWith("estimados") ||
+        indicatorData.indicator.endsWith("estimadas")
+      ) {
+        const indicatorParts = indicatorData.indicator.split(" ");
+        indicatorParts.pop();
+        const regularIndicator = indicatorParts.join(" ");
+        combinedData = getAdjustedEstimatedData(
+          indicatorData.indicator,
+          regularIndicator
+        );
+      } else {
+        combinedData = adjustDataArray(indicatorData.data, totalLabels);
+      }
+
+      return {
+        name: indicatorData.indicator.toLowerCase(),
+        type: indicatorData.indicator.includes("Recursos") ? "bar" : "line",
+        data: combinedData,
+      };
+    });
+
+    const resourceIndicators = ["produção", "produção estimada"];
+    const prodctivityLineIndicators = [
+      "média horas diretas",
+      "média horas diretas estimadas",
+      "target horas diretas",
+      "target produtividade",
+    ];
+    const prodctivityBarIndicators = [
+      "produtividade",
+      "produtividade estimada",
+    ];
+
+    const filteredSeriesResourceChart = filterSeriesByIndicators(
+      series,
+      resourceIndicators
+    );
+    const filteredSeriesProductivityLinesChart = filterSeriesByIndicators(
+      series,
+      prodctivityLineIndicators
+    );
+
+    const filteredSeriesProductivityBarsChart = filterSeriesByIndicators(
+      series,
+      prodctivityBarIndicators
+    );
+
+    // Special check for second chart
+    let mergedProductivitySeries;
+
+    const checkIfHasNull =
+      filteredSeriesProductivityBarsChart[0].data.includes(null);
+
+    console.log(
+      "filteredSeriesProductivityBarsChart",
+      filteredSeriesProductivityBarsChart
+    );
+
+    if (checkIfHasNull) {
+      const productivity = filteredSeriesProductivityBarsChart[0].data;
+      const productivityEstimate = filteredSeriesProductivityBarsChart[1].data;
+
+      const productivityWithoutNull = productivity.filter(
+        (item) => item !== null
+      );
+
+      const productivityEstimateWithoutNull = productivityEstimate.filter(
+        (item) => item !== null
+      );
+
+      const productivityMerged = productivityWithoutNull.concat(
+        productivityEstimateWithoutNull
+      );
+
+      mergedProductivitySeries = {
+        name: "produtividade",
+        type: "bar",
+        data: productivityMerged,
+      };
+    }
+
+    const getLabelsRecursos = getMergedLabels("produção", "produção estimada");
+
+    const mergedRecursosSeries = mergeArrays(
+      series,
+      "recursos",
+      "recursos estimados"
+    );
+
+    // Create a function
+
+    const resourceChart = {
+      options: {
+        ...stateProductionxResources.options,
+        xaxis: {
+          ...stateProductionxResources.options.xaxis,
+          categories: getLabelsRecursos,
+        },
+      },
+      series: [mergedRecursosSeries, ...filteredSeriesResourceChart],
+    };
+
+    const productivityChart = {
+      options: {
+        ...stateProductivityxHour.options,
+        xaxis: {
+          ...stateProductivityxHour.options.xaxis,
+          categories: getLabelsRecursos,
+        },
+      },
+      series: [
+        mergedProductivitySeries,
+        ...filteredSeriesProductivityLinesChart,
+      ],
+    };
+
+    setChartDataProdByResource(resourceChart);
+    setChartDataProductivityByHour(productivityChart);
+
+    // const productionData = data.find(
+    //   (obj: any) => obj.indicator === "Produção"
+    // );
+    // const resourceData = data.find((obj: any) => obj.indicator === "Recursos");
+    // const estimatedProductionData = data.find(
+    //   (obj: any) => obj.indicator === "Produção estimada"
+    // );
+    // const estimatedResourceData = data.find(
+    //   (obj: any) => obj.indicator === "Recursos estimados"
+    // );
+
+    // const productionDataChart = productionData?.data
+    // const productionEstimateDataChart = estimatedProductionData?.data
+    // const resources = {
+    //   data: resourceData?.data.concat(estimatedResourceData?.data),
+    // };
+
+    // Both productionDataChart and productionEstimateDataChart will return
+  };
+
   // display the page
   return (
     <div className="flex flex-col gap-4">
@@ -115,7 +445,7 @@ export default function Productivity() {
                   Produção x Recurso em atividade
                 </Text>
               </div>
-              <MixedChart state={stateProductionxResources} />
+              <MixedChart state={chartDataProdByResource} />
               <Divider />
               <div className="mt-3">
                 {/* <Subtitle>Produtividade</Subtitle> */}
@@ -123,7 +453,7 @@ export default function Productivity() {
                   Produtividade x Horas diretas
                 </Text>
               </div>
-              <MixedChart state={stateProductivityxHour} />
+              <MixedChart state={chartDataProductivityByHour} />
             </CardBody>
           </Card>
         </div>
@@ -138,7 +468,12 @@ export default function Productivity() {
                 name="shift"
                 id=""
                 className="p-1 bg-[#F1F0F9] rounded-md text-sm"
+                onChange={(e) =>
+                  setDateInfo({ ...dateInfo, shift: e.target.value })
+                }
+                defaultValue={dateInfo.shift}
               >
+                <option value="0">Todos</option>
                 <option value="1">1° turno</option>
                 <option value="2">2° turno</option>
                 <option value="3">3° turno</option>
@@ -146,7 +481,11 @@ export default function Productivity() {
               <div className="flex justify-between gap-2">
                 <select
                   name="year"
+                  defaultValue={dateInfo.year}
                   className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
+                  onChange={(e) =>
+                    setDateInfo({ ...dateInfo, year: e.target.value })
+                  }
                 >
                   <option value="2023">2023</option>
                   <option value="2024">2024</option>
@@ -154,34 +493,41 @@ export default function Productivity() {
                 <select
                   name="month"
                   className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
+                  onChange={(e) =>
+                    setDateInfo({ ...dateInfo, month: e.target.value })
+                  }
+                  defaultValue={dateInfo.month}
                 >
-                  <option value="jan">Janeiro</option>
-                  <option value="fev">Fevereiro</option>
-                  <option value="mar">Março</option>
-                  <option value="apr">Abril</option>
-                  <option value="may">Maio</option>
-                  <option value="jun">Junho</option>
-                  <option value="jul">Julho</option>
-                  <option value="aug">Agosto</option>
-                  <option value="sept">Setembro</option>
-                  <option value="oct">Outubro</option>
-                  <option value="nov">Novembro</option>
-                  <option value="dec">Dezembro</option>
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
+                  <option value="10">Outubro</option>
+                  <option value="11">Novembro</option>
+                  <option value="12">Dezembro</option>
                 </select>
               </div>
-              <button className="px-2 py-1 rounded-md bg-blue-900 text-white text-sm font-medium mt-2">
+              <button
+                className="px-2 py-1 rounded-md bg-blue-900 text-white text-sm font-medium mt-2"
+                onClick={handleGetInfoByData}
+              >
                 Buscar
               </button>
             </CardBody>
           </Card>
-          <Card className="p-4 h-fit ">
+          {/* <Card className="p-4 h-fit ">
             <CardHeader className="p-0 pb-2 flex-col items-start">
               <Text className="font-medium">Base Produtividade</Text>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
               <Dropzone file={productivityFile} setFile={onFileSelect} />
             </CardBody>
-          </Card>
+          </Card> */}
           {/* <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <h2 className="">Base Demanda</h2>
@@ -201,35 +547,35 @@ export default function Productivity() {
                   <Subtitle>Ranking</Subtitle>
                   <Text className="text-gray-400">Usuarios</Text>
                 </div>
-                <DateFilter />
               </div>
             </CardHeader>
             <CardBody className="overflow-visible py-2 gap-6">
               <div className="flex gap-4 mt-5 justify-around">
                 <UserCard
-                  name="Guilherme"
+                  name={rankingData[0]?.worker_code || ""}
                   position={1}
                   medal="gold"
-                  avatar="https://i.pravatar.cc/150?u=a04258a2462d826712d"
-                  score={100}
+                  score={rankingData[0]?.score || ""}
                 />
                 <UserCard
-                  name="João"
+                  name={rankingData[1]?.worker_code || ""}
                   position={2}
                   medal="silver"
-                  avatar="https://i.pravatar.cc/150?u=a042581f4e29026024d"
-                  score={90}
+                  score={rankingData[1]?.score || ""}
                 />
                 <UserCard
-                  name="Diogo"
+                  name={rankingData[2]?.worker_code || ""}
                   position={3}
                   medal="bronze"
-                  avatar="https://i.pravatar.cc/150?u=a04258114e29026302d"
-                  score={87}
+                  score={rankingData[2]?.score || ""}
                 />
               </div>
               <div>
-                <Table />
+                <Table
+                  rankingTable={rankingData}
+                  selectedKeys={selectedKeys}
+                  setSelectedKeys={setSelectedKeys}
+                />
               </div>
             </CardBody>
           </Card>
@@ -239,18 +585,16 @@ export default function Productivity() {
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
               <UserProfile
-                photo="https://i.pravatar.cc/150?u=a04258114e29026302d"
-                rankingPosition={4}
-                name="John Doe"
-                age={31}
-                sector="Unilever"
-                indicators={[10, 20, 15, 5, 30]}
+                user={selectedKeys}
+                date={{
+                  month: dateInfo.month,
+                  year: dateInfo.year,
+                  shift: dateInfo.shift,
+                }}
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
-            <CardBody>
-              <RadarChart />
-            </CardBody>
+            <CardBody>{/* <RadarChart /> */}</CardBody>
           </Card>
         </div>
       </div>
