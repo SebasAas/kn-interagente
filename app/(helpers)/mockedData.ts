@@ -502,6 +502,19 @@ export const stateProductivityxHour = {
             },
 
         ],
+        tooltip: {
+            shared: true,
+            intersect: false,
+            y: {
+                formatter: function (val: any) {
+                    if (typeof val !== "undefined" && val != null && isNaN(val) === false) {
+                        return val.toFixed(0);
+                    }
+                    return null;
+                },
+            },
+
+        },
         dataLabels: {
             enabled: true,
             enabledOnSeries: [0],
@@ -549,6 +562,9 @@ export const stateProductivityxHour = {
                     return "#003369";
                 }
                 if (props.seriesIndex === 3) {
+                    return "#FF0000";
+                }
+                if (props.seriesIndex === 4) {
                     return "#FF0000";
                 }
             },
