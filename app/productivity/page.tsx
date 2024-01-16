@@ -173,7 +173,7 @@ export default function Productivity() {
 
     await toastPromiseRanking
       .then((res: any) => {
-        console.log("res", res);
+        // console.log("res", res);
 
         if (res.error) {
           toast.error(
@@ -186,7 +186,7 @@ export default function Productivity() {
         } else {
           // toast.success("Arquivos enviados com sucesso!");
           // handleBuildChart(res);
-          console.log("res", res);
+          // console.log("res", res);
           setRankingData(res);
         }
       })
@@ -209,9 +209,12 @@ export default function Productivity() {
     name: string,
     seriesName: string
   ): Series => {
-    const recursos = series.find((s) => s.name === name)?.data || [];
+    const recursos =
+      series.find((s) => s.name?.toLowerCase() === name?.toLowerCase())?.data ||
+      [];
     const recursosEstimados =
-      series.find((s) => s.name === seriesName)?.data || [];
+      series.find((s) => s.name?.toLowerCase() === seriesName?.toLowerCase())
+        ?.data || [];
 
     // Replace nulls in 'recursos' with values from 'recursos estimados'
     for (let i = 0; i < recursos.length; i++) {
@@ -246,11 +249,6 @@ export default function Productivity() {
       const estimatedLabels =
         data.find((obj) => obj.indicator.toLowerCase() === estimatedIndicator)
           ?.label || [];
-
-      console.log("[...regularLabels, ...estimatedLabels]", [
-        ...regularLabels,
-        ...estimatedLabels,
-      ]);
 
       return [...regularLabels, ...estimatedLabels];
     };
@@ -330,6 +328,7 @@ export default function Productivity() {
       series,
       resourceIndicators
     );
+
     const filteredSeriesProductivityLinesChart = filterSeriesByIndicators(
       series,
       prodctivityLineIndicators
@@ -343,15 +342,9 @@ export default function Productivity() {
     // Special check for second chart
     let mergedProductivitySeries;
 
-    const checkIfHasNull =
-      filteredSeriesProductivityBarsChart[0].data.includes(null);
+    const serieProductivity = filteredSeriesProductivityBarsChart[0].data;
 
-    console.log(
-      "filteredSeriesProductivityBarsChart",
-      filteredSeriesProductivityBarsChart
-    );
-
-    if (checkIfHasNull) {
+    if (serieProductivity.includes(null)) {
       const productivity = filteredSeriesProductivityBarsChart[0].data;
       const productivityEstimate = filteredSeriesProductivityBarsChart[1].data;
 
@@ -372,9 +365,17 @@ export default function Productivity() {
         type: "bar",
         data: productivityMerged,
       };
+    } else {
+      mergedProductivitySeries = {
+        name: "produtividade",
+        type: "bar",
+        data: serieProductivity,
+      };
     }
 
     const getLabelsRecursos = getMergedLabels("produção", "produção estimada");
+
+    console.log("getLabelsRecursos", getLabelsRecursos);
 
     const mergedRecursosSeries = mergeArrays(
       series,
@@ -382,13 +383,29 @@ export default function Productivity() {
       "recursos estimados"
     );
 
-    // Create a function
+    // Remove all the nulls from [mergedRecursosSeries, ...filteredSeriesResourceChart][0].data
+    const mergedRecursosSeriesWithoutNull = mergedRecursosSeries?.data?.filter(
+      (item) => item !== null
+    );
+
+    mergedRecursosSeries.data = mergedRecursosSeriesWithoutNull;
 
     const resourceChart = {
       options: {
         ...stateProductionxResources.options,
         xaxis: {
-          ...stateProductionxResources.options.xaxis,
+          type: "category",
+          labels: {
+            formatter: function (val: string) {
+              // Based in the date
+              return `${val}`;
+            },
+            style: {
+              fontSize: "12px",
+              fontWeight: 600,
+              colors: "#000",
+            },
+          },
           categories: getLabelsRecursos,
         },
       },
@@ -399,7 +416,18 @@ export default function Productivity() {
       options: {
         ...stateProductivityxHour.options,
         xaxis: {
-          ...stateProductivityxHour.options.xaxis,
+          type: "category",
+          labels: {
+            formatter: function (val: string) {
+              // Based in the date
+              return `${val}`;
+            },
+            style: {
+              fontSize: "12px",
+              fontWeight: 600,
+              colors: "#000",
+            },
+          },
           categories: getLabelsRecursos,
         },
       },
@@ -408,6 +436,9 @@ export default function Productivity() {
         ...filteredSeriesProductivityLinesChart,
       ],
     };
+
+    console.log(resourceChart);
+    console.log(productivityChart);
 
     setChartDataProdByResource(resourceChart);
     setChartDataProductivityByHour(productivityChart);
@@ -488,7 +519,6 @@ export default function Productivity() {
                   }
                 >
                   <option value="2023">2023</option>
-                  <option value="2024">2024</option>
                 </select>
                 <select
                   name="month"
@@ -498,18 +528,9 @@ export default function Productivity() {
                   }
                   defaultValue={dateInfo.month}
                 >
-                  <option value="1">Janeiro</option>
-                  <option value="2">Fevereiro</option>
-                  <option value="3">Março</option>
-                  <option value="4">Abril</option>
-                  <option value="5">Maio</option>
-                  <option value="6">Junho</option>
-                  <option value="7">Julho</option>
-                  <option value="8">Agosto</option>
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
-                  <option value="12">Dezembro</option>
                 </select>
               </div>
               <button

@@ -1,37 +1,3 @@
-const xAxisLabel = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "30",
-    "31",
-];
-
 function minTommss(minutes: number) {
     var sign = minutes < 0 ? "-" : "";
     var min = Math.floor(Math.abs(minutes));
@@ -186,7 +152,7 @@ export const stateProductionxResources = {
         },
         xaxis: {
             type: "category",
-            categories: xAxisLabel,
+            categories: [],
             labels: {
                 formatter: function (val: string) {
                     // Based in the date
@@ -329,40 +295,25 @@ export const stateProductionxResources = {
         {
             name: "recursos",
             type: "bar",
-            data: [
-                15, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58,
-                60, 62, 65, 68, 70, 72, 75, 78, 80, 82, 85, 88, 90,
-            ],
+            data: [],
         },
         {
             name: "produção",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                500, 530, 548, 570, 640, 680, 790, 790, 358, 500, 530, 548, 570, 640,
-                680, 790, 790, 358, 500, 530, 548, 570, 640, 680, 790, 790, 358, 500,
-                530, 548, 570,
-            ],
+            data: [],
         },
         {
             name: "produção estimada",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                419, 350, 400, 430, 448, 470, 540, 580, 690, 690, 258, 400, 430, 448,
-                470, 540, 580, 690, 690, 258, 400, 430, 448, 470, 540, 580, 690, 690,
-                258, 400, 430,
-            ],
+            data: [],
         },
         {
             name: "produção potencial",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                729, 450, 720, 630, 648, 670, 740, 780, 890, 890, 458, 720, 630, 648,
-                670, 740, 780, 890, 890, 458, 720, 630, 648, 670, 740, 780, 890, 890,
-                458, 720, 630,
-            ],
+            data: [],
         },
     ],
 };
@@ -401,7 +352,7 @@ export const stateProductivityxHour = {
         },
         xaxis: {
             type: "category",
-            categories: xAxisLabel,
+            categories: [],
             labels: {
                 formatter: function (val: string) {
                     // Based in the date
@@ -441,7 +392,6 @@ export const stateProductivityxHour = {
             },
             {
                 seriesName: "media horas diretas",
-
                 opposite: true,
                 title: {
                     text: "Horas diretas",
@@ -459,6 +409,10 @@ export const stateProductivityxHour = {
                         const seconds = value?.toString().substring(1);
 
                         const val = (Number(minutes) + Number(seconds) * 0.0168).toFixed(2);
+
+                        if (minTommss(Number(val)) === 'NaN:NaN') {
+                            return null
+                        }
 
                         return minTommss(Number(val));
                     },
@@ -480,6 +434,10 @@ export const stateProductivityxHour = {
 
                         const val = (Number(minutes) + Number(seconds) * 0.0168).toFixed(2);
 
+                        if (minTommss(Number(val)) === 'NaN:NaN') {
+                            return null
+                        }
+
                         return minTommss(Number(val));
                     },
 
@@ -488,33 +446,24 @@ export const stateProductivityxHour = {
             {
                 seriesName: "target produtividade", // スケール合わせるためにわざと総数にしている
                 show: false,
-                labels: {
-                    formatter: function (value: number) {
-                        const minutes = value?.toString().substring(0, 1);
-                        const seconds = value?.toString().substring(1);
-
-                        const val = (Number(minutes) + Number(seconds) * 0.0168).toFixed(2);
-
-                        return minTommss(Number(val));
-                    },
-
-                },
             },
 
         ],
-        tooltip: {
-            shared: true,
-            intersect: false,
-            y: {
-                formatter: function (val: any) {
-                    if (typeof val !== "undefined" && val != null && isNaN(val) === false) {
-                        return val.toFixed(0);
-                    }
-                    return null;
-                },
-            },
+        // tooltip: {
+        //     shared: true,
+        //     intersect: false,
+        //     y: {
+        //         formatter: function (val: any) {
+        //             console.log(val)
+        //             return val
+        //             // if (typeof val !== "undefined" && val != null && isNaN(val) === false) {
+        //             //     return val.toFixed(0);
+        //             // }
+        //             // return null;
+        //         },
+        //     },
 
-        },
+        // },
         dataLabels: {
             enabled: true,
             enabledOnSeries: [0],
@@ -592,41 +541,26 @@ export const stateProductivityxHour = {
         {
             name: "produtividade",
             type: "bar",
-            data: [
-                21, 19, 25, 19, 22, 18, 19, 23, 17, 19, 25, 19, 22, 18, 19, 23, 17, 19,
-                25, 19, 22, 18, 19, 23, 17, 19, 25, 19, 22, 18, 19,
-            ],
+            data: [],
         },
         {
             // Pedir para Joao mandar as horas assim... 
             name: "media horas diretas",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                350, 357, 413, 340, 325, 415, 420, 425, 350, 337, 413, 350, 315, 415,
-                420, 425, 320, 347, 413, 350, 325, 415, 420, 425, 310, 357, 413, 320,
-                345, 415, 420,
-            ],
+            data: [],
         },
         {
             name: "target horas directas",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645,
-                645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645, 645,
-                645,
-            ],
+            data: [],
         },
         {
             name: "target produtividade",
             type: "line",
             //   31 random numbers btw 800 and 200, not being the same as avobe
-            data: [
-                618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618,
-                618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618, 618,
-                618,
-            ],
+            data: [],
         },
     ],
 };

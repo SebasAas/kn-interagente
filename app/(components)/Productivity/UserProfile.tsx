@@ -49,7 +49,7 @@ const UserProfile = ({
   const allWorkload =
     userData && userData?.length > 0 ? userData?.workloads[0] : [];
 
-  console.log(allWorkload, userData);
+  // console.log(allWorkload, userData);
 
   return (
     <div className="flex gap-6 mt-4">
