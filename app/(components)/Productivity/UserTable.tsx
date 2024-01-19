@@ -29,7 +29,6 @@ export interface Data {
 }
 
 const UserTable = ({ data }: { data: Data }) => {
-  console.log(data);
   // Accumulate production for "AERO", "HPC", and "FOODS"
   const productionData = data?.workloads?.reduce(
     (acc: Record<string, number>, workload: Workload) => {
@@ -50,12 +49,12 @@ const UserTable = ({ data }: { data: Data }) => {
             Object.entries(productionData).map(
               ([productType, production], index) => (
                 <tr
-                  className={`text-sm ${
+                  className={`text-sm  ${
                     index % 2 === 0 ? "bg-gray-100" : "bg-white"
                   }`}
                   key={productType}
                 >
-                  <td className="pl-2 pr-12">{productType}</td>
+                  <td className="pl-2 py-2 pr-12">{productType}</td>
                   <td className="ml-auto pr-2">{production}</td>
                 </tr>
               )

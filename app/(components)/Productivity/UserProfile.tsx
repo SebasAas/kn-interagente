@@ -11,7 +11,7 @@ const RadarChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <Loader className="h-[350px] flex justify-center items-center" />
+      <Loader className="h-[250px] flex justify-center items-center" />
     ),
   }
 );
@@ -124,7 +124,6 @@ const UserProfile = ({
       {selectedKeys.size !== 0 && (
         <div className="flex flex-row justify-between">
           <UserTable data={userData} />
-          <Divider orientation="vertical" />
           <RadarChart data={userData} />
         </div>
       )}

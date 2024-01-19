@@ -20,6 +20,7 @@ import { columns, users, statusOptions } from "./data";
 import { capitalize } from "./utils";
 import { SearchIcon } from "@/app/(assets)/SearchIcon";
 import { ChevronDownIcon } from "@/app/(assets)/ChevronDownIcon";
+import { toast } from "react-toastify";
 
 const statusColorMap = {
   active: "success",
@@ -40,7 +41,6 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
   });
   const [page, setPage] = React.useState(1);
 
-  console.log("selectedKeys", selectedKeys)
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -52,6 +52,13 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
 
   const filteredItems = React.useMemo(() => {
     if(!rankingTable) return []
+
+    if(rankingTable.detail) {
+      toast.info(rankingTable.detail)
+      return [];
+    }
+
+    console.log("rankingTable", rankingTable)
     
     let filteredUsers = [...rankingTable];
 

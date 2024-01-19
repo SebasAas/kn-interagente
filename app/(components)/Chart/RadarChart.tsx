@@ -59,7 +59,7 @@ function RadarChart({ data }: { data: Data }) {
     ],
     options: {
       chart: {
-        height: 350,
+        height: 250,
         type: "radar",
       },
       dataLabels: {
@@ -89,7 +89,7 @@ function RadarChart({ data }: { data: Data }) {
         options={state.options}
         series={state.series}
         type="radar"
-        height={350}
+        height={250}
       />
     </div>
   );

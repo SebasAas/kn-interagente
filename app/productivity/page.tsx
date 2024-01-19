@@ -128,6 +128,10 @@ export default function Productivity() {
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
+  useEffect(() => {
+    handleGetInfoByData();
+  }, []);
+
   const handleGetInfoByData = async () => {
     setButtonDisabled(true);
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
@@ -373,8 +377,6 @@ export default function Productivity() {
 
     const getLabelsRecursos = getMergedLabels("produção", "produção estimada");
 
-    console.log("getLabelsRecursos", getLabelsRecursos);
-
     const mergedRecursosSeries = mergeArrays(
       series,
       "recursos",
@@ -435,35 +437,9 @@ export default function Productivity() {
       ],
     };
 
-    console.log(resourceChart);
-    console.log(productivityChart);
-
     setChartDataProdByResource(resourceChart);
     setChartDataProductivityByHour(productivityChart);
-
-    // const productionData = data.find(
-    //   (obj: any) => obj.indicator === "Produção"
-    // );
-    // const resourceData = data.find((obj: any) => obj.indicator === "Recursos");
-    // const estimatedProductionData = data.find(
-    //   (obj: any) => obj.indicator === "Produção estimada"
-    // );
-    // const estimatedResourceData = data.find(
-    //   (obj: any) => obj.indicator === "Recursos estimados"
-    // );
-
-    // const productionDataChart = productionData?.data
-    // const productionEstimateDataChart = estimatedProductionData?.data
-    // const resources = {
-    //   data: resourceData?.data.concat(estimatedResourceData?.data),
-    // };
-
-    // Both productionDataChart and productionEstimateDataChart will return
   };
-
-  // display the page
-
-  console.log(selectedKeys.size);
 
   return (
     <div className="flex flex-col gap-4">
@@ -532,7 +508,7 @@ export default function Productivity() {
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
-                  <option value="12">Decembro</option>
+                  {/* <option value="12">Decembro</option> */}
                 </select>
               </div>
               <button
@@ -607,8 +583,8 @@ export default function Productivity() {
             </CardBody>
           </Card>
         </div>
-        <div className="flex flex-1 w-full">
-          {/* <Card className="p-4 w-full">
+        <div className="flex  w-full">
+          <Card className="p-4 w-full h-min">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
             </CardHeader>
@@ -623,7 +599,7 @@ export default function Productivity() {
                 selectedKeys={selectedKeys}
               />
             </CardBody>
-          </Card> */}
+          </Card>
         </div>
       </div>
     </div>
