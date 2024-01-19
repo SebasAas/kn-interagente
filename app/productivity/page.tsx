@@ -36,6 +36,8 @@ import {
 import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
+import UserTable from "../(components)/Productivity/UserTable";
+
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -132,7 +134,10 @@ export default function Productivity() {
     }
   };
 
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
   const handleGetInfoByData = async () => {
+    setButtonDisabled(true);
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
     const toastPromiseGraph = toast.promise(
       fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
@@ -195,6 +200,7 @@ export default function Productivity() {
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
         setProductivityFile(null);
       });
+      setButtonDisabled(false);
   };
 
   const filterSeriesByIndicators = (
@@ -534,8 +540,9 @@ export default function Productivity() {
                 </select>
               </div>
               <button
-                className="px-2 py-1 rounded-md bg-blue-900 text-white text-sm font-medium mt-2"
+                className={`px-2 py-1 rounded-md ${buttonDisabled ? 'bg-gray-500 text-gray-400 cursor-not-allowed opacity-50' : 'bg-blue-900 text-white'} text-sm font-medium mt-2`}
                 onClick={handleGetInfoByData}
+                disabled={buttonDisabled}
               >
                 Buscar
               </button>
@@ -564,9 +571,8 @@ export default function Productivity() {
           <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <div className="flex w-full justify-between">
-                <div className="w-1/5">
-                  <Subtitle>Ranking</Subtitle>
-                  <Text className="text-gray-400">Usuarios</Text>
+                <div className="w-1/2">
+                  <Subtitle>Ranking de usuários</Subtitle>
                 </div>
               </div>
             </CardHeader>
@@ -615,7 +621,11 @@ export default function Productivity() {
               />
               {/*<Text className="text-gray-400">John Doe</Text>*/}
             </CardHeader>
-            <CardBody>{/* <RadarChart /> */}</CardBody>
+            <CardBody className="flex flex-row justify-between">
+              <UserTable />
+              <Divider orientation="vertical" /> 
+              <RadarChart /> 
+            </CardBody>
           </Card>
         </div>
       </div>

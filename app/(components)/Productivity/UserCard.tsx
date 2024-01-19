@@ -15,7 +15,7 @@ function UserCard({
   score: number;
 }) {
   return (
-    <Card className="p-2 overflow-visible bg-[#F1F0F9] w-1/3 ">
+    <Card className="flex flex-row p-2 overflow-visible bg-[#F1F0F9] w-1/3 ">
       <CardBody className="flex flex-row justify-center items-center gap-4 overflow-hidden">
         <div>
           <Text className="uppercase text-sm font-medium">{name}</Text>
@@ -25,7 +25,7 @@ function UserCard({
           </div>
         </div>
       </CardBody>
-      <Divider />
+      <Divider orientation="vertical" />
       <CardFooter className="flex flex-col">
         <Text>Score</Text>
         <Text className="text-3xl font-semibold">{score}</Text>

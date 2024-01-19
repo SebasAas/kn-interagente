@@ -135,7 +135,7 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
           <Input
             size="sm"
             isClearable
-            placeholder="Search by name..."
+            placeholder="Pesquisar por nome..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}

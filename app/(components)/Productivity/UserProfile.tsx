@@ -61,7 +61,7 @@ const UserProfile = ({
         <div className="flex flex-col text-center">
           <p className="text-gray-400 text-sm font-medium">Trabalho</p>
           <p className="text-xl text-red-700 font-semibold">
-            {userData?.workloads[0]?.work?.toFixed(1)}
+            {userData?.workloads[0]?.work?.toFixed(0)}
           </p>
         </div>
         <div className="flex flex-col text-center">
@@ -73,13 +73,13 @@ const UserProfile = ({
         <div className="flex flex-col text-center">
           <p className="text-gray-400 text-sm font-medium">Produtividade</p>
           <p className="text-xl text-blue-700 font-semibold">
-            {userData?.workloads[0]?.productivity?.toFixed(2)}
+            {userData?.workloads[0]?.productivity?.toFixed(0)}
           </p>
         </div>
         <div className="flex flex-col text-center">
           <p className="text-gray-400 text-sm font-medium">Perfil</p>
           <p className="text-xl text-blue-700 font-semibold">
-            {userData?.workloads[0]?.profile?.toFixed(2)}
+            {userData?.workloads[0]?.profile?.toFixed(0)}
           </p>
         </div>
         <div className="flex flex-col text-center">
@@ -98,7 +98,7 @@ const UserProfile = ({
         <div className="flex flex-col text-center">
           <p className="text-gray-400 text-sm font-medium">Distancia</p>
           <p className="text-xl text-blue-700 font-semibold">
-            {userData?.workloads[0]?.distance?.toFixed(2)}
+            {userData?.workloads[0]?.distance?.toFixed(0)}
           </p>
         </div>
       </div>
