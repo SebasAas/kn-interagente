@@ -54,7 +54,6 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
     if(!rankingTable) return []
 
     if(rankingTable.detail) {
-      toast.info(rankingTable.detail)
       return [];
     }
 

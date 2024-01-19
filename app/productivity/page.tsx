@@ -176,11 +176,11 @@ export default function Productivity() {
       .then((res: any) => {
         // console.log("res", res);
 
-        if (res.error) {
+        if (res.detail) {
           toast.error(
             <div>
               <h2>Algo deu errado obtendo ranking, tente novamente!</h2>
-              {/* <p className="text-xs"> {res?.error?.data?.code} </p> */}
+              <p className="text-xs"> {res?.detail} </p>
             </div>
           );
           setProductivityFile(null);
