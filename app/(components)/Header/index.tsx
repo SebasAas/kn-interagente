@@ -24,7 +24,7 @@ const Header = ({ activePath }: { activePath: string }) => {
   console.log("status", status);
 
   return (
-    <header className="top-0 fixed bg-white opacity-80 h-12 w-full text-black border-b-2 border-blue-900 rounded-b-3xl z-30">
+    <header className="top-0 fixed bg-white  h-12 w-full text-black border-b-2 border-blue-900 z-30">
       <nav className="w-full h-full flex justify-between items-center py-1 pl-2 pr-10">
         <div>
           <Link href="/" className="h-full flex justify-center items-center">
