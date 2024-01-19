@@ -134,7 +134,10 @@ export default function Productivity() {
     }
   };
 
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
   const handleGetInfoByData = async () => {
+    setButtonDisabled(true);
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
     const toastPromiseGraph = toast.promise(
       fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
@@ -197,6 +200,7 @@ export default function Productivity() {
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
         setProductivityFile(null);
       });
+      setButtonDisabled(false);
   };
 
   const filterSeriesByIndicators = (
@@ -536,8 +540,9 @@ export default function Productivity() {
                 </select>
               </div>
               <button
-                className="px-2 py-1 rounded-md bg-blue-900 text-white text-sm font-medium mt-2"
+                className={`px-2 py-1 rounded-md ${buttonDisabled ? 'bg-gray-500 text-gray-400 cursor-not-allowed opacity-50' : 'bg-blue-900 text-white'} text-sm font-medium mt-2`}
                 onClick={handleGetInfoByData}
+                disabled={buttonDisabled}
               >
                 Buscar
               </button>
