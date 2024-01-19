@@ -547,7 +547,7 @@ export const stateProductivityxHour = {
           return "#FF0000";
         }
         if (props.seriesIndex === 4) {
-          return "#FF0000";
+          return "#6AB187";
         }
       },
     ],
