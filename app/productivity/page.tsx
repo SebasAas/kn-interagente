@@ -37,7 +37,7 @@ import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
 import UserTable from "../(components)/Productivity/UserTable";
-import VerticalDivider from "../(assets)/VerticalDivider";
+
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -618,7 +618,7 @@ export default function Productivity() {
             </CardHeader>
             <CardBody className="flex flex-row justify-between">
               <UserTable />
-              <VerticalDivider /> 
+              <Divider orientation="vertical" /> 
               <RadarChart /> 
             </CardBody>
           </Card>

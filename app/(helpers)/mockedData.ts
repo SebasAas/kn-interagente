@@ -169,7 +169,7 @@ export const stateProductionxResources = {
             {
                 seriesName: "produtividade potencial",
                 title: {
-                    text: "Recursos1",
+                    text: "Recursos",
                     style: {
                         color: "#CCCCCC",
                         fontSize: "14px",

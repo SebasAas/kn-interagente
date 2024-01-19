@@ -2,7 +2,6 @@ import Medal from "@/app/(assets)/MedalIcon";
 import { Avatar, Card, CardBody, CardFooter, Divider } from "@nextui-org/react";
 import React from "react";
 import Text from "../Text/Text";
-import VerticalDivider from "@/app/(assets)/VerticalDivider";
 
 function UserCard({
   name,
@@ -26,7 +25,7 @@ function UserCard({
           </div>
         </div>
       </CardBody>
-      <VerticalDivider />
+      <Divider orientation="vertical" />
       <CardFooter className="flex flex-col">
         <Text>Score</Text>
         <Text className="text-3xl font-semibold">{score}</Text>
