@@ -101,7 +101,7 @@ const handleChangeLineChartProductivityByHour = () => {
       linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
     }
     if (lineEstimatedAvgDirectHoursFirstChild) {
-      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#FF0000");
+      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#6AB187");
       lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "2");
       // dashed line
       lineEstimatedAvgDirectHoursFirstChild.setAttribute(
@@ -547,7 +547,7 @@ export const stateProductivityxHour = {
           return "#FF0000";
         }
         if (props.seriesIndex === 4) {
-          return "#FF0000";
+          return "#6AB187";
         }
       },
     ],

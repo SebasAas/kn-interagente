@@ -451,17 +451,13 @@ export default function Productivity() {
             <CardBody className="overflow-visible">
               <div>
                 {/* <Subtitle>Produtividade</Subtitle> */}
-                <Text className="font-medium">
-                  Produção x Recurso em atividade
-                </Text>
+                <Subtitle>Produção x Recurso em atividade</Subtitle>
               </div>
               <MixedChart state={chartDataProdByResource} />
               <Divider />
               <div className="mt-3">
                 {/* <Subtitle>Produtividade</Subtitle> */}
-                <Text className="font-medium">
-                  Produtividade x Horas diretas
-                </Text>
+                <Subtitle>Produtividade x Horas diretas</Subtitle>
               </div>
               <MixedChart state={chartDataProductivityByHour} />
             </CardBody>
