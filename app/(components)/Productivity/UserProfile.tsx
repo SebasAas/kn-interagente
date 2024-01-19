@@ -68,7 +68,7 @@ const UserProfile = ({
   // console.log(allWorkload, userData);
 
   return (
-    <>
+    <div className="flex flex-col  w-full">
       <div className="flex gap-6 mt-4">
         <div className="flex flex-col gap-3 text-center">
           <p className="text-4xl font-bold">{userData?.position}</p>
@@ -121,12 +121,12 @@ const UserProfile = ({
         </div>
       </div>
       {selectedKeys.size !== 0 && (
-        <div className="flex flex-row gap-12">
+        <div className="flex flex-row gap-12 mt-12">
           <UserTable data={userData} />
           <RadarChart data={userData} />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

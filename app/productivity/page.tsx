@@ -510,7 +510,7 @@ export default function Productivity() {
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
-                  <option value="12">Decembro</option>
+                  <option value="12">Dezembro</option>
                 </select>
               </div>
               <button
@@ -546,7 +546,7 @@ export default function Productivity() {
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">
         <div className="w-1/2">
-          <Card className="p-4 w-full ">
+          <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <div className="flex w-full justify-between">
                 <div className="w-1/2">
@@ -585,8 +585,8 @@ export default function Productivity() {
             </CardBody>
           </Card>
         </div>
-        <div className="flex w-full justify-center">
-          <Card className="p-4 w-auto h-min">
+        <div className="flex justify-center w-1/2">
+          <Card className="p-4 w-full h-min">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
             </CardHeader>
