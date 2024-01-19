@@ -5,7 +5,19 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import UserTable from "./UserTable";
 import { Divider } from "@nextui-org/react";
-import RadarChart from "../Chart/RadarChart";
+
+const RadarChart = dynamic(
+  () => import("../../(components)/Chart/RadarChart"),
+  {
+    ssr: false,
+    loading: () => (
+      <Loader className="h-[350px] flex justify-center items-center" />
+    ),
+  }
+);
+
+import Loader from "../Loader";
+import dynamic from "next/dynamic";
 
 const UserProfile = ({
   user,

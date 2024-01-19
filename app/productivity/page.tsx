@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 
 // Next
@@ -36,16 +37,8 @@ import {
 import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
-import UserTable from "../(components)/Productivity/UserTable";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="h-[350px] flex justify-center items-center" />
-  ),
-});
-
-const RadarChart = dynamic(() => import("../(components)/Chart/RadarChart"), {
   ssr: false,
   loading: () => (
     <Loader className="h-[350px] flex justify-center items-center" />
@@ -615,7 +608,7 @@ export default function Productivity() {
           </Card>
         </div>
         <div className="flex flex-1 w-full">
-          <Card className="p-4 w-full">
+          {/* <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
             </CardHeader>
@@ -630,7 +623,7 @@ export default function Productivity() {
                 selectedKeys={selectedKeys}
               />
             </CardBody>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>
