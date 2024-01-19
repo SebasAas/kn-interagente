@@ -44,7 +44,6 @@ const UserProfile = ({
     );
     toastPromiseGraph
       .then((res: any) => {
-        console.log("res", res);
         if (res.error) {
           toast.error(
             <div>
@@ -122,7 +121,7 @@ const UserProfile = ({
         </div>
       </div>
       {selectedKeys.size !== 0 && (
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row gap-12">
           <UserTable data={userData} />
           <RadarChart data={userData} />
         </div>

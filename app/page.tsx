@@ -14,11 +14,7 @@ import { getBaseUrl } from "./(helpers)/env";
 // Components
 import Chart from "./(components)/Chart";
 import Alerts from "./(components)/Alerts";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-} from "@nextui-org/react";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -30,6 +26,8 @@ export default function Home() {
       url.searchParams.append("callbackUrl", "/");
       redirect(url.toString());
     }
+
+    redirect("/productivity");
   }, [session, status]);
 
   return (

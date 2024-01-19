@@ -437,6 +437,8 @@ export default function Productivity() {
       ],
     };
 
+    console.log("productivityChart", productivityChart);
+
     setChartDataProdByResource(resourceChart);
     setChartDataProductivityByHour(productivityChart);
   };
@@ -508,7 +510,7 @@ export default function Productivity() {
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
-                  {/* <option value="12">Decembro</option> */}
+                  <option value="12">Decembro</option>
                 </select>
               </div>
               <button
@@ -524,14 +526,14 @@ export default function Productivity() {
               </button>
             </CardBody>
           </Card>
-          {/* <Card className="p-4 h-fit ">
+          <Card className="p-4 h-fit ">
             <CardHeader className="p-0 pb-2 flex-col items-start">
               <Text className="font-medium">Base Produtividade</Text>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
               <Dropzone file={productivityFile} setFile={onFileSelect} />
             </CardBody>
-          </Card> */}
+          </Card>
           {/* <Card className="p-4 h-fit ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <h2 className="">Base Demanda</h2>
@@ -542,9 +544,9 @@ export default function Productivity() {
           </Card> */}
         </div>
       </div>
-      <div className="flex flex-row gap-4 mt-4">
+      <div className="flex flex-row gap-4 mt-4 justify-between">
         <div className="w-1/2">
-          <Card className="p-4 w-full">
+          <Card className="p-4 w-full ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <div className="flex w-full justify-between">
                 <div className="w-1/2">
@@ -583,8 +585,8 @@ export default function Productivity() {
             </CardBody>
           </Card>
         </div>
-        <div className="flex  w-full">
-          <Card className="p-4 w-full h-min">
+        <div className="flex w-full justify-center">
+          <Card className="p-4 w-auto h-min">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
             </CardHeader>

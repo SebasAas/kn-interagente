@@ -58,7 +58,6 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
       return [];
     }
 
-    console.log("rankingTable", rankingTable)
     
     let filteredUsers = [...rankingTable];
 
