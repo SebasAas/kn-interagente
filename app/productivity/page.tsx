@@ -466,7 +466,7 @@ export default function Productivity() {
         <div className="flex flex-col h-full w-[20%] gap-6">
           <Card className="p-4 h-fit">
             <CardHeader className="p-0 pb-2 flex-col items-start">
-              <Text className="font-medium">Filtros</Text>
+              <Subtitle>Filtros</Subtitle>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2 gap-3">
               {/* Create two select with the years 2023, 2024 and a select with the months */}
@@ -524,7 +524,7 @@ export default function Productivity() {
           </Card>
           <Card className="p-4 h-fit ">
             <CardHeader className="p-0 pb-2 flex-col items-start">
-              <Text className="font-medium">Base Produtividade</Text>
+              <Subtitle>Base Produtividade</Subtitle>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
               <Dropzone file={productivityFile} setFile={onFileSelect} />
