@@ -33,7 +33,7 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState({
     column: "age",
     direction: "ascending",
@@ -51,6 +51,8 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
+    if(!rankingTable) return []
+    
     let filteredUsers = [...rankingTable];
 
     if (hasSearchFilter) {
@@ -165,9 +167,9 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
               <option value="all">Todos</option>
             </select>
           </label>
@@ -191,9 +193,6 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
       selectedKeys={selectedKeys}
       selectionMode="single"
       sortDescriptor={sortDescriptor}

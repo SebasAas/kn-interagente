@@ -38,7 +38,6 @@ import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
 import UserTable from "../(components)/Productivity/UserTable";
 
-
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
   loading: () => (
@@ -200,7 +199,7 @@ export default function Productivity() {
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
         setProductivityFile(null);
       });
-      setButtonDisabled(false);
+    setButtonDisabled(false);
   };
 
   const filterSeriesByIndicators = (
@@ -470,6 +469,9 @@ export default function Productivity() {
   };
 
   // display the page
+
+  console.log(selectedKeys.size);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
@@ -537,10 +539,15 @@ export default function Productivity() {
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
+                  <option value="12">Decembro</option>
                 </select>
               </div>
               <button
-                className={`px-2 py-1 rounded-md ${buttonDisabled ? 'bg-gray-500 text-gray-400 cursor-not-allowed opacity-50' : 'bg-blue-900 text-white'} text-sm font-medium mt-2`}
+                className={`px-2 py-1 rounded-md ${
+                  buttonDisabled
+                    ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                    : "bg-blue-900 text-white"
+                } text-sm font-medium mt-2`}
                 onClick={handleGetInfoByData}
                 disabled={buttonDisabled}
               >
@@ -611,6 +618,8 @@ export default function Productivity() {
           <Card className="p-4 w-full">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
               <Subtitle>Informações do Usuario</Subtitle>
+            </CardHeader>
+            <CardBody>
               <UserProfile
                 user={selectedKeys}
                 date={{
@@ -618,13 +627,8 @@ export default function Productivity() {
                   year: dateInfo.year,
                   shift: dateInfo.shift,
                 }}
+                selectedKeys={selectedKeys}
               />
-              {/*<Text className="text-gray-400">John Doe</Text>*/}
-            </CardHeader>
-            <CardBody className="flex flex-row justify-between">
-              <UserTable />
-              <Divider orientation="vertical" /> 
-              <RadarChart /> 
             </CardBody>
           </Card>
         </div>
