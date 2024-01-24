@@ -101,7 +101,7 @@ const handleChangeLineChartProductivityByHour = () => {
       linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
     }
     if (lineEstimatedAvgDirectHoursFirstChild) {
-      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#6AB187");
+      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#FF0000");
       lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "2");
       // dashed line
       lineEstimatedAvgDirectHoursFirstChild.setAttribute(
@@ -227,9 +227,28 @@ export const stateProductionxResources = {
         colors: ["white"],
       },
       background: {
-        enabled: false,
+        enabled: true,
         borderColor: "transparent",
+        colors: ["transparent"],
+        foreColor: "#6AB187",
+        dropShadow: {
+          enabled: false,
+          top: 1,
+          left: 1,
+          blur: 1,
+          color: "#6AB187",
+          opacity: 0.45,
+        },
       },
+
+      // dropShadow: {
+      //   enabled: true,
+      //   top: 0,
+      //   left: 0,
+      //   blur: 1,
+      //   color: "#000",
+      //   opacity: 1,
+      // },
     },
     legend: {
       formatter: (val: string) => {
@@ -414,8 +433,6 @@ export const stateProductivityxHour = {
             // @ts-ignore
             const val = (total * 0.0168).toFixed(2);
 
-            console.log(val);
-
             if (minTommss(Number(val)) === "NaN:NaN") {
               return null;
             }
@@ -443,8 +460,6 @@ export const stateProductivityxHour = {
             // @ts-ignore
             const val = (total * 0.0168).toFixed(2);
 
-            console.log(val);
-
             if (minTommss(Number(val)) === "NaN:NaN") {
               return null;
             }
@@ -470,8 +485,6 @@ export const stateProductivityxHour = {
 
             // @ts-ignore
             const val = (total * 0.0168).toFixed(2);
-
-            console.log(val);
 
             if (minTommss(Number(val)) === "NaN:NaN") {
               return null;
@@ -504,8 +517,18 @@ export const stateProductivityxHour = {
         colors: ["white"],
       },
       background: {
-        enabled: false,
+        enabled: true,
         borderColor: "transparent",
+        colors: ["transparent"],
+        foreColor: "#003369",
+        dropShadow: {
+          enabled: false,
+          top: 1,
+          left: 1,
+          blur: 1,
+          color: "#003369",
+          opacity: 0.45,
+        },
       },
     },
     legend: {
@@ -537,11 +560,11 @@ export const stateProductivityxHour = {
         }
         // First Line
         if (props.seriesIndex === 1) {
-          return "#6AB187";
+          return "#003369";
         }
         // Second Line
         if (props.seriesIndex === 2) {
-          return "#003369";
+          return "#FF0000";
         }
         if (props.seriesIndex === 3) {
           return "#FF0000";

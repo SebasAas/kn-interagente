@@ -4,7 +4,6 @@ import { fetchWorker } from "@/app/(services)/ranking";
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import UserTable from "./UserTable";
-import { Divider } from "@nextui-org/react";
 
 const RadarChart = dynamic(
   () => import("../../(components)/Chart/RadarChart"),
@@ -30,10 +29,11 @@ const UserProfile = ({
 }) => {
   const [userData, setUserData] = React.useState<any>(null);
 
-  // get first value from Set user
-  const code = Array.from(user)[0] as string;
-
   useEffect(() => {
+    if (!user) return;
+
+    const code = Array.from(user)[0] as string;
+
     if (!code) return;
 
     const toastPromiseGraph = toast.promise(
@@ -59,13 +59,6 @@ const UserProfile = ({
         toast.error("Algo deu errado obtendo empregado, tente novamente!");
       });
   }, [user]);
-
-  // const { photo, rankingPosition, name, age, sector, indicators } = user;
-
-  const allWorkload =
-    userData && userData?.length > 0 ? userData?.workloads[0] : [];
-
-  // console.log(allWorkload, userData);
 
   return (
     <div className="flex flex-col  w-full">

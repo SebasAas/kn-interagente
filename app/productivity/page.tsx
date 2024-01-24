@@ -69,6 +69,14 @@ export default function Productivity() {
       series: [],
     });
 
+  const [estimatedLengthSeries, setEstimatedLengthSeries] = useState<{
+    resource: number;
+    productivity: number;
+  }>({
+    resource: 0,
+    productivity: 0,
+  });
+
   const [rankingData, setRankingData] = useState<any[]>([]);
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -144,8 +152,6 @@ export default function Productivity() {
 
     await toastPromiseGraph
       .then((res: any) => {
-        console.log("res", res);
-
         if (res.error) {
           toast.error(
             <div>
@@ -183,6 +189,9 @@ export default function Productivity() {
               <p className="text-xs"> {res?.detail} </p>
             </div>
           );
+
+          setRankingData([]);
+          setSelectedKeys(new Set([]));
           setProductivityFile(null);
         } else {
           // toast.success("Arquivos enviados com sucesso!");
@@ -195,6 +204,8 @@ export default function Productivity() {
         console.log("err", err);
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
         setProductivityFile(null);
+        setRankingData([]);
+        setSelectedKeys(new Set([]));
       });
     setButtonDisabled(false);
   };
@@ -341,6 +352,24 @@ export default function Productivity() {
       prodctivityBarIndicators
     );
 
+    // Get all the not null values from the resource and productivity serie to remove bg from barchart
+    const estimatedProdValues = series.filter((s) =>
+      ["produção estimada"].includes(s.name)
+    ) as Array<any>;
+
+    const lengthEstimatedProd = estimatedProdValues[0]?.data?.filter(
+      (item: any) => {
+        return item !== null;
+      }
+    ).length;
+
+    console.log("lengthEstimatedProd", lengthEstimatedProd);
+
+    setEstimatedLengthSeries({
+      resource: lengthEstimatedProd || 0,
+      productivity: lengthEstimatedProd || 0,
+    });
+
     // Special check for second chart
     let mergedProductivitySeries;
 
@@ -437,11 +466,58 @@ export default function Productivity() {
       ],
     };
 
-    console.log("productivityChart", productivityChart);
-
     setChartDataProdByResource(resourceChart);
     setChartDataProductivityByHour(productivityChart);
   };
+
+  useEffect(() => {
+    if (estimatedLengthSeries.resource === 0) return;
+
+    const lineResources = document.querySelector('g[seriesname="recursos"]');
+    const lineProductivity = document.querySelector(
+      'g[seriesname="produtividade"]'
+    );
+
+    if (!lineResources) return;
+
+    // Select all path elements inside the lineProductivity element
+    const pathsResource = lineResources.querySelectorAll("path");
+
+    if (pathsResource.length < estimatedLengthSeries.resource) return;
+
+    // Get the last two path elements
+    const lastTwoPathsResource = Array.from(pathsResource).slice(
+      -estimatedLengthSeries.resource
+    );
+
+    console.log("lastTwoPathsResource", lastTwoPathsResource);
+
+    // Apply styles to the last two path elements
+    lastTwoPathsResource.forEach((path) => {
+      path.style.fill = "transparent";
+      path.style.stroke = "#6AB187";
+      path.style.strokeWidth = "2";
+    });
+
+    if (!lineProductivity) return;
+
+    // Select all path elements inside the lineProductivity element
+    const pathsProductivity = lineProductivity.querySelectorAll("path");
+
+    if (pathsProductivity.length < estimatedLengthSeries.productivity) return;
+
+    // Get the last two path elements
+    const lastTwoPathsProductivity = Array.from(pathsProductivity).slice(
+      -estimatedLengthSeries.resource
+    );
+
+    // Apply styles to the last two path elements
+    lastTwoPathsProductivity.forEach((path) => {
+      path.style.fill = "transparent";
+      path.style.stroke = "#003369";
+      path.style.strokeWidth = "2";
+    });
+  }, [chartDataProdByResource]);
 
   return (
     <div className="flex flex-col gap-4">
