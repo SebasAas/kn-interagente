@@ -660,7 +660,7 @@ export default function Productivity() {
         <div className="flex justify-center w-1/2">
           <Card className="p-4 w-full h-min">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <Subtitle>Informações do Usuario</Subtitle>
+              <Subtitle>Informações do Usuário</Subtitle>
             </CardHeader>
             <CardBody>
               <UserProfile
