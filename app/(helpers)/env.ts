@@ -1,13 +1,11 @@
 export const isDev = process.env.VERCEL_ENV === "development";
 
 export const getBaseUrl = () => {
-  if (!isDev) {
-    // Production URL
+  const hostname = window.location.hostname;
+
+  if (hostname.includes("kn-interagente.")) {
     return "https://kn-interagente.vercel.app";
   }
-
-  // For development, check the hostname to determine the correct URL
-  const hostname = window.location.hostname;
 
   if (hostname.includes("localhost")) {
     // Local development
