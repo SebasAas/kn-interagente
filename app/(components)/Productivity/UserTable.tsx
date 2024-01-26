@@ -41,10 +41,18 @@ const UserTable = ({ data }: { data: Data }) => {
     {}
   );
 
+  const palets = data?.workloads?.filter((el) => el.product_type === "AALL");
+
+  console.log("palets", palets);
+
   return (
     <div className="mt-10 w-1/3 h-2/5">
       <table className="h-full w-full">
         <tbody>
+          <p className="my-2">
+            {/* @ts-ignore */}
+            Pallets: {palets && palets.length > 0 && palets[0]?.pallets}
+          </p>
           {productionData &&
             Object.entries(productionData).map(
               ([productType, production], index) => (
