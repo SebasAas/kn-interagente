@@ -33,7 +33,7 @@ export const uploadFiles = async (files: File[]) => {
     formData.append("files", file);
   });
 
-  const promise = fetch(`${BASE_URL}production/uploadfile`, {
+  const promise = fetch(`${BASE_URL}visits/uploadfile`, {
     method: "POST",
     body: formData,
   });
