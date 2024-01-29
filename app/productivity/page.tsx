@@ -328,7 +328,7 @@ export default function Productivity() {
     const resourceIndicators = ["produção", "produção estimada"];
     const prodctivityLineIndicators = [
       "média horas diretas",
-      "média horas diretas estimadas",
+      "média horas diretas estimados",
       "target horas diretas",
       "target produtividade",
     ];
@@ -570,6 +570,7 @@ export default function Productivity() {
                   }
                 >
                   <option value="2023">2023</option>
+                  <option value="2024">2024</option>
                 </select>
                 <select
                   name="month"
@@ -579,6 +580,14 @@ export default function Productivity() {
                   }
                   defaultValue={dateInfo.month}
                 >
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
                   <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
