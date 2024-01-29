@@ -560,11 +560,11 @@ export const stateProductivityxHour = {
         }
         // First Line
         if (props.seriesIndex === 1) {
-          return "#003369";
+          return "#6AB187";
         }
         // Second Line
         if (props.seriesIndex === 2) {
-          return "#FF0000";
+          return "#003369";
         }
         if (props.seriesIndex === 3) {
           return "#FF0000";
