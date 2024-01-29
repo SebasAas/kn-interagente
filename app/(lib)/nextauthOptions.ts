@@ -10,6 +10,7 @@ export const nextauthOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60,
   },
   providers: [
     CredentialsProvider({
@@ -34,7 +35,6 @@ export const nextauthOptions: AuthOptions = {
         const usersCollection = client
           .db(process.env.DB_NAME)
           .collection("users");
-
 
         const email = credentials?.email.toLowerCase();
         const user = await usersCollection.findOne({ email });
@@ -83,5 +83,5 @@ export const nextauthOptions: AuthOptions = {
       return token;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET
+  secret: process.env.NEXTAUTH_SECRET,
 };
