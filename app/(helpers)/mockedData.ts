@@ -57,7 +57,7 @@ const handleChangeLineChartProductivityByHour = () => {
     'g[seriesname="médiaxhorasxdiretas"]'
   );
   const lineEstimatedAvgDirectHours = document.querySelectorAll(
-    'g[seriesname="médiaxhorasxdiretasxestimadas"]'
+    'g[seriesname="médiaxhorasxdiretasxestimados"]'
   );
   const lineEstimateProductivity = document.querySelectorAll(
     'g[seriesname="targetxhorasxdiretas"]'
@@ -101,7 +101,7 @@ const handleChangeLineChartProductivityByHour = () => {
       linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
     }
     if (lineEstimatedAvgDirectHoursFirstChild) {
-      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#FF0000");
+      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#6AB187");
       lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "2");
       // dashed line
       lineEstimatedAvgDirectHoursFirstChild.setAttribute(
@@ -212,11 +212,11 @@ export const stateProductionxResources = {
         forceNiceScale: true,
       },
       {
-        seriesName: "produção estimada", // スケール合わせるためにわざと総数にしている
+        seriesName: "produção estimada",
         show: false,
       },
       {
-        seriesName: "produção potencial", // スケール合わせるためにわざと総数にしている
+        seriesName: "produção potencial",
         show: false,
       },
     ],
@@ -447,7 +447,7 @@ export const stateProductivityxHour = {
         forceNiceScale: true,
       },
       {
-        seriesName: "target horas directas", // スケール合わせるためにわざと総数にしている
+        seriesName: "target horas directas",
         show: false,
         labels: {
           formatter: function (value: number) {
@@ -469,11 +469,11 @@ export const stateProductivityxHour = {
         },
       },
       {
-        seriesName: "target produtividade", // スケール合わせるためにわざと総数にしている
+        seriesName: "target produtividade",
         show: false,
       },
       {
-        seriesName: "media horas diretas estimadas", // スケール合わせるためにわざと総数にしている
+        seriesName: "media horas diretas estimados",
         show: false,
         labels: {
           formatter: function (value: number) {
@@ -619,7 +619,7 @@ export const stateProductivityxHour = {
       data: [],
     },
     {
-      name: "media horas diretas estimadas",
+      name: "media horas diretas estimados",
       type: "line",
       //   31 random numbers btw 800 and 200, not being the same as avobe
       data: [],

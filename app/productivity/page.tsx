@@ -328,7 +328,7 @@ export default function Productivity() {
     const resourceIndicators = ["produção", "produção estimada"];
     const prodctivityLineIndicators = [
       "média horas diretas",
-      "média horas diretas estimadas",
+      "média horas diretas estimados",
       "target horas diretas",
       "target produtividade",
     ];
