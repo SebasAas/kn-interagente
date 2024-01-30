@@ -411,6 +411,10 @@ export const stateProductivityxHour = {
         forceNiceScale: true,
       },
       {
+        seriesName: "target produtividade",
+        show: false,
+      },
+      {
         seriesName: "media horas diretas",
         opposite: true,
         title: {
@@ -449,6 +453,7 @@ export const stateProductivityxHour = {
       {
         seriesName: "target horas directas",
         show: false,
+        opposite: true,
         labels: {
           formatter: function (value: number) {
             // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
@@ -468,13 +473,11 @@ export const stateProductivityxHour = {
           },
         },
       },
-      {
-        seriesName: "target produtividade",
-        show: false,
-      },
+
       {
         seriesName: "media horas diretas estimados",
         show: false,
+        opposite: true,
         labels: {
           formatter: function (value: number) {
             // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
@@ -560,14 +563,14 @@ export const stateProductivityxHour = {
         }
         // First Line
         if (props.seriesIndex === 1) {
-          return "#003369";
+          return "#FF0000";
         }
         // Second Line
         if (props.seriesIndex === 2) {
-          return "#FF0000";
+          return "#003369";
         }
         if (props.seriesIndex === 3) {
-          return "#FF0000";
+          return "#6AB187";
         }
         if (props.seriesIndex === 4) {
           return "#6AB187";
