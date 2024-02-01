@@ -473,7 +473,6 @@ export const stateProductivityxHour = {
           },
         },
       },
-
       {
         seriesName: "media horas diretas estimados",
         show: false,
@@ -497,6 +496,29 @@ export const stateProductivityxHour = {
           },
         },
       },
+      // {
+      //   seriesName: "media horas diretas estimados",
+      //   show: false,
+      //   opposite: true,
+      //   labels: {
+      //     formatter: function (value: number) {
+      //       // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
+      //       const minutes = value?.toString().substring(0, 1);
+      //       const seconds = value?.toString().substring(1);
+
+      //       const total = minutes + seconds;
+
+      //       // @ts-ignore
+      //       const val = (total * 0.0168).toFixed(2);
+
+      //       if (minTommss(Number(val)) === "NaN:NaN") {
+      //         return null;
+      //       }
+
+      //       return minTommss(Number(val));
+      //     },
+      //   },
+      // },
     ],
     // tooltip: {
     //     shared: true,
