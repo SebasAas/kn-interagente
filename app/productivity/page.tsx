@@ -57,6 +57,34 @@ interface Series {
   data: (number | null)[];
 }
 
+// Define the order of the indicators
+const indicatorOrder = [
+  "Recursos",
+  "Produção",
+  "Produção estimada",
+  "Produção potencial",
+  "Produtividade",
+  "Target produtividade",
+  "Média horas diretas",
+  "Target horas diretas",
+  "Média horas diretas estimados",
+];
+
+// Function to reorder the JSON data based on the indicator order
+const reorderJsonData = (data: any, order: any) => {
+  // Create a mapping of indicators to their order index
+  const orderMap = new Map(
+    order.map((indicator: any, index: any) => [indicator, index])
+  );
+
+  // Sort the data based on the order of the indicators
+  return data.sort((a: any, b: any) => {
+    const orderA = orderMap.get(a.indicator) ?? order.length; // Fallback to a value after the last if not found
+    const orderB = orderMap.get(b.indicator) ?? order.length; // Fallback to a value after the last if not found
+    return orderA - orderB;
+  });
+};
+
 export default function Productivity() {
   const { data: session, status } = useSession();
   const [chartDataProdByResource, setChartDataProdByResource] = useState<any>({
@@ -169,7 +197,9 @@ export default function Productivity() {
 
           setProductivityFile(null);
         } else {
-          handleBuildChart(res);
+          const reorderedData = reorderJsonData(res, indicatorOrder);
+
+          handleBuildChart(reorderedData);
         }
 
         if (res.error) {
