@@ -21,17 +21,30 @@ import Loader from "../Loader";
 import dynamic from "next/dynamic";
 
 const UserProfile = ({
+  rankingData,
   user,
   date,
   selectedKeys,
 }: {
+  rankingData: any;
   user: any;
   date: { month: string; year: string; shift: string };
   selectedKeys: Set<string>;
 }) => {
-  const [userData, setUserData] = React.useState<any>(null);
+  const [userData, setUserData] = React.useState<any>({
+    workloads: [],
+  });
+
+  console.log("rankingData", rankingData);
 
   useEffect(() => {
+    if (rankingData.length === 0) {
+      setUserData({
+        workloads: [],
+      });
+      return;
+    }
+
     if (!user) return;
 
     const code = Array.from(user)[0] as string;
@@ -59,6 +72,7 @@ const UserProfile = ({
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo empregado, tente novamente!");
+        setUserData({});
       });
   }, [user]);
 
@@ -72,29 +86,44 @@ const UserProfile = ({
         <div className="flex gap-6 flex-wrap">
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Trabalho</p>
-            <a className="tooltip-trabalho"><TooltipIcon /></a> 
-            <Tooltip anchorSelect=".tooltip-trabalho" content="Total de caixas por peso e distância" />
+              <p className="text-gray-400 text-sm font-medium">Trabalho</p>
+              <a className="tooltip-trabalho">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-trabalho"
+                content="Total de caixas por peso e distância"
+              />
             </div>
             <p className="text-2xl text-red-700 font-semibold">
               {userData?.workloads[0]?.work?.toFixed(0)}
             </p>
           </div>
           <div className="flex flex-col text-center">
-          <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Produção</p>
-            <a className="tooltip-producao"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-producao" content="Total de caixas separadas" />
-          </div>
+            <div className="flex flex-row">
+              <p className="text-gray-400 text-sm font-medium">Produção</p>
+              <a className="tooltip-producao">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-producao"
+                content="Total de caixas separadas"
+              />
+            </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.production}
             </p>
           </div>
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Produtividade</p>
-            <a className="tooltip-produtividade"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-produtividade" content="Média de caixas separadas por hora" />
+              <p className="text-gray-400 text-sm font-medium">Produtividade</p>
+              <a className="tooltip-produtividade">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-produtividade"
+                content="Média de caixas separadas por hora"
+              />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.productivity?.toFixed(0)}
@@ -102,9 +131,14 @@ const UserProfile = ({
           </div>
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Perfil</p>
-            <a className="tooltip-perfil"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-perfil" content="Média de caixas separadas por visita" />
+              <p className="text-gray-400 text-sm font-medium">Perfil</p>
+              <a className="tooltip-perfil">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-perfil"
+                content="Média de caixas separadas por visita"
+              />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.profile?.toFixed(0)}
@@ -112,9 +146,14 @@ const UserProfile = ({
           </div>
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Horas Diretas</p>
-            <a className="tooltip-horasDiretas"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-horasDiretas" content="Horas do usuário disponíveis para o trabalho" />
+              <p className="text-gray-400 text-sm font-medium">Horas Diretas</p>
+              <a className="tooltip-horasDiretas">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-horasDiretas"
+                content="Horas do usuário disponíveis para o trabalho"
+              />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.hours?.toFixed(2)}
@@ -123,9 +162,14 @@ const UserProfile = ({
 
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Velocidade</p>
-            <a className="tooltip-velocidade"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-velocidade" content="Velocidade média dos usuários no picking" />
+              <p className="text-gray-400 text-sm font-medium">Velocidade</p>
+              <a className="tooltip-velocidade">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-velocidade"
+                content="Velocidade média dos usuários no picking"
+              />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.speed?.toFixed(2)}
@@ -133,9 +177,14 @@ const UserProfile = ({
           </div>
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
-            <p className="text-gray-400 text-sm font-medium">Distância</p>
-            <a className="tooltip-distancia"><TooltipIcon /></a>
-            <Tooltip anchorSelect=".tooltip-distancia" content="Distância total percorrida pelo usuário em picking" />
+              <p className="text-gray-400 text-sm font-medium">Distância</p>
+              <a className="tooltip-distancia">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-distancia"
+                content="Distância total percorrida pelo usuário em picking"
+              />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.distance?.toFixed(0)}
