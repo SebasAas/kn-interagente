@@ -21,17 +21,30 @@ import Loader from "../Loader";
 import dynamic from "next/dynamic";
 
 const UserProfile = ({
+  rankingData,
   user,
   date,
   selectedKeys,
 }: {
+  rankingData: any;
   user: any;
   date: { month: string; year: string; shift: string };
   selectedKeys: Set<string>;
 }) => {
-  const [userData, setUserData] = React.useState<any>(null);
+  const [userData, setUserData] = React.useState<any>({
+    workloads: [],
+  });
+
+  console.log("rankingData", rankingData);
 
   useEffect(() => {
+    if (rankingData.length === 0) {
+      setUserData({
+        workloads: [],
+      });
+      return;
+    }
+
     if (!user) return;
 
     const code = Array.from(user)[0] as string;
@@ -59,6 +72,7 @@ const UserProfile = ({
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo empregado, tente novamente!");
+        setUserData({});
       });
   }, [user]);
 

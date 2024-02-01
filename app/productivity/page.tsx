@@ -152,17 +152,29 @@ export default function Productivity() {
 
     await toastPromiseGraph
       .then((res: any) => {
-        if (res.error) {
-          toast.error(
-            <div>
-              <h2>Algo deu errado obtendo graficos, tente novamente!</h2>
-              {/* <p className="text-xs"> {res?.error?.data?.code} </p> */}
-            </div>
-          );
+        if (res.detail) {
+          if (res.detail.includes("Não tem dados")) {
+            toast.info(
+              <div>
+                <h2>Não encontramos dados de grafico para essa data</h2>
+              </div>
+            );
+          } else {
+            toast.error(
+              <div>
+                <h2>Algo deu errado obtendo graficos, tente novamente!</h2>
+              </div>
+            );
+          }
+
           setProductivityFile(null);
         } else {
-          // toast.success("Arquivos enviados com sucesso!");
           handleBuildChart(res);
+        }
+
+        if (res.error) {
+        } else {
+          // toast.success("Arquivos enviados com sucesso!");
         }
       })
       .catch((err) => {
@@ -180,23 +192,26 @@ export default function Productivity() {
 
     await toastPromiseRanking
       .then((res: any) => {
-        // console.log("res", res);
-
         if (res.detail) {
-          toast.error(
-            <div>
-              <h2>Algo deu errado obtendo ranking, tente novamente!</h2>
-              <p className="text-xs"> {res?.detail} </p>
-            </div>
-          );
+          if (res.detail.includes("No ranking data found")) {
+            toast.info(
+              <div>
+                <h2>Não encontramos dados de ranking para essa data</h2>
+              </div>
+            );
+          } else {
+            toast.info(
+              <div>
+                <h2>Algo deu errado obtendo ranking, tente novamente!</h2>
+                <p className="text-xs"> {res?.detail} </p>
+              </div>
+            );
+          }
 
           setRankingData([]);
           setSelectedKeys(new Set([]));
           setProductivityFile(null);
         } else {
-          // toast.success("Arquivos enviados com sucesso!");
-          // handleBuildChart(res);
-          // console.log("res", res);
           setRankingData(res);
         }
       })
@@ -673,6 +688,7 @@ export default function Productivity() {
             </CardHeader>
             <CardBody>
               <UserProfile
+                rankingData={rankingData}
                 user={selectedKeys}
                 date={{
                   month: dateInfo.month,
