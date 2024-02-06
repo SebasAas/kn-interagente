@@ -1,4 +1,5 @@
-export const isDev = process.env.VERCEL_ENV === "development";
+export const isDevVercel = process.env.VERCEL_ENV === "development";
+export const isDevNetlify = process.env.NODE_ENV === "development";
 
 export const getBaseUrl = () => {
   const hostname = window.location.hostname;
@@ -12,6 +13,6 @@ export const getBaseUrl = () => {
     return "http://localhost:3000";
   } else {
     // Remote development
-    return "https://kn-interagente-git-develop-sebastians-projects-cf418221.vercel.app";
+    return "https://dev-kn-interagente.netlify.app";
   }
 };
