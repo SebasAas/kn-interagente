@@ -8,7 +8,7 @@ export const getBaseUrl = () => {
     return "https://dev-kn-interagente.netlify.app";
   }
 
-  if (hostname.includes("kn-interagente.")) {
+  if (hostname.includes("kn-interagente.vercel.app")) {
     return "https://kn-interagente.vercel.app";
   }
 
