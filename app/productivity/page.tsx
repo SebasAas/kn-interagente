@@ -34,9 +34,14 @@ import {
   stateProductionxResources,
   stateProductivityxHour,
 } from "../(helpers)/mockedData";
-import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
+import {
+  checkNewestDateUploadFiles,
+  fetchProductionCharts,
+  uploadFiles,
+} from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
+import { WebSocket } from "../(components)/WSS";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -105,6 +110,13 @@ export default function Productivity() {
     productivity: 0,
   });
 
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const [dateRangeChart, setDateRangeChart] = useState<any>({
+    latest_updated_visit: "",
+    newest_updated_visit: "",
+  });
+
   const [rankingData, setRankingData] = useState<any[]>([]);
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -116,6 +128,24 @@ export default function Productivity() {
     month: "11",
     shift: "0",
   });
+
+  const getNewestDateChart = async () => {
+    await checkNewestDateUploadFiles().then((res) => {
+      if (res && Object.keys(res).length > 0) {
+        setDateRangeChart(res);
+      } else {
+        toast.error(
+          <div>
+            <h2>
+              Algo deu errado obtendo ultima data da carga de arquivo, tente
+              buscar novamente!
+            </h2>
+            <p className="text-xs"> {res?.error?.data?.code} </p>
+          </div>
+        );
+      }
+    });
+  };
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -134,21 +164,20 @@ export default function Productivity() {
       });
 
       await toastPromise
+        .then((response) => response.json())
         .then((res: any) => {
-          if (res.error) {
-            toast.error(
-              <div>
-                <h2>Algo deu errado, tente novamente!</h2>
-                <p className="text-xs"> {res?.error?.data?.code} </p>
-              </div>
-            );
-            setProductivityFile(null);
-          } else {
-            toast.success("Arquivos enviados com sucesso!");
+          if (res === null) {
+            return;
           }
+          toast.error(
+            <div>
+              <h2>Algo deu errado enviando o arquivo, tente novamente!</h2>
+            </div>
+          );
+          setProductivityFile(null);
         })
         .catch((err) => {
-          toast.error("Algo deu errado, tente novamente!");
+          toast.error("Algo deu errado enviando o arquivo, tente novamente!");
           setProductivityFile(null);
         });
     }
@@ -162,9 +191,8 @@ export default function Productivity() {
     }
   };
 
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-
   useEffect(() => {
+    getNewestDateChart();
     handleGetInfoByData();
   }, []);
 
@@ -657,17 +685,14 @@ export default function Productivity() {
               <Subtitle>Base Produtividade</Subtitle>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={productivityFile} setFile={onFileSelect} />
+              <Dropzone
+                file={productivityFile}
+                setFile={onFileSelect}
+                dateRangeChart={dateRangeChart}
+              />
+              <WebSocket file={productivityFile} setFile={onFileSelect} />
             </CardBody>
           </Card>
-          {/* <Card className="p-4 h-fit ">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <h2 className="">Base Demanda</h2>
-            </CardHeader>
-            <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={demandFile} setFile={setDemandFile} />
-            </CardBody>
-          </Card> */}
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">

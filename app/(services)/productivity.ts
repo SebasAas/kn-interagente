@@ -40,3 +40,9 @@ export const uploadFiles = async (files: File[]) => {
 
   return promise;
 };
+
+export const checkNewestDateUploadFiles = async () => {
+  const response = await fetch(`${BASE_URL}visits/range`);
+  const data = await response.json();
+  return data;
+};
