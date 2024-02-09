@@ -5,11 +5,16 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { toast } from "react-toastify";
+import { WebSocket } from "../WSS";
+import { WebSocketRanking } from "../WSS/WebSocketRanking";
 
 export default function Dropzone({
   file,
   setFile,
   dateRangeChart,
+  setWSSChartFinished,
+  setWSSRankingFinished,
+  setDateInfoCallback,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -17,6 +22,9 @@ export default function Dropzone({
     latest_updated_visit: string;
     newest_updated_visit: string;
   };
+  setWSSChartFinished: (newFiles: boolean) => void;
+  setWSSRankingFinished: (newFiles: boolean) => void;
+  setDateInfoCallback: any;
 }) {
   const isDisable = dateRangeChart.newest_updated_visit !== "" ? false : true;
 
@@ -145,6 +153,12 @@ export default function Dropzone({
               </button>
             </div>
           </div>
+          <WebSocket file={file} setWSSChartFinished={setWSSChartFinished} />
+          <WebSocketRanking
+            file={file}
+            setWSSRankingFinished={setWSSRankingFinished}
+            setDateInfoCallback={setDateInfoCallback}
+          />
         </>
       )}
     </div>

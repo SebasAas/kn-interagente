@@ -48,11 +48,8 @@ export const WebSocket = ({
       setProgress(newProgress);
 
       if (status === "finished") {
-        setTimeout(() => {
-          toast.success("Arquivo processado com sucesso!");
-          setWSSChartFinished(true);
-          getWebSocket()?.close();
-        }, 2000);
+        setWSSChartFinished(true);
+        getWebSocket()?.close();
       }
     }
   }, [lastMessage, file, getWebSocket]);

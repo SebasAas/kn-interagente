@@ -736,13 +736,7 @@ export default function Productivity() {
                 file={productivityFile}
                 setFile={onFileSelect}
                 dateRangeChart={dateRangeChart}
-              />
-              <WebSocket
-                file={productivityFile}
                 setWSSChartFinished={setWSSChartFinished}
-              />
-              <WebSocketRanking
-                file={productivityFile}
                 setWSSRankingFinished={setWSSRankingFinished}
                 setDateInfoCallback={setDateInfoCallback}
               />

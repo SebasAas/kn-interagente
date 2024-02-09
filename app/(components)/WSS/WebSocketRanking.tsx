@@ -54,11 +54,8 @@ export const WebSocketRanking = ({
       setProgress(newProgress);
 
       if (status === "finished") {
-        setTimeout(() => {
-          // toast.success("Arquivo processado com sucesso!");
-          setWSSRankingFinished(true);
-          getWebSocket()?.close();
-        }, 2000);
+        getWebSocket()?.close();
+        setWSSRankingFinished(true);
       }
     }
   }, [lastMessage, file, getWebSocket]);
