@@ -167,7 +167,7 @@ export default function Productivity() {
         shift: dateInfoCallback.shift,
       });
 
-      // handleGetInfoByData();
+      getNewestDateChart();
     }
   }, [wssChartFinished]);
 

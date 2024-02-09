@@ -147,20 +147,14 @@ export default function Dropzone({
           <div className="flex flex-col items-center w-full">
             <div className="flex w-full flex-row justify-around items-center">
               <span
-                className="font-medium truncate w-3/4"
+                className="font-normal text-center"
                 style={{ lineBreak: "anywhere" }}
               >
                 {file?.name}
               </span>
-              <button
-                className={`text-red-500 cursor-pointer text-sm border-1 border-solid border-red-500 rounded-md px-2 py-1`}
-                onClick={() => setFile(null)}
-              >
-                Remover
-              </button>
             </div>
           </div>
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-start w-full">
             <WebSocket
               file={file}
               setWSSChartFinished={setWSSChartFinished}
@@ -170,6 +164,14 @@ export default function Dropzone({
               file={file}
               setWSSRankingFinished={setWSSRankingFinished}
             />
+          </div>
+          <div className="flex items-center justify-center mt-4">
+            <button
+              className={`text-red-500 cursor-pointer text-sm border-1 border-solid border-red-500 rounded-md px-2 py-1`}
+              onClick={() => setFile(null)}
+            >
+              Remover
+            </button>
           </div>
         </>
       )}

@@ -154,7 +154,7 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.hours?.toFixed(2)}
+              {userData?.workloads[0]?.direct_hours}
             </p>
           </div>
 
