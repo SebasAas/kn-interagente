@@ -3,15 +3,21 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Spinner } from "../Spinner";
 import { toast } from "react-toastify";
 
-export const WebSocket = ({
+export const WebSocketRanking = ({
   file,
-  setWSSChartFinished,
+  setWSSRankingFinished,
+  setDateInfoCallback,
 }: {
   file: File | null;
-  setWSSChartFinished: (newFiles: boolean) => void;
+  setWSSRankingFinished: (status: boolean) => void;
+  setDateInfoCallback: (dateInfo: {
+    month: string;
+    year: string;
+    shift: string;
+  }) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `ws://kn-productivity-dev-emachzhqzq-uc.a.run.app/ws/status_csv`
+    `ws://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/state`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 
@@ -27,10 +33,10 @@ export const WebSocket = ({
   const statusToProgress: Record<string, number> = {
     idle: 0,
     processing_visits: (1 / 5) * 100,
-    processing_products: (2 / 5) * 100,
-    processing_production: (3 / 5) * 100,
-    processing_charts: (4 / 5) * 100,
-    finished: 100, // Assuming 'finished' means complete
+    processing_workdays: (2 / 5) * 100,
+    processing_workloads: (3 / 5) * 100,
+    processing_ranking: (4 / 5) * 100,
+    finished: 100,
   };
 
   // Re-establish connection on new file upload
@@ -49,8 +55,8 @@ export const WebSocket = ({
 
       if (status === "finished") {
         setTimeout(() => {
-          toast.success("Arquivo processado com sucesso!");
-          setWSSChartFinished(true);
+          // toast.success("Arquivo processado com sucesso!");
+          setWSSRankingFinished(true);
           getWebSocket()?.close();
         }, 2000);
       }
@@ -64,8 +70,13 @@ export const WebSocket = ({
     if (message === "Processamento finalizado") {
       const filters = parsedData?.data?.filter;
       setTimeout(() => {
-        setWSSChartFinished(true);
-      }, 1000);
+        setDateInfoCallback({
+          month: filters?.month,
+          year: filters?.year,
+          shift: filters?.shift,
+        });
+        setWSSRankingFinished(true);
+      }, 2000);
     }
     // Display both message and Spinner with progress
     return (

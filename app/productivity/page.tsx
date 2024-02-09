@@ -42,6 +42,7 @@ import {
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
 import { WebSocket } from "../(components)/WSS";
+import { WebSocketRanking } from "../(components)/WSS/WebSocketRanking";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -119,6 +120,9 @@ export default function Productivity() {
 
   const [rankingData, setRankingData] = useState<any[]>([]);
 
+  const [wssChartFinished, setWSSChartFinished] = useState(false);
+  const [wssRankingFinished, setWSSRankingFinished] = useState(false);
+
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
@@ -127,6 +131,12 @@ export default function Productivity() {
     year: "2023",
     month: "11",
     shift: "0",
+  });
+
+  const [dateInfoCallback, setDateInfoCallback] = useState({
+    year: "",
+    month: "",
+    shift: "",
   });
 
   const getNewestDateChart = async () => {
@@ -146,6 +156,25 @@ export default function Productivity() {
       }
     });
   };
+
+  useEffect(() => {
+    console.log(dateInfoCallback);
+    if (
+      wssChartFinished &&
+      wssRankingFinished &&
+      dateInfoCallback.year !== "" &&
+      dateInfoCallback.month !== "" &&
+      dateInfoCallback.shift !== ""
+    ) {
+      onFileSelect(null);
+
+      setDateInfo({
+        year: dateInfoCallback.year,
+        month: dateInfoCallback.month,
+        shift: dateInfoCallback.shift,
+      });
+    }
+  }, [wssChartFinished, wssRankingFinished, dateInfoCallback]);
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -198,6 +227,13 @@ export default function Productivity() {
 
   const handleGetInfoByData = async () => {
     setButtonDisabled(true);
+    setWSSRankingFinished(false);
+    setWSSChartFinished(false);
+    setDateInfoCallback({
+      year: "",
+      month: "",
+      shift: "",
+    });
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
     const toastPromiseGraph = toast.promise(
       fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
@@ -592,6 +628,17 @@ export default function Productivity() {
     });
   }, [chartDataProdByResource]);
 
+  // const handleRefreshData = (year: string, month: string, shift: string) => {
+  //   if (year === "" || month === "" || shift === "") {
+  //     return;
+  //   }
+
+  //   if(wssChartFinished && wssRankingFinished) {
+
+  //   }
+  //   handleGetInfoByData();
+  // };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
@@ -690,7 +737,15 @@ export default function Productivity() {
                 setFile={onFileSelect}
                 dateRangeChart={dateRangeChart}
               />
-              <WebSocket file={productivityFile} setFile={onFileSelect} />
+              <WebSocket
+                file={productivityFile}
+                setWSSChartFinished={setWSSChartFinished}
+              />
+              <WebSocketRanking
+                file={productivityFile}
+                setWSSRankingFinished={setWSSRankingFinished}
+                setDateInfoCallback={setDateInfoCallback}
+              />
             </CardBody>
           </Card>
         </div>

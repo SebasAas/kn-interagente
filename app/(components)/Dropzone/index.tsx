@@ -36,6 +36,8 @@ export default function Dropzone({
             if (results?.data?.length > 0) {
               const firstDateInFile = results.data[1] as string[];
 
+              console.log("firstDateInFile", firstDateInFile);
+
               if (firstDateInFile && firstDateInFile.length > 0) {
                 // Check if position 8 exisit in firstDateInFile
                 if (firstDateInFile.length < 9) {
@@ -66,11 +68,13 @@ export default function Dropzone({
 
                 const formattedNextDayNewestUpdatedVisitDate = `${day}/${month}/${year}`;
 
-                const diffTime = Math.abs(
+                const diffTime =
                   firstDateInFileDate.getTime() -
-                    newestUpdatedVisitDate.getTime()
-                );
+                  newestUpdatedVisitDate.getTime();
+
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                console.log("diffDays", diffDays);
 
                 if (diffDays >= 2) {
                   toast.error(
