@@ -175,7 +175,7 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="50">50</option>
-              <option value="all">Todos</option>
+              <option value="100000">Todos</option>
             </select>
           </label>
         </div>
