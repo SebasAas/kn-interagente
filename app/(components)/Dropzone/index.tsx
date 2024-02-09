@@ -14,7 +14,7 @@ export default function Dropzone({
   dateRangeChart,
   setWSSChartFinished,
   setWSSRankingFinished,
-  setDateInfoCallback,
+  setDateInfo,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -24,15 +24,12 @@ export default function Dropzone({
   };
   setWSSChartFinished: (newFiles: boolean) => void;
   setWSSRankingFinished: (newFiles: boolean) => void;
-  setDateInfoCallback: any;
+  setDateInfo: any;
 }) {
   const isDisable = dateRangeChart.newest_updated_visit !== "" ? false : true;
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
-      console.log(
-        acceptedFiles.length > 0 && dateRangeChart.newest_updated_visit !== ""
-      );
       if (
         acceptedFiles.length > 0 &&
         dateRangeChart.newest_updated_visit !== ""
@@ -44,8 +41,6 @@ export default function Dropzone({
             if (results?.data?.length > 0) {
               const firstDateInFile = results.data[1] as string[];
 
-              console.log("firstDateInFile", firstDateInFile);
-
               if (firstDateInFile && firstDateInFile.length > 0) {
                 // Check if position 8 exisit in firstDateInFile
                 if (firstDateInFile.length < 9) {
@@ -55,8 +50,22 @@ export default function Dropzone({
 
                 const bipPositionOrigin = firstDateInFile[8];
 
+                // keepe only the 10 first characters from bipPositionOrigin
+                const bipPositionOriginSplit = bipPositionOrigin.substring(
+                  0,
+                  10
+                );
+
+                // bigPositionOriginSplit is in the format DD/MM/YYYY, convert to MM/DD/YYYY
+                const bipPositionOriginSplitSplit =
+                  bipPositionOriginSplit.split("/");
+
+                const bipPositionOriginSplitSplitFormatted = `${bipPositionOriginSplitSplit[1]}/${bipPositionOriginSplitSplit[0]}/${bipPositionOriginSplitSplit[2]}`;
+
                 // Transform firstDateInFile and newest_updated_visit to Date and check if firstDateInFile is 2 or more days in front of newest_updated_visit
-                const firstDateInFileDate = new Date(bipPositionOrigin);
+                const bipPositionOriginDate = new Date(
+                  bipPositionOriginSplitSplitFormatted
+                );
                 const newestUpdatedVisitDate = new Date(
                   dateRangeChart.newest_updated_visit
                 );
@@ -77,14 +86,12 @@ export default function Dropzone({
                 const formattedNextDayNewestUpdatedVisitDate = `${day}/${month}/${year}`;
 
                 const diffTime =
-                  firstDateInFileDate.getTime() -
+                  bipPositionOriginDate.getTime() -
                   newestUpdatedVisitDate.getTime();
 
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                console.log("diffDays", diffDays);
-
-                if (diffDays >= 2) {
+                if (diffDays > 1) {
                   toast.error(
                     `Data do arquivo maior que ${formattedNextDayNewestUpdatedVisitDate}`
                   );
@@ -153,12 +160,17 @@ export default function Dropzone({
               </button>
             </div>
           </div>
-          <WebSocket file={file} setWSSChartFinished={setWSSChartFinished} />
-          <WebSocketRanking
-            file={file}
-            setWSSRankingFinished={setWSSRankingFinished}
-            setDateInfoCallback={setDateInfoCallback}
-          />
+          <div className="flex flex-col items-start">
+            <WebSocket
+              file={file}
+              setWSSChartFinished={setWSSChartFinished}
+              setDateInfo={setDateInfo}
+            />
+            <WebSocketRanking
+              file={file}
+              setWSSRankingFinished={setWSSRankingFinished}
+            />
+          </div>
         </>
       )}
     </div>

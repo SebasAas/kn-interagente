@@ -6,20 +6,22 @@ import { toast } from "react-toastify";
 export const WebSocket = ({
   file,
   setWSSChartFinished,
+  setDateInfo,
 }: {
   file: File | null;
   setWSSChartFinished: (newFiles: boolean) => void;
+  setDateInfo: (dateInfo: {
+    month: string;
+    year: string;
+    shift: string;
+  }) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
     `ws://kn-productivity-dev-emachzhqzq-uc.a.run.app/ws/status_csv`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 
-  const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl, {
-    shouldReconnect: (closeEvent) => true, // Always attempt to reconnect
-    reconnectAttempts: 10,
-    reconnectInterval: 3000,
-  });
+  const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl);
 
   const [progress, setProgress] = useState(0);
 
@@ -48,8 +50,11 @@ export const WebSocket = ({
       setProgress(newProgress);
 
       if (status === "finished") {
-        setWSSChartFinished(true);
-        getWebSocket()?.close();
+        setTimeout(() => {
+          toast.success("Arquivo processado com sucesso!");
+          getWebSocket()?.close();
+          setWSSChartFinished(true);
+        }, 1000);
       }
     }
   }, [lastMessage, file, getWebSocket]);
@@ -60,7 +65,13 @@ export const WebSocket = ({
 
     if (message === "Processamento finalizado") {
       const filters = parsedData?.data?.filter;
+
       setTimeout(() => {
+        setDateInfo({
+          month: filters?.month,
+          year: filters?.year,
+          shift: filters?.shift,
+        });
         setWSSChartFinished(true);
       }, 1000);
     }

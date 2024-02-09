@@ -6,26 +6,16 @@ import { toast } from "react-toastify";
 export const WebSocketRanking = ({
   file,
   setWSSRankingFinished,
-  setDateInfoCallback,
 }: {
   file: File | null;
   setWSSRankingFinished: (status: boolean) => void;
-  setDateInfoCallback: (dateInfo: {
-    month: string;
-    year: string;
-    shift: string;
-  }) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `ws://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/state`
+    `ws://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/status_ranking`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 
-  const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl, {
-    shouldReconnect: (closeEvent) => true, // Always attempt to reconnect
-    reconnectAttempts: 10,
-    reconnectInterval: 3000,
-  });
+  const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl);
 
   const [progress, setProgress] = useState(0);
 
@@ -54,8 +44,10 @@ export const WebSocketRanking = ({
       setProgress(newProgress);
 
       if (status === "finished") {
-        getWebSocket()?.close();
-        setWSSRankingFinished(true);
+        setTimeout(() => {
+          getWebSocket()?.close();
+          setWSSRankingFinished(true);
+        }, 1000);
       }
     }
   }, [lastMessage, file, getWebSocket]);
@@ -65,15 +57,9 @@ export const WebSocketRanking = ({
     const message = parsedData?.data?.text;
 
     if (message === "Processamento finalizado") {
-      const filters = parsedData?.data?.filter;
       setTimeout(() => {
-        setDateInfoCallback({
-          month: filters?.month,
-          year: filters?.year,
-          shift: filters?.shift,
-        });
         setWSSRankingFinished(true);
-      }, 2000);
+      }, 1000);
     }
     // Display both message and Spinner with progress
     return (

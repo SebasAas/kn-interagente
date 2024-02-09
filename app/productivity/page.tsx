@@ -158,14 +158,7 @@ export default function Productivity() {
   };
 
   useEffect(() => {
-    console.log(dateInfoCallback);
-    if (
-      wssChartFinished &&
-      wssRankingFinished &&
-      dateInfoCallback.year !== "" &&
-      dateInfoCallback.month !== "" &&
-      dateInfoCallback.shift !== ""
-    ) {
+    if (wssChartFinished) {
       onFileSelect(null);
 
       setDateInfo({
@@ -173,8 +166,10 @@ export default function Productivity() {
         month: dateInfoCallback.month,
         shift: dateInfoCallback.shift,
       });
+
+      // handleGetInfoByData();
     }
-  }, [wssChartFinished, wssRankingFinished, dateInfoCallback]);
+  }, [wssChartFinished]);
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -472,8 +467,6 @@ export default function Productivity() {
       }
     ).length;
 
-    console.log("lengthEstimatedProd", lengthEstimatedProd);
-
     setEstimatedLengthSeries({
       resource: lengthEstimatedProd || 0,
       productivity: lengthEstimatedProd || 0,
@@ -599,8 +592,6 @@ export default function Productivity() {
       -estimatedLengthSeries.resource
     );
 
-    console.log("lastTwoPathsResource", lastTwoPathsResource);
-
     // Apply styles to the last two path elements
     lastTwoPathsResource.forEach((path) => {
       path.style.fill = "transparent";
@@ -673,7 +664,7 @@ export default function Productivity() {
                 onChange={(e) =>
                   setDateInfo({ ...dateInfo, shift: e.target.value })
                 }
-                defaultValue={dateInfo.shift}
+                value={dateInfo.shift}
               >
                 <option value="0">Todos</option>
                 <option value="1">1° turno</option>
@@ -683,11 +674,11 @@ export default function Productivity() {
               <div className="flex justify-between gap-2">
                 <select
                   name="year"
-                  defaultValue={dateInfo.year}
                   className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
                   onChange={(e) =>
                     setDateInfo({ ...dateInfo, year: e.target.value })
                   }
+                  value={dateInfo.year}
                 >
                   <option value="2023">2023</option>
                   <option value="2024">2024</option>
@@ -698,7 +689,7 @@ export default function Productivity() {
                   onChange={(e) =>
                     setDateInfo({ ...dateInfo, month: e.target.value })
                   }
-                  defaultValue={dateInfo.month}
+                  value={dateInfo.month}
                 >
                   <option value="1">Janeiro</option>
                   <option value="2">Fevereiro</option>
@@ -738,7 +729,7 @@ export default function Productivity() {
                 dateRangeChart={dateRangeChart}
                 setWSSChartFinished={setWSSChartFinished}
                 setWSSRankingFinished={setWSSRankingFinished}
-                setDateInfoCallback={setDateInfoCallback}
+                setDateInfo={setDateInfoCallback}
               />
             </CardBody>
           </Card>
