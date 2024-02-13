@@ -17,7 +17,7 @@ interface Workload {
   profile: number;
 }
 
-export interface Data {
+export interface UserTableProps {
   _id: string;
   worker_code: string;
   month_year: string;
@@ -28,9 +28,9 @@ export interface Data {
   workloads: Workload[];
 }
 
-const UserTable = ({ data }: { data: Data }) => {
+const UserTable = ({ userData }: { userData: UserTableProps }) => {
   // Accumulate production for "AERO", "HPC", and "FOODS"
-  const productionData = data?.workloads?.reduce(
+  const productionData = userData?.workloads?.reduce(
     (acc: Record<string, number>, workload: Workload) => {
       if (["AERO", "HPC", "FOODS"].includes(workload.product_type)) {
         acc[workload.product_type] =
@@ -41,7 +41,7 @@ const UserTable = ({ data }: { data: Data }) => {
     {}
   );
 
-  const palets: any = data?.workloads?.filter(
+  const palets: any = userData?.workloads?.filter(
     (el) => el.product_type === "AALL"
   );
 

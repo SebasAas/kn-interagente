@@ -15,6 +15,7 @@ export default function Dropzone({
   setWSSChartFinished,
   setWSSRankingFinished,
   setDateInfo,
+  buttonDisabled,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -25,8 +26,9 @@ export default function Dropzone({
   setWSSChartFinished: (newFiles: boolean) => void;
   setWSSRankingFinished: (newFiles: boolean) => void;
   setDateInfo: any;
+  buttonDisabled: boolean;
 }) {
-  const isDisable = dateRangeChart.newest_updated_visit !== "" ? false : true;
+  const isDisable = !buttonDisabled ? false : true;
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
@@ -91,7 +93,7 @@ export default function Dropzone({
 
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                if (diffDays > 1) {
+                if (diffDays > 2) {
                   toast.error(
                     `Data do arquivo maior que ${formattedNextDayNewestUpdatedVisitDate}`
                   );

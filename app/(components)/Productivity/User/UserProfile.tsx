@@ -7,17 +7,14 @@ import UserTable from "./UserTable";
 import { Tooltip } from "react-tooltip";
 import TooltipIcon from "@/app/(assets)/TooltipIcon";
 
-const RadarChart = dynamic(
-  () => import("../../(components)/Chart/RadarChart"),
-  {
-    ssr: false,
-    loading: () => (
-      <Loader className="h-[250px] flex justify-center items-center" />
-    ),
-  }
-);
+const RadarChart = dynamic(() => import("../../Chart/RadarChart"), {
+  ssr: false,
+  loading: () => (
+    <Loader className="h-[250px] flex justify-center items-center" />
+  ),
+});
 
-import Loader from "../Loader";
+import Loader from "../../Loader";
 import dynamic from "next/dynamic";
 
 const UserProfile = ({
@@ -192,7 +189,7 @@ const UserProfile = ({
       </div>
       {selectedKeys.size !== 0 && (
         <div className="flex flex-row gap-12 mt-12">
-          <UserTable data={userData} />
+          <UserTable userData={userData} />
           <RadarChart data={userData} />
         </div>
       )}
