@@ -154,6 +154,23 @@ const UserProfile = ({
               {userData?.workloads[0]?.direct_hours}
             </p>
           </div>
+          <div className="flex flex-col text-center">
+            <div className="flex flex-row">
+              <p className="text-gray-400 text-sm font-medium">
+                Media Horas Diretas
+              </p>
+              <a className="tooltip-horasDiretas">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-horasDiretas"
+                content="Media de horas diretas do usuário disponíveis para o trabalho"
+              />
+            </div>
+            <p className="text-2xl text-blue-700 font-semibold">
+              {userData?.workloads[0]?.mean_direct_hours}
+            </p>
+          </div>
 
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
@@ -183,6 +200,23 @@ const UserProfile = ({
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.distance?.toFixed(0)}
+            </p>
+          </div>
+          <div className="flex flex-col text-center">
+            <div className="flex flex-row">
+              <p className="text-gray-400 text-sm font-medium">
+                Media Distância
+              </p>
+              <a className="tooltip-distancia">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-distancia"
+                content="Media Distância percorrida pelo usuário em picking"
+              />
+            </div>
+            <p className="text-2xl text-blue-700 font-semibold">
+              {userData?.workloads[0]?.mean_distance?.toFixed(0)}
             </p>
           </div>
         </div>
