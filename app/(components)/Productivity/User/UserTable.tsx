@@ -48,7 +48,20 @@ const UserTable = ({ userData }: { userData: UserTableProps }) => {
   // Add new element to productionData that will be "pallets" and the value palets[0]?.pallets
   const productionDataWithPallets = {
     PALLETS: palets && palets.length > 0 && palets[0]?.pallets,
+    DIRECT_HOURS: palets[0]?.direct_hours,
+    DISTANCE: palets[0]?.distance,
     ...productionData,
+  };
+
+  const refactorName = (key: string) => {
+    switch (key) {
+      case "DIRECT_HOURS":
+        return "HORAS DIRECTAS";
+      case "DISTANCE":
+        return "DISTÂNCIA";
+      default:
+        return key;
+    }
   };
 
   return (
@@ -57,15 +70,15 @@ const UserTable = ({ userData }: { userData: UserTableProps }) => {
         <tbody>
           {productionDataWithPallets &&
             Object.entries(productionDataWithPallets).map(
-              ([productType, production], index) => (
+              ([key, value], index) => (
                 <tr
                   className={`text-sm  ${
                     index % 2 === 0 ? "bg-gray-100" : "bg-white"
                   }`}
-                  key={productType}
+                  key={key}
                 >
-                  <td className="pl-2 py-2 pr-12">{productType}</td>
-                  <td className="ml-auto pr-2">{production}</td>
+                  <td className="pl-2 py-2 pr-12">{refactorName(key)}</td>
+                  <td className="ml-auto pr-2">{value}</td>
                 </tr>
               )
             )}

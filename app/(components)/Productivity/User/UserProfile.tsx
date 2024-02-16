@@ -139,7 +139,7 @@ const UserProfile = ({
               {userData?.workloads[0]?.profile?.toFixed(0)}
             </p>
           </div>
-          <div className="flex flex-col text-center">
+          {/* <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">Horas Diretas</p>
               <a className="tooltip-horasDiretas">
@@ -153,11 +153,11 @@ const UserProfile = ({
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.direct_hours}
             </p>
-          </div>
+          </div> */}
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">
-                Media Horas Diretas
+                Horas Media Diretas
               </p>
               <a className="tooltip-horasDiretas">
                 <TooltipIcon />
@@ -187,7 +187,7 @@ const UserProfile = ({
               {userData?.workloads[0]?.speed?.toFixed(2)}
             </p>
           </div>
-          <div className="flex flex-col text-center">
+          {/* <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">Distância</p>
               <a className="tooltip-distancia">
@@ -201,11 +201,11 @@ const UserProfile = ({
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.distance?.toFixed(0)}
             </p>
-          </div>
+          </div> */}
           <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">
-                Media Distância
+                Distância Media
               </p>
               <a className="tooltip-distancia">
                 <TooltipIcon />
@@ -222,7 +222,7 @@ const UserProfile = ({
         </div>
       </div>
       {selectedKeys.size !== 0 && (
-        <div className="flex flex-row gap-12 mt-12">
+        <div className="flex flex-row justify-between mt-12 px-6">
           <UserTable userData={userData} />
           <RadarChart data={userData} />
         </div>

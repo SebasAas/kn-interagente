@@ -89,7 +89,7 @@ function RadarChart({ data }: { data: UserTableProps }) {
         options={state.options}
         series={state.series}
         type="radar"
-        height={250}
+        height={350}
       />
     </div>
   );
