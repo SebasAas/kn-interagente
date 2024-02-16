@@ -9,14 +9,12 @@ import { uploadFiles } from "@/app/(services)/productivity";
 function DropzoneProductivity({
   wssChartFinished,
   setWSSChartFinished,
-  setWSSRankingFinished,
   setDateInfo,
   dateRangeChart,
   buttonDisabled,
 }: {
   wssChartFinished: boolean;
   setWSSChartFinished: React.Dispatch<React.SetStateAction<boolean>>;
-  setWSSRankingFinished: React.Dispatch<React.SetStateAction<boolean>>;
   setDateInfo: React.Dispatch<React.SetStateAction<any>>;
   dateRangeChart: {
     latest_updated_visit: string;
@@ -77,7 +75,6 @@ function DropzoneProductivity({
           setFile={onFileSelect}
           dateRangeChart={dateRangeChart}
           setWSSChartFinished={setWSSChartFinished}
-          setWSSRankingFinished={setWSSRankingFinished}
           setDateInfo={setDateInfo}
           buttonDisabled={buttonDisabled}
         />

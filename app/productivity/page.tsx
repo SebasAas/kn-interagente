@@ -109,7 +109,6 @@ export default function Productivity() {
   const [rankingData, setRankingData] = useState<any[]>([]);
 
   const [wssChartFinished, setWSSChartFinished] = useState(false);
-  const [wssRankingFinished, setWSSRankingFinished] = useState(false);
 
   const [dateRangeChart, setDateRangeChart] = useState<any>({
     latest_updated_visit: "",
@@ -118,8 +117,6 @@ export default function Productivity() {
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
-  const [productivityFile, setProductivityFile] = useState<File | null>(null);
-  const [demandFile, setDemandFile] = useState<File | null>(null);
   const [dateInfo, setDateInfo] = useState({
     year: "",
     month: "",
@@ -178,7 +175,6 @@ export default function Productivity() {
     shift: string;
   }) => {
     setButtonDisabled(true);
-    setWSSRankingFinished(false);
     setWSSChartFinished(false);
 
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
@@ -205,8 +201,6 @@ export default function Productivity() {
               </div>
             );
           }
-
-          setProductivityFile(null);
         } else {
           const reorderedData = reorderJsonData(res, indicatorOrder);
 
@@ -221,7 +215,6 @@ export default function Productivity() {
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo graficos, tente novamente!");
-        setProductivityFile(null);
       });
 
     const toastPromiseRanking = toast.promise(
@@ -251,7 +244,6 @@ export default function Productivity() {
 
           setRankingData([]);
           setSelectedKeys(new Set([]));
-          setProductivityFile(null);
         } else {
           setRankingData(res);
         }
@@ -259,7 +251,6 @@ export default function Productivity() {
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
-        setProductivityFile(null);
         setRankingData([]);
         setSelectedKeys(new Set([]));
       })
@@ -662,7 +653,6 @@ export default function Productivity() {
           <DropzoneProductivity
             setDateInfo={setDateInfo}
             setWSSChartFinished={setWSSChartFinished}
-            setWSSRankingFinished={setWSSRankingFinished}
             wssChartFinished={wssChartFinished}
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
