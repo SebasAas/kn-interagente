@@ -2,6 +2,8 @@
 import { Divider } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 
+//comando pra rodar a API falsa: json-server --watch /home/gabriel-marinho/Área\ de\ Trabalho/kn-interagente/app/scale/fakedata.json --port 3004
+
 type dadosTabela = {
   turno: number;
   hora: string;
