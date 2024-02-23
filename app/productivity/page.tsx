@@ -34,9 +34,15 @@ import {
   stateProductionxResources,
   stateProductivityxHour,
 } from "../(helpers)/mockedData";
-import { fetchProductionCharts, uploadFiles } from "../(services)/productivity";
+import {
+  checkNewestDateUploadFiles,
+  fetchProductionCharts,
+  uploadFiles,
+} from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
+import { WebSocket } from "../(components)/WSS";
+import { WebSocketRanking } from "../(components)/WSS/WebSocketRanking";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -105,17 +111,65 @@ export default function Productivity() {
     productivity: 0,
   });
 
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const [dateRangeChart, setDateRangeChart] = useState<any>({
+    latest_updated_visit: "",
+    newest_updated_visit: "",
+  });
+
   const [rankingData, setRankingData] = useState<any[]>([]);
+
+  const [wssChartFinished, setWSSChartFinished] = useState(false);
+  const [wssRankingFinished, setWSSRankingFinished] = useState(false);
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
   const [demandFile, setDemandFile] = useState<File | null>(null);
   const [dateInfo, setDateInfo] = useState({
-    year: "2023",
-    month: "11",
+    year: "2024",
+    month: "01",
     shift: "0",
   });
+
+  const [dateInfoCallback, setDateInfoCallback] = useState({
+    year: "",
+    month: "",
+    shift: "",
+  });
+
+  const getNewestDateChart = async () => {
+    await checkNewestDateUploadFiles().then((res) => {
+      if (res && Object.keys(res).length > 0) {
+        setDateRangeChart(res);
+      } else {
+        toast.error(
+          <div>
+            <h2>
+              Algo deu errado obtendo ultima data da carga de arquivo, tente
+              buscar novamente!
+            </h2>
+            <p className="text-xs"> {res?.error?.data?.code} </p>
+          </div>
+        );
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (wssChartFinished) {
+      onFileSelect(null);
+
+      setDateInfo({
+        year: dateInfoCallback.year,
+        month: dateInfoCallback.month,
+        shift: dateInfoCallback.shift,
+      });
+
+      getNewestDateChart();
+    }
+  }, [wssChartFinished]);
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -134,21 +188,20 @@ export default function Productivity() {
       });
 
       await toastPromise
+        .then((response) => response.json())
         .then((res: any) => {
-          if (res.error) {
-            toast.error(
-              <div>
-                <h2>Algo deu errado, tente novamente!</h2>
-                <p className="text-xs"> {res?.error?.data?.code} </p>
-              </div>
-            );
-            setProductivityFile(null);
-          } else {
-            toast.success("Arquivos enviados com sucesso!");
+          if (res === null) {
+            return;
           }
+          toast.error(
+            <div>
+              <h2>Algo deu errado enviando o arquivo, tente novamente!</h2>
+            </div>
+          );
+          setProductivityFile(null);
         })
         .catch((err) => {
-          toast.error("Algo deu errado, tente novamente!");
+          toast.error("Algo deu errado enviando o arquivo, tente novamente!");
           setProductivityFile(null);
         });
     }
@@ -162,14 +215,20 @@ export default function Productivity() {
     }
   };
 
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-
   useEffect(() => {
+    getNewestDateChart();
     handleGetInfoByData();
   }, []);
 
   const handleGetInfoByData = async () => {
     setButtonDisabled(true);
+    setWSSRankingFinished(false);
+    setWSSChartFinished(false);
+    setDateInfoCallback({
+      year: "",
+      month: "",
+      shift: "",
+    });
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
     const toastPromiseGraph = toast.promise(
       fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
@@ -408,8 +467,6 @@ export default function Productivity() {
       }
     ).length;
 
-    console.log("lengthEstimatedProd", lengthEstimatedProd);
-
     setEstimatedLengthSeries({
       resource: lengthEstimatedProd || 0,
       productivity: lengthEstimatedProd || 0,
@@ -535,8 +592,6 @@ export default function Productivity() {
       -estimatedLengthSeries.resource
     );
 
-    console.log("lastTwoPathsResource", lastTwoPathsResource);
-
     // Apply styles to the last two path elements
     lastTwoPathsResource.forEach((path) => {
       path.style.fill = "transparent";
@@ -563,6 +618,17 @@ export default function Productivity() {
       path.style.strokeWidth = "2";
     });
   }, [chartDataProdByResource]);
+
+  // const handleRefreshData = (year: string, month: string, shift: string) => {
+  //   if (year === "" || month === "" || shift === "") {
+  //     return;
+  //   }
+
+  //   if(wssChartFinished && wssRankingFinished) {
+
+  //   }
+  //   handleGetInfoByData();
+  // };
 
   return (
     <div className="flex flex-col gap-4">
@@ -598,7 +664,7 @@ export default function Productivity() {
                 onChange={(e) =>
                   setDateInfo({ ...dateInfo, shift: e.target.value })
                 }
-                defaultValue={dateInfo.shift}
+                value={dateInfo.shift}
               >
                 <option value="0">Todos</option>
                 <option value="1">1° turno</option>
@@ -608,11 +674,11 @@ export default function Productivity() {
               <div className="flex justify-between gap-2">
                 <select
                   name="year"
-                  defaultValue={dateInfo.year}
                   className="p-1 rounded-md text-sm bg-[#F1F0F9] w-full"
                   onChange={(e) =>
                     setDateInfo({ ...dateInfo, year: e.target.value })
                   }
+                  value={dateInfo.year}
                 >
                   <option value="2023">2023</option>
                   <option value="2024">2024</option>
@@ -623,7 +689,7 @@ export default function Productivity() {
                   onChange={(e) =>
                     setDateInfo({ ...dateInfo, month: e.target.value })
                   }
-                  defaultValue={dateInfo.month}
+                  value={dateInfo.month}
                 >
                   <option value="1">Janeiro</option>
                   <option value="2">Fevereiro</option>
@@ -657,17 +723,16 @@ export default function Productivity() {
               <Subtitle>Base Produtividade</Subtitle>
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={productivityFile} setFile={onFileSelect} />
+              <Dropzone
+                file={productivityFile}
+                setFile={onFileSelect}
+                dateRangeChart={dateRangeChart}
+                setWSSChartFinished={setWSSChartFinished}
+                setWSSRankingFinished={setWSSRankingFinished}
+                setDateInfo={setDateInfoCallback}
+              />
             </CardBody>
           </Card>
-          {/* <Card className="p-4 h-fit ">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <h2 className="">Base Demanda</h2>
-            </CardHeader>
-            <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone file={demandFile} setFile={setDemandFile} />
-            </CardBody>
-          </Card> */}
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">

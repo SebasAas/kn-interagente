@@ -35,8 +35,6 @@ const UserProfile = ({
     workloads: [],
   });
 
-  console.log("rankingData", rankingData);
-
   useEffect(() => {
     if (rankingData.length === 0) {
       setUserData({
