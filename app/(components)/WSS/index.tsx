@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Spinner } from "../Spinner";
 import { toast } from "react-toastify";
+import { fetchProductionCharts } from "@/app/(services)/productivity";
+import { fetchRanking } from "@/app/(services)/ranking";
 
 export const WebSocket = ({
   file,
@@ -50,7 +52,23 @@ export const WebSocket = ({
       setProgress(newProgress);
 
       if (status === "finished") {
+        const filters = parsedData?.data?.filter;
+
         setTimeout(() => {
+          const monthUpdated =
+            filters?.month < 10 ? `0${filters?.month}` : `${filters?.month}`;
+
+          toast.promise(
+            fetchProductionCharts(monthUpdated, `${filters?.year}`, `0`),
+            {
+              pending: "Obtendo dados dos graficos...",
+            }
+          );
+
+          toast.promise(fetchRanking(monthUpdated, `${filters?.year}`, `0`), {
+            pending: "Obtendo dados dos ranking...",
+          });
+
           toast.success("Arquivo processado com sucesso!");
           getWebSocket()?.close();
           setWSSChartFinished(true);
@@ -66,11 +84,14 @@ export const WebSocket = ({
     if (message === "Processamento finalizado") {
       const filters = parsedData?.data?.filter;
 
+      const monthUpdated =
+        filters?.month < 10 ? `0${filters?.month}` : `${filters?.month}`;
+
       setTimeout(() => {
         setDateInfo({
-          month: filters?.month,
-          year: filters?.year,
-          shift: filters?.shift,
+          month: monthUpdated,
+          year: `${filters?.year}`,
+          shift: `${filters?.shift}`,
         });
         setWSSChartFinished(true);
       }, 1000);

@@ -7,17 +7,14 @@ import UserTable from "./UserTable";
 import { Tooltip } from "react-tooltip";
 import TooltipIcon from "@/app/(assets)/TooltipIcon";
 
-const RadarChart = dynamic(
-  () => import("../../(components)/Chart/RadarChart"),
-  {
-    ssr: false,
-    loading: () => (
-      <Loader className="h-[250px] flex justify-center items-center" />
-    ),
-  }
-);
+const RadarChart = dynamic(() => import("../../Chart/RadarChart"), {
+  ssr: false,
+  loading: () => (
+    <Loader className="h-[250px] flex justify-center items-center" />
+  ),
+});
 
-import Loader from "../Loader";
+import Loader from "../../Loader";
 import dynamic from "next/dynamic";
 
 const UserProfile = ({
@@ -142,7 +139,7 @@ const UserProfile = ({
               {userData?.workloads[0]?.profile?.toFixed(0)}
             </p>
           </div>
-          <div className="flex flex-col text-center">
+          {/* <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">Horas Diretas</p>
               <a className="tooltip-horasDiretas">
@@ -155,6 +152,23 @@ const UserProfile = ({
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.direct_hours}
+            </p>
+          </div> */}
+          <div className="flex flex-col text-center">
+            <div className="flex flex-row">
+              <p className="text-gray-400 text-sm font-medium">
+                Horas Media Diretas
+              </p>
+              <a className="tooltip-horasDiretas">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-horasDiretas"
+                content="Media de horas diretas do usuário disponíveis para o trabalho"
+              />
+            </div>
+            <p className="text-2xl text-blue-700 font-semibold">
+              {userData?.workloads[0]?.mean_direct_hours}
             </p>
           </div>
 
@@ -173,7 +187,7 @@ const UserProfile = ({
               {userData?.workloads[0]?.speed?.toFixed(2)}
             </p>
           </div>
-          <div className="flex flex-col text-center">
+          {/* <div className="flex flex-col text-center">
             <div className="flex flex-row">
               <p className="text-gray-400 text-sm font-medium">Distância</p>
               <a className="tooltip-distancia">
@@ -187,12 +201,29 @@ const UserProfile = ({
             <p className="text-2xl text-blue-700 font-semibold">
               {userData?.workloads[0]?.distance?.toFixed(0)}
             </p>
+          </div> */}
+          <div className="flex flex-col text-center">
+            <div className="flex flex-row">
+              <p className="text-gray-400 text-sm font-medium">
+                Distância Media
+              </p>
+              <a className="tooltip-distancia">
+                <TooltipIcon />
+              </a>
+              <Tooltip
+                anchorSelect=".tooltip-distancia"
+                content="Media Distância percorrida pelo usuário em picking"
+              />
+            </div>
+            <p className="text-2xl text-blue-700 font-semibold">
+              {userData?.workloads[0]?.mean_distance?.toFixed(0)}
+            </p>
           </div>
         </div>
       </div>
       {selectedKeys.size !== 0 && (
-        <div className="flex flex-row gap-12 mt-12">
-          <UserTable data={userData} />
+        <div className="flex flex-row justify-between mt-12 px-6">
+          <UserTable userData={userData} />
           <RadarChart data={userData} />
         </div>
       )}

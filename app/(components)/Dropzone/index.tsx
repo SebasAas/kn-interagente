@@ -1,7 +1,7 @@
 "use client";
 
 import { Divider } from "@nextui-org/react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { toast } from "react-toastify";
@@ -13,8 +13,8 @@ export default function Dropzone({
   setFile,
   dateRangeChart,
   setWSSChartFinished,
-  setWSSRankingFinished,
   setDateInfo,
+  buttonDisabled,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -23,10 +23,10 @@ export default function Dropzone({
     newest_updated_visit: string;
   };
   setWSSChartFinished: (newFiles: boolean) => void;
-  setWSSRankingFinished: (newFiles: boolean) => void;
   setDateInfo: any;
+  buttonDisabled: boolean;
 }) {
-  const isDisable = dateRangeChart.newest_updated_visit !== "" ? false : true;
+  const isDisable = !buttonDisabled ? false : true;
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
@@ -91,7 +91,7 @@ export default function Dropzone({
 
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                if (diffDays > 1) {
+                if (diffDays > 2) {
                   toast.error(
                     `Data do arquivo maior que ${formattedNextDayNewestUpdatedVisitDate}`
                   );
@@ -160,10 +160,7 @@ export default function Dropzone({
               setWSSChartFinished={setWSSChartFinished}
               setDateInfo={setDateInfo}
             />
-            <WebSocketRanking
-              file={file}
-              setWSSRankingFinished={setWSSRankingFinished}
-            />
+            <WebSocketRanking file={file} />
           </div>
           <div className="flex items-center justify-center mt-4">
             <button

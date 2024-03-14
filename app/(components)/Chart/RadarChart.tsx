@@ -1,6 +1,6 @@
 import React from "react";
 import Chart from "react-apexcharts";
-import { Data } from "../Productivity/UserTable";
+import { UserTableProps } from "../Productivity/User/UserTable";
 
 const state = {
   series: [
@@ -27,7 +27,7 @@ type ProductionValues = {
   FOODS: number;
 };
 
-function RadarChart({ data }: { data: Data }) {
+function RadarChart({ data }: { data: UserTableProps }) {
   const productionValues: ProductionValues = {
     AERO: 0,
     HPC: 0,
@@ -89,7 +89,7 @@ function RadarChart({ data }: { data: Data }) {
         options={state.options}
         series={state.series}
         type="radar"
-        height={250}
+        height={350}
       />
     </div>
   );
