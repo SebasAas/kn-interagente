@@ -5,6 +5,30 @@ function minTommss(minutes: number) {
   return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 }
 
+function minTommssString(hour: string) {
+  if (!hour || hour === null || hour === undefined) {
+    return "00:00";
+  }
+  let internalHour = hour;
+
+  // If hours is length 2 add a 0 in the beginning
+  if (hour.toString().length === 2) {
+    internalHour = `0${hour}`;
+  }
+
+  // If hour is a string, I want to return the same string
+
+  const minutesInternal = hour?.toString().substring(0, 1);
+  const secondsInternal = hour?.toString().substring(1);
+
+  // if minutes length is 1 and seconds length is 1 return 00:minutesseconds
+  if (minutesInternal?.length === 1 && secondsInternal?.length === 1) {
+    return `00:${minutesInternal}${secondsInternal}`;
+  }
+
+  return `${minutesInternal}:${secondsInternal}`;
+}
+
 const handleChangeLineChart = () => {
   // Change productivity line stroke color
   const lineProductivity = document.querySelectorAll(
@@ -214,6 +238,23 @@ export const stateProductionxResources = {
       {
         seriesName: "produção estimada",
         show: false,
+        labels: {
+          formatter: (value: number) => {
+            if (
+              !value ||
+              value === null ||
+              value === undefined ||
+              value === 0
+            ) {
+              return undefined;
+            }
+            return value;
+          },
+          style: {
+            colors: "#CCCCCC",
+            fontWeight: "bold",
+          },
+        },
       },
       {
         seriesName: "produção potencial",
@@ -427,21 +468,12 @@ export const stateProductivityxHour = {
         },
         tickAmount: 5, // number of lines
         labels: {
-          formatter: function (value: number) {
-            // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
-            const minutes = value?.toString().substring(0, 1);
-            const seconds = value?.toString().substring(1);
-
-            const total = minutes + seconds;
-
-            // @ts-ignore
-            const val = (total * 0.0168).toFixed(2);
-
-            if (minTommss(Number(val)) === "NaN:NaN") {
-              return null;
+          formatter: function (value: string) {
+            if (!value || value === null || value === undefined) {
+              return undefined;
             }
-
-            return minTommss(Number(val));
+            // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
+            return minTommssString(value);
           },
           style: {
             colors: "#CCCCCC",
@@ -455,21 +487,11 @@ export const stateProductivityxHour = {
         show: false,
         opposite: true,
         labels: {
-          formatter: function (value: number) {
-            // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
-            const minutes = value?.toString().substring(0, 1);
-            const seconds = value?.toString().substring(1);
-
-            const total = minutes + seconds;
-
-            // @ts-ignore
-            const val = (total * 0.0168).toFixed(2);
-
-            if (minTommss(Number(val)) === "NaN:NaN") {
-              return null;
+          formatter: function (value: string) {
+            if (!value || value === null || value === undefined) {
+              return undefined;
             }
-
-            return minTommss(Number(val));
+            return minTommssString(value);
           },
         },
       },
@@ -478,21 +500,11 @@ export const stateProductivityxHour = {
         show: false,
         opposite: true,
         labels: {
-          formatter: function (value: number) {
-            // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
-            const minutes = value?.toString().substring(0, 1);
-            const seconds = value?.toString().substring(1);
-
-            const total = minutes + seconds;
-
-            // @ts-ignore
-            const val = (total * 0.0168).toFixed(2);
-
-            if (minTommss(Number(val)) === "NaN:NaN") {
-              return null;
+          formatter: function (value: string) {
+            if (!value || value === null || value === undefined) {
+              return undefined;
             }
-
-            return minTommss(Number(val));
+            return minTommssString(value);
           },
         },
       },
