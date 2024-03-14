@@ -56,7 +56,7 @@ const UserTable = ({ userData }: { userData: UserTableProps }) => {
   const refactorName = (key: string) => {
     switch (key) {
       case "DIRECT_HOURS":
-        return "HORAS DIRECTAS";
+        return "HORAS DIRETAS";
       case "DISTANCE":
         return "DISTÂNCIA";
       default:
