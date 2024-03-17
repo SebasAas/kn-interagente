@@ -1,9 +1,6 @@
-"use client";
-import { Divider } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+//Tabela antiga
 
-//comando pra rodar a API falsa: json-server --watch /home/gabriel-marinho/Área\ de\ Trabalho/kn-interagente/app/scale/fakedata.json --port 3004
-
+/*
 type dadosTabela = {
   turno: number;
   hora: string;
@@ -56,7 +53,7 @@ const BoxSeparation: React.FC = () => {
   };
 
   return (
-    <div className="overflow-x-auto w-full h-full">
+     <div className="overflow-x-auto w-full h-full">
       <table className="w-full h-full">
         <thead>
           <tr>
@@ -127,4 +124,4 @@ const BoxSeparation: React.FC = () => {
 };
 
 export default BoxSeparation;
-
+*/

@@ -16,9 +16,9 @@ const UploadButton: React.FC<UploadButtonProps> = ({ onUploadComplete }) => {
   };
 
   return (
-    <div className='flex flex-col gap-8 ml-8'>
+    <div className='flex flex-col gap-8 ml-2'>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded-full w-4/5"
+        className="bg-[#003369] hover:bg-blue-700 text-white text-sm font-bold py-1 px-2 rounded-full w-4/5"
         onClick={handleUpload}
       >
         Carregar Base

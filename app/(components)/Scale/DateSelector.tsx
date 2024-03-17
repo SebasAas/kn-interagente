@@ -4,16 +4,7 @@ interface DateSelectorProps {
     onDateSelect: (date: Date) => void;
 }
 
-function isToday(date: Date) {
-    const today = new Date();
-    return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-    );
-}
-
-const DateSelector: React.FC<DateSelectorProps> = ({onDateSelect}) => {
+const DateSelector: React.FC<DateSelectorProps> = ({ onDateSelect }) => {
     const [dates, setDates] = useState<Date[]>(generateDates());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -27,21 +18,40 @@ const DateSelector: React.FC<DateSelectorProps> = ({onDateSelect}) => {
         }
         return datesArray;
     }
+
+    function isToday(date: Date) {
+        const today = new Date();
+        return (
+            date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear()
+        );
+    }
+
     return (
-        <div className='flex space-x-2 w-full justify-between'>
-            {dates.map((date, index)=>(
-                <div 
-                key={index} 
-                className={`cursor-pointer border-none rounded p-1 w-1/5 bg-gray-100 text-center hover:bg-[#003369] hover:text-white ${
-                    selectedDate?.getTime() === date.getTime() ? 'bg-[#003369]' : 'border-gray-300'
-                  }`} 
-                onClick={() => {onDateSelect(date); setSelectedDate(date) }}
-                >
-                  {isToday(date) ? 'Hoje' : date.toLocaleDateString('pt-BR', { day:'numeric', month:'numeric'})}  
+        <div className='flex flex-col space-y-2 justify-between'>
+            {dates.map((date, index) => (
+                <div key={index} className='flex flex-row justify-between'>
+                    <div
+                        className={`cursor-pointer rounded p-1 w-1/2 text-center ${
+                            selectedDate && selectedDate.getTime() === date.getTime()
+                                ? 'bg-[#003369] text-white'
+                                : isToday(date)
+                                    ? 'bg-gray-200'
+                                    : 'bg-gray-100'
+                        }`}
+                        onClick={() => {
+                            onDateSelect(date);
+                            setSelectedDate(date);
+                        }}
+                    >
+                        {date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'numeric' })}
+                    </div>
+                    <div className="w-3 h-3 rounded-full bg-[#AC3E31] ml-2 mt-2"></div>
                 </div>
-            ))}        
+            ))}
         </div>
-    )
+    );
 };
 
 export default DateSelector;
