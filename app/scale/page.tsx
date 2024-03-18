@@ -8,6 +8,7 @@ import TruckIcon from "../(assets)/TruckIcon";
 import TooltipIcon from "../(assets)/TooltipIcon";
 import { Tooltip } from "react-tooltip";
 import ProductTable from "../(components)/Scale/ProductTable";
+import PoliticsForm from "../(components)/Scale/PoliticsForm";
 
 
 const ScalePage: React.FC = () => {
@@ -71,7 +72,8 @@ const ScalePage: React.FC = () => {
       <div className="flex flex-col mt-8 p-4 border-1 border-solid rounded-lg transform rotate-x-2 shadow-md w-6/12 h-full overflow-auto">
         <div className="flex flex-col gap-4">
           <h3 className="text-[#353535] font-medium">Separação de Caixas - </h3>
-          <div className="flex flex-row">
+          <div className="flex flex-col">
+            <div className="flex flex-row">
             <p>Políticas</p>
             <a className="tooltip-politicas">
               <TooltipIcon />
@@ -80,6 +82,10 @@ const ScalePage: React.FC = () => {
                 anchorSelect=".tooltip-politicas"
                 content="Defina aqui as regras de negócio por família e gere novas simulações"
               />
+              </div>
+              <div>
+                <PoliticsForm />
+              </div>
           </div>
           <ProductTable productData={productData} />
         </div>
