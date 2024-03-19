@@ -1,0 +1,584 @@
+{
+  "HPC": [
+    {
+      "turno": 1,
+      "hora": "06:00",
+      "estimado": 11,
+      "caixas": 1000,
+      "pallets": 10,
+      "visitas": 100
+    },
+    {
+      "turno": 1,
+      "hora": "07:00",
+      "estimado": 12,
+      "caixas": 1050,
+      "pallets": 15,
+      "visitas": 150
+    },
+    {
+      "turno": 1,
+      "hora": "08:00",
+      "estimado": 13,
+      "caixas": 1100,
+      "pallets": 20,
+      "visitas": 200
+    },
+    {
+      "turno": 1,
+      "hora": "09:00",
+      "estimado": 14,
+      "caixas": 1150,
+      "pallets": 25,
+      "visitas": 250
+    },
+    {
+      "turno": 1,
+      "hora": "10:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 1,
+      "hora": "11:00",
+      "estimado": 15,
+      "caixas": 1250,
+      "pallets": 35,
+      "visitas": 350
+    },
+    {
+      "turno": 1,
+      "hora": "12:00",
+      "estimado": 16,
+      "caixas": 1300,
+      "pallets": 40,
+      "visitas": 400
+    },
+    {
+      "turno": 1,
+      "hora": "13:00",
+      "estimado": 17,
+      "caixas": 1350,
+      "pallets": 45,
+      "visitas": 450
+    },
+    {
+      "turno": 2,
+      "hora": "14:00",
+      "estimado": 18,
+      "caixas": 2500,
+      "pallets": 55,
+      "visitas": 550
+    },
+    {
+      "turno": 2,
+      "hora": "15:00",
+      "estimado": 19,
+      "caixas": 2550,
+      "pallets": 60,
+      "visitas": 600
+    },
+    {
+      "turno": 2,
+      "hora": "16:00",
+      "estimado": 20,
+      "caixas": 2600,
+      "pallets": 64,
+      "visitas": 640
+    },
+    {
+      "turno": 2,
+      "hora": "17:00",
+      "estimado": 21,
+      "caixas": 2710,
+      "pallets": 68,
+      "visitas": 680
+    },
+    {
+      "turno": 2,
+      "hora": "18:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 2,
+      "hora": "19:00",
+      "estimado": 22,
+      "caixas": 2990,
+      "pallets": 79,
+      "visitas": 790
+    },
+    {
+      "turno": 2,
+      "hora": "20:00",
+      "estimado": 23,
+      "caixas": 3070,
+      "pallets": 82,
+      "visitas": 820
+    },
+    {
+      "turno": 2,
+      "hora": "21:00",
+      "estimado": 24,
+      "caixas": 3135,
+      "pallets": 86,
+      "visitas": 860
+    },
+    {
+      "turno": 3,
+      "hora": "22:00",
+      "estimado": 25,
+      "caixas": 3210,
+      "pallets": 89,
+      "visitas": 890
+    },
+    {
+      "turno": 3,
+      "hora": "23:00",
+      "estimado": 26,
+      "caixas": 3415,
+      "pallets": 92,
+      "visitas": 920
+    },
+    {
+      "turno": 3,
+      "hora": "00:00",
+      "estimado": 27,
+      "caixas": 3580,
+      "pallets": 94,
+      "visitas": 940
+    },
+    {
+      "turno": 3,
+      "hora": "01:00",
+      "estimado": 28,
+      "caixas": 3675,
+      "pallets": 99,
+      "visitas": 990
+    },
+    {
+      "turno": 3,
+      "hora": "02:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 3,
+      "hora": "03:00",
+      "estimado": 29,
+      "caixas": 3910,
+      "pallets": 110,
+      "visitas": 994
+    },
+    {
+      "turno": 3,
+      "hora": "04:00",
+      "estimado": 30,
+      "caixas": 4025,
+      "pallets": 115,
+      "visitas": 996
+    },
+    {
+      "turno": 3,
+      "hora": "05:00",
+      "estimado": 31,
+      "caixas": 4500,
+      "pallets": 150,
+      "visitas": 999
+    }
+  ],
+  "AERO": [
+    {
+      "turno": 1,
+      "hora": "06:00",
+      "estimado": 11,
+      "caixas": 1000,
+      "pallets": 10,
+      "visitas": 100
+    },
+    {
+      "turno": 1,
+      "hora": "07:00",
+      "estimado": 12,
+      "caixas": 1050,
+      "pallets": 15,
+      "visitas": 150
+    },
+    {
+      "turno": 1,
+      "hora": "08:00",
+      "estimado": 13,
+      "caixas": 1100,
+      "pallets": 20,
+      "visitas": 200
+    },
+    {
+      "turno": 1,
+      "hora": "09:00",
+      "estimado": 14,
+      "caixas": 1150,
+      "pallets": 25,
+      "visitas": 250
+    },
+    {
+      "turno": 1,
+      "hora": "10:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 1,
+      "hora": "11:00",
+      "estimado": 15,
+      "caixas": 1250,
+      "pallets": 35,
+      "visitas": 350
+    },
+    {
+      "turno": 1,
+      "hora": "12:00",
+      "estimado": 16,
+      "caixas": 1300,
+      "pallets": 40,
+      "visitas": 400
+    },
+    {
+      "turno": 1,
+      "hora": "13:00",
+      "estimado": 17,
+      "caixas": 1350,
+      "pallets": 45,
+      "visitas": 450
+    },
+    {
+      "turno": 2,
+      "hora": "14:00",
+      "estimado": 18,
+      "caixas": 2500,
+      "pallets": 55,
+      "visitas": 550
+    },
+    {
+      "turno": 2,
+      "hora": "15:00",
+      "estimado": 19,
+      "caixas": 2550,
+      "pallets": 60,
+      "visitas": 600
+    },
+    {
+      "turno": 2,
+      "hora": "16:00",
+      "estimado": 20,
+      "caixas": 2600,
+      "pallets": 64,
+      "visitas": 640
+    },
+    {
+      "turno": 2,
+      "hora": "17:00",
+      "estimado": 21,
+      "caixas": 2710,
+      "pallets": 68,
+      "visitas": 680
+    },
+    {
+      "turno": 2,
+      "hora": "18:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 2,
+      "hora": "19:00",
+      "estimado": 22,
+      "caixas": 2990,
+      "pallets": 79,
+      "visitas": 790
+    },
+    {
+      "turno": 2,
+      "hora": "20:00",
+      "estimado": 23,
+      "caixas": 3070,
+      "pallets": 82,
+      "visitas": 820
+    },
+    {
+      "turno": 2,
+      "hora": "21:00",
+      "estimado": 24,
+      "caixas": 3135,
+      "pallets": 86,
+      "visitas": 860
+    },
+    {
+      "turno": 3,
+      "hora": "22:00",
+      "estimado": 25,
+      "caixas": 3210,
+      "pallets": 89,
+      "visitas": 890
+    },
+    {
+      "turno": 3,
+      "hora": "23:00",
+      "estimado": 26,
+      "caixas": 3415,
+      "pallets": 92,
+      "visitas": 920
+    },
+    {
+      "turno": 3,
+      "hora": "00:00",
+      "estimado": 27,
+      "caixas": 3580,
+      "pallets": 94,
+      "visitas": 940
+    },
+    {
+      "turno": 3,
+      "hora": "01:00",
+      "estimado": 28,
+      "caixas": 3675,
+      "pallets": 99,
+      "visitas": 990
+    },
+    {
+      "turno": 3,
+      "hora": "02:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 3,
+      "hora": "03:00",
+      "estimado": 29,
+      "caixas": 3910,
+      "pallets": 110,
+      "visitas": 994
+    },
+    {
+      "turno": 3,
+      "hora": "04:00",
+      "estimado": 30,
+      "caixas": 4025,
+      "pallets": 115,
+      "visitas": 996
+    },
+    {
+      "turno": 3,
+      "hora": "05:00",
+      "estimado": 31,
+      "caixas": 4500,
+      "pallets": 150,
+      "visitas": 999
+    }
+  ],
+  "FOODS": [
+    {
+      "turno": 1,
+      "hora": "06:00",
+      "estimado": 11,
+      "caixas": 1000,
+      "pallets": 10,
+      "visitas": 100
+    },
+    {
+      "turno": 1,
+      "hora": "07:00",
+      "estimado": 12,
+      "caixas": 1050,
+      "pallets": 15,
+      "visitas": 150
+    },
+    {
+      "turno": 1,
+      "hora": "08:00",
+      "estimado": 13,
+      "caixas": 1100,
+      "pallets": 20,
+      "visitas": 200
+    },
+    {
+      "turno": 1,
+      "hora": "09:00",
+      "estimado": 14,
+      "caixas": 1150,
+      "pallets": 25,
+      "visitas": 250
+    },
+    {
+      "turno": 1,
+      "hora": "10:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 1,
+      "hora": "11:00",
+      "estimado": 15,
+      "caixas": 1250,
+      "pallets": 35,
+      "visitas": 350
+    },
+    {
+      "turno": 1,
+      "hora": "12:00",
+      "estimado": 16,
+      "caixas": 1300,
+      "pallets": 40,
+      "visitas": 400
+    },
+    {
+      "turno": 1,
+      "hora": "13:00",
+      "estimado": 17,
+      "caixas": 1350,
+      "pallets": 45,
+      "visitas": 450
+    },
+    {
+      "turno": 2,
+      "hora": "14:00",
+      "estimado": 18,
+      "caixas": 2500,
+      "pallets": 55,
+      "visitas": 550
+    },
+    {
+      "turno": 2,
+      "hora": "15:00",
+      "estimado": 19,
+      "caixas": 2550,
+      "pallets": 60,
+      "visitas": 600
+    },
+    {
+      "turno": 2,
+      "hora": "16:00",
+      "estimado": 20,
+      "caixas": 2600,
+      "pallets": 64,
+      "visitas": 640
+    },
+    {
+      "turno": 2,
+      "hora": "17:00",
+      "estimado": 21,
+      "caixas": 2710,
+      "pallets": 68,
+      "visitas": 680
+    },
+    {
+      "turno": 2,
+      "hora": "18:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 2,
+      "hora": "19:00",
+      "estimado": 22,
+      "caixas": 2990,
+      "pallets": 79,
+      "visitas": 790
+    },
+    {
+      "turno": 2,
+      "hora": "20:00",
+      "estimado": 23,
+      "caixas": 3070,
+      "pallets": 82,
+      "visitas": 820
+    },
+    {
+      "turno": 2,
+      "hora": "21:00",
+      "estimado": 24,
+      "caixas": 3135,
+      "pallets": 86,
+      "visitas": 860
+    },
+    {
+      "turno": 3,
+      "hora": "22:00",
+      "estimado": 25,
+      "caixas": 3210,
+      "pallets": 89,
+      "visitas": 890
+    },
+    {
+      "turno": 3,
+      "hora": "23:00",
+      "estimado": 26,
+      "caixas": 3415,
+      "pallets": 92,
+      "visitas": 920
+    },
+    {
+      "turno": 3,
+      "hora": "00:00",
+      "estimado": 27,
+      "caixas": 3580,
+      "pallets": 94,
+      "visitas": 940
+    },
+    {
+      "turno": 3,
+      "hora": "01:00",
+      "estimado": 28,
+      "caixas": 3675,
+      "pallets": 99,
+      "visitas": 990
+    },
+    {
+      "turno": 3,
+      "hora": "02:00",
+      "estimado": 0,
+      "caixas": 0,
+      "pallets": 0,
+      "visitas": 0
+    },
+    {
+      "turno": 3,
+      "hora": "03:00",
+      "estimado": 29,
+      "caixas": 3910,
+      "pallets": 110,
+      "visitas": 994
+    },
+    {
+      "turno": 3,
+      "hora": "04:00",
+      "estimado": 30,
+      "caixas": 4025,
+      "pallets": 115,
+      "visitas": 996
+    },
+    {
+      "turno": 3,
+      "hora": "05:00",
+      "estimado": 31,
+      "caixas": 4500,
+      "pallets": 150,
+      "visitas": 999
+    }
+  ]
+}

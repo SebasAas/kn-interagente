@@ -49,8 +49,6 @@ export const WebSocketRanking = ({ file }: { file: File | null }) => {
     const parsedData = JSON.parse(JSON.parse(lastMessage?.data));
     const message = parsedData?.data?.text;
 
-    if (message === "Processamento finalizado") {
-    }
     // Display both message and Spinner with progress
     return (
       <div className="flex items-center gap-4 mt-3">
