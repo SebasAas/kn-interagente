@@ -35,74 +35,77 @@ export default function Dropzone({
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
+      if (isEnabled) {
+        return setFile(acceptedFiles[0]);
+      }
+
       if (
-        acceptedFiles.length > 0
-        // && dateRangeChart.newest_updated_visit !== ""
+        acceptedFiles.length > 0 &&
+        dateRangeChart.newest_updated_visit !== ""
       ) {
-        // Papa.parse(acceptedFiles[0], {
-        //   header: false,
-        //   preview: 10,
-        //   complete: function (results, file) {
-        //     if (results?.data?.length > 0) {
-        //       const firstDateInFile = results.data[1] as string[];
-        //       if (firstDateInFile && firstDateInFile.length > 0) {
-        //         // Check if position 8 exisit in firstDateInFile
-        //         if (firstDateInFile.length < 9) {
-        //           toast.error("Erro ao ler data do arquivo");
-        //           return;
-        //         }
-        //         const bipPositionOrigin = firstDateInFile[8];
-        //         // keepe only the 10 first characters from bipPositionOrigin
-        //         const bipPositionOriginSplit = bipPositionOrigin.substring(
-        //           0,
-        //           10
-        //         );
-        //         // bigPositionOriginSplit is in the format DD/MM/YYYY, convert to MM/DD/YYYY
-        //         const bipPositionOriginSplitSplit =
-        //           bipPositionOriginSplit.split("/");
-        //         const bipPositionOriginSplitSplitFormatted = `${bipPositionOriginSplitSplit[1]}/${bipPositionOriginSplitSplit[0]}/${bipPositionOriginSplitSplit[2]}`;
-        //         // Transform firstDateInFile and newest_updated_visit to Date and check if firstDateInFile is 2 or more days in front of newest_updated_visit
-        //         const bipPositionOriginDate = new Date(
-        //           bipPositionOriginSplitSplitFormatted
-        //         );
-        //         const newestUpdatedVisitDate = new Date(
-        //           dateRangeChart.newest_updated_visit
-        //         );
-        //         // +1 day to newest_updated_visitDate
-        //         const nextDayNewestUpdatedVisitDate = new Date(
-        //           newestUpdatedVisitDate
-        //         );
-        //         nextDayNewestUpdatedVisitDate.setDate(
-        //           nextDayNewestUpdatedVisitDate.getDate() + 1
-        //         );
-        //         // Format nextDayNewestUpdatedVisitDate to DD/MM/YYYY
-        //         const day = nextDayNewestUpdatedVisitDate.getDate();
-        //         const month = nextDayNewestUpdatedVisitDate.getMonth() + 1;
-        //         const year = nextDayNewestUpdatedVisitDate.getFullYear();
-        //         const formattedNextDayNewestUpdatedVisitDate = `${day}/${month}/${year}`;
-        //         const diffTime =
-        //           bipPositionOriginDate.getTime() -
-        //           newestUpdatedVisitDate.getTime();
-        //         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        //         if (diffDays > 1) {
-        //           toast.error(
-        //             `Data do arquivo maior que ${formattedNextDayNewestUpdatedVisitDate}`
-        //           );
-        //           return;
-        //         } else {
-        //           setFile(acceptedFiles[0]);
-        //         }
-        //       } else {
-        //         toast.error(
-        //           "O arquivo não possui informações válidas ou esta vazio"
-        //         );
-        //       }
-        //     } else {
-        //       toast.error("Erro ao ler o arquivo");
-        //     }
-        //   },
-        // });
-        setFile(acceptedFiles[0]);
+        Papa.parse(acceptedFiles[0], {
+          header: false,
+          preview: 10,
+          complete: function (results, file) {
+            if (results?.data?.length > 0) {
+              const firstDateInFile = results.data[1] as string[];
+              if (firstDateInFile && firstDateInFile.length > 0) {
+                // Check if position 8 exisit in firstDateInFile
+                if (firstDateInFile.length < 9) {
+                  toast.error("Erro ao ler data do arquivo");
+                  return;
+                }
+                const bipPositionOrigin = firstDateInFile[8];
+                // keepe only the 10 first characters from bipPositionOrigin
+                const bipPositionOriginSplit = bipPositionOrigin.substring(
+                  0,
+                  10
+                );
+                // bigPositionOriginSplit is in the format DD/MM/YYYY, convert to MM/DD/YYYY
+                const bipPositionOriginSplitSplit =
+                  bipPositionOriginSplit.split("/");
+                const bipPositionOriginSplitSplitFormatted = `${bipPositionOriginSplitSplit[1]}/${bipPositionOriginSplitSplit[0]}/${bipPositionOriginSplitSplit[2]}`;
+                // Transform firstDateInFile and newest_updated_visit to Date and check if firstDateInFile is 2 or more days in front of newest_updated_visit
+                const bipPositionOriginDate = new Date(
+                  bipPositionOriginSplitSplitFormatted
+                );
+                const newestUpdatedVisitDate = new Date(
+                  dateRangeChart.newest_updated_visit
+                );
+                // +1 day to newest_updated_visitDate
+                const nextDayNewestUpdatedVisitDate = new Date(
+                  newestUpdatedVisitDate
+                );
+                nextDayNewestUpdatedVisitDate.setDate(
+                  nextDayNewestUpdatedVisitDate.getDate() + 1
+                );
+                // Format nextDayNewestUpdatedVisitDate to DD/MM/YYYY
+                const day = nextDayNewestUpdatedVisitDate.getDate();
+                const month = nextDayNewestUpdatedVisitDate.getMonth() + 1;
+                const year = nextDayNewestUpdatedVisitDate.getFullYear();
+                const formattedNextDayNewestUpdatedVisitDate = `${day}/${month}/${year}`;
+                const diffTime =
+                  bipPositionOriginDate.getTime() -
+                  newestUpdatedVisitDate.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays > 1) {
+                  toast.error(
+                    `Data do arquivo maior que ${formattedNextDayNewestUpdatedVisitDate}`
+                  );
+                  return;
+                } else {
+                  setFile(acceptedFiles[0]);
+                }
+              } else {
+                toast.error(
+                  "O arquivo não possui informações válidas ou esta vazio"
+                );
+              }
+            } else {
+              toast.error("Erro ao ler o arquivo");
+            }
+          },
+        });
       }
     },
     [dateRangeChart]
