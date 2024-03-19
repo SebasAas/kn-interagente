@@ -16,7 +16,7 @@ export const demandFiles = async (files: File[]) => {
 };
 
 export const fetchUploadStatus = async () => {
-  const response = await fetch(`${BASE_URL}demand/uploadsstatus`);
+  const response = await fetch(`${BASE_URL}demand/uploadstatus`);
   const data = await response.json();
   return data;
 };

@@ -25,7 +25,7 @@ const Header = ({ activePath }: { activePath: string }) => {
 
   return (
     <header className="top-0 fixed bg-white  h-12 w-full text-black border-b-2 border-blue-900 z-30">
-      <nav className="w-full h-full flex justify-between items-center py-1 pl-2 pr-10">
+      <nav className="w-full h-full flex justify-between items-center py-1 pl-3 pr-10">
         <div>
           <Link href="/" className="h-full flex justify-center items-center">
             <Image
@@ -54,12 +54,16 @@ const Header = ({ activePath }: { activePath: string }) => {
                 <Link
                   href="/productivity"
                   aria-current="page"
-                  className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                 >
                   Produtividade
                 </Link>
-                <Link href="/scale" aria-current="page" className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" >
-                  Escala
+                <Link
+                  href="/planning"
+                  aria-current="page"
+                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                >
+                  Planejamento
                 </Link>
               </li>
               {/* <li>
@@ -102,12 +106,15 @@ const Header = ({ activePath }: { activePath: string }) => {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button className="gap-3" variant="light">
-                      <p>{user.name}</p>
                       <Avatar
                         className="h-7 w-7"
                         showFallback
-                        src="https://images.unsplash.com/broken"
+                        src={user.image || ""}
                       />
+                      <div className="flex flex-col justify-start text-left">
+                        <p className="capitalize font-medium">{user.name}</p>
+                        <p className="text-xs text-gray-400">{user.email}</p>
+                      </div>
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Static Actions">

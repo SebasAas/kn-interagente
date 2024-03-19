@@ -8,7 +8,7 @@ export async function generateDates(): Promise<
   ).json()) as { date: string; uploaded: boolean }[];
 
   const datesArray = data.map((status) => {
-    return { date: status.date, uploaded: false };
+    return { date: status.date, uploaded: status.uploaded };
   });
 
   return datesArray;

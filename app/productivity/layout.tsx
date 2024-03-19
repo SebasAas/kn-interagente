@@ -3,5 +3,5 @@ export default function ProductivityLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section className="px-8">{children}</section>;
+  return <section>{children}</section>;
 }
