@@ -126,7 +126,6 @@ export default function Productivity() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
-  const [demandFile, setDemandFile] = useState<File | null>(null);
   const [dateInfo, setDateInfo] = useState({
     year: "2024",
     month: "01",
