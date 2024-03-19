@@ -3,13 +3,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Spinner } from "../Spinner";
 import { toast } from "react-toastify";
 
-export const WebSocketRanking = ({
-  file,
-  setWSSRankingFinished,
-}: {
-  file: File | null;
-  setWSSRankingFinished: (status: boolean) => void;
-}) => {
+export const WebSocketRanking = ({ file }: { file: File | null }) => {
   const [socketUrl, setSocketUrl] = useState(
     `wss://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/status_ranking`
   );
@@ -46,7 +40,6 @@ export const WebSocketRanking = ({
       if (status === "finished") {
         setTimeout(() => {
           getWebSocket()?.close();
-          setWSSRankingFinished(true);
         }, 1000);
       }
     }
@@ -56,11 +49,6 @@ export const WebSocketRanking = ({
     const parsedData = JSON.parse(JSON.parse(lastMessage?.data));
     const message = parsedData?.data?.text;
 
-    if (message === "Processamento finalizado") {
-      setTimeout(() => {
-        setWSSRankingFinished(true);
-      }, 1000);
-    }
     // Display both message and Spinner with progress
     return (
       <div className="flex items-center gap-4 mt-3">

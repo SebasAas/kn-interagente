@@ -13,7 +13,6 @@ export default function Dropzone({
   setFile,
   dateRangeChart,
   setWSSChartFinished,
-  setWSSRankingFinished,
   setDateInfo,
   isEnabled = false,
   hasWSS = true,
@@ -26,7 +25,6 @@ export default function Dropzone({
     newest_updated_visit: string;
   };
   setWSSChartFinished: (newFiles: boolean) => void;
-  setWSSRankingFinished: (newFiles: boolean) => void;
   setDateInfo: any;
   isEnabled?: boolean;
   hasWSS?: boolean;
@@ -164,10 +162,7 @@ export default function Dropzone({
                   setWSSChartFinished={setWSSChartFinished}
                   setDateInfo={setDateInfo}
                 />
-                <WebSocketRanking
-                  file={file}
-                  setWSSRankingFinished={setWSSRankingFinished}
-                />
+                <WebSocketRanking file={file} />
               </div>
               <div className="flex items-center justify-center mt-4">
                 <button
