@@ -10,7 +10,6 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // Components
-import Table from "../(components)/Table";
 import {
   Avatar,
   Card,
@@ -19,17 +18,11 @@ import {
   CardHeader,
   Divider,
 } from "@nextui-org/react";
-import DateFilter from "../(components)/DateFilter/DateFilter";
-import UserProfile from "../(components)/Productivity/UserProfile";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
 import Subtitle from "../(components)/Text/Subtitle";
-import Text from "../(components)/Text/Text";
 import Loader from "../(components)/Loader";
-import Medal from "../(assets)/MedalIcon";
-import UserCard from "../(components)/Productivity/UserCard";
-import Dropzone from "../(components)/Dropzone";
 import {
   stateProductionxResources,
   stateProductivityxHour,
@@ -37,12 +30,12 @@ import {
 import {
   checkNewestDateUploadFiles,
   fetchProductionCharts,
-  uploadFiles,
 } from "../(services)/productivity";
 import { toast } from "react-toastify";
 import { fetchRanking } from "../(services)/ranking";
-import { WebSocket } from "../(components)/WSS";
-import { WebSocketRanking } from "../(components)/WSS/WebSocketRanking";
+import User from "../(components)/Productivity/User";
+import Ranking from "../(components)/Productivity/Ranking";
+import DropzoneProductivity from "../(components)/Productivity/Dropzone";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -113,35 +106,51 @@ export default function Productivity() {
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
+  const [rankingData, setRankingData] = useState<any[]>([]);
+
+  const [wssChartFinished, setWSSChartFinished] = useState(false);
+
   const [dateRangeChart, setDateRangeChart] = useState<any>({
     latest_updated_visit: "",
     newest_updated_visit: "",
   });
 
-  const [rankingData, setRankingData] = useState<any[]>([]);
-
-  const [wssChartFinished, setWSSChartFinished] = useState(false);
-  const [wssRankingFinished, setWSSRankingFinished] = useState(false);
-
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
-  const [productivityFile, setProductivityFile] = useState<File | null>(null);
   const [dateInfo, setDateInfo] = useState({
-    year: "2024",
-    month: "01",
+    year: "",
+    month: "",
     shift: "0",
   });
 
-  const [dateInfoCallback, setDateInfoCallback] = useState({
-    year: "",
-    month: "",
-    shift: "",
-  });
+  useEffect(() => {
+    if (!session && status === "unauthenticated") {
+      console.log("session", session, "status", status);
+      const url = new URL("/login", getBaseUrl());
+      url.searchParams.append("callbackUrl", "/");
+      redirect(url.toString());
+    }
+  }, [session, status]);
+
+  useEffect(() => {
+    getNewestDateChart();
+  }, []);
 
   const getNewestDateChart = async () => {
     await checkNewestDateUploadFiles().then((res) => {
       if (res && Object.keys(res).length > 0) {
         setDateRangeChart(res);
+        setDateInfo({
+          year: res.newest_updated_visit.split("-")[0],
+          month: res.newest_updated_visit.split("-")[1],
+          shift: "0",
+        });
+
+        handleGetInfoByData({
+          year: res.newest_updated_visit.split("-")[0],
+          month: res.newest_updated_visit.split("-")[1],
+          shift: "0",
+        });
       } else {
         toast.error(
           <div>
@@ -156,81 +165,21 @@ export default function Productivity() {
     });
   };
 
-  useEffect(() => {
-    if (wssChartFinished) {
-      onFileSelect(null);
-
-      setDateInfo({
-        year: dateInfoCallback.year,
-        month: dateInfoCallback.month,
-        shift: dateInfoCallback.shift,
-      });
-
-      getNewestDateChart();
-    }
-  }, [wssChartFinished]);
-
-  useEffect(() => {
-    if (!session && status === "unauthenticated") {
-      console.log("session", session, "status", status);
-      const url = new URL("/login", getBaseUrl());
-      url.searchParams.append("callbackUrl", "/");
-      redirect(url.toString());
-    }
-  }, [session, status]);
-
-  // Handler for file upload
-  const handleFileUpload = async (file: File) => {
-    if (file) {
-      const toastPromise = toast.promise(uploadFiles([file]), {
-        pending: "Enviando arquivo...",
-      });
-
-      await toastPromise
-        .then((response) => response.json())
-        .then((res: any) => {
-          if (res === null) {
-            return;
-          }
-          toast.error(
-            <div>
-              <h2>Algo deu errado enviando o arquivo, tente novamente!</h2>
-            </div>
-          );
-          setProductivityFile(null);
-        })
-        .catch((err) => {
-          toast.error("Algo deu errado enviando o arquivo, tente novamente!");
-          setProductivityFile(null);
-        });
-    }
-  };
-
-  // Trigger the upload process when the file is selected
-  const onFileSelect = (file: File | null) => {
-    setProductivityFile(file);
-    if (file) {
-      handleFileUpload(file);
-    }
-  };
-
-  useEffect(() => {
-    getNewestDateChart();
-    handleGetInfoByData();
-  }, []);
-
-  const handleGetInfoByData = async () => {
+  const handleGetInfoByData = async ({
+    year,
+    month,
+    shift,
+  }: {
+    year: string;
+    month: string;
+    shift: string;
+  }) => {
     setButtonDisabled(true);
-    setWSSRankingFinished(false);
     setWSSChartFinished(false);
-    setDateInfoCallback({
-      year: "",
-      month: "",
-      shift: "",
-    });
+
     // Fetch fetchProductionCharts & fetchProductionVisits passing year, month and shift
     const toastPromiseGraph = toast.promise(
-      fetchProductionCharts(dateInfo.month, dateInfo.year, dateInfo.shift),
+      fetchProductionCharts(month, year, shift),
       {
         pending: "Obtendo dados dos graficos...",
       }
@@ -252,8 +201,6 @@ export default function Productivity() {
               </div>
             );
           }
-
-          setProductivityFile(null);
         } else {
           const reorderedData = reorderJsonData(res, indicatorOrder);
 
@@ -268,11 +215,10 @@ export default function Productivity() {
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo graficos, tente novamente!");
-        setProductivityFile(null);
       });
 
     const toastPromiseRanking = toast.promise(
-      fetchRanking(dateInfo.month, dateInfo.year, dateInfo.shift),
+      fetchRanking(month, year, shift),
       {
         pending: "Obtendo dados dos ranking...",
       }
@@ -298,7 +244,6 @@ export default function Productivity() {
 
           setRankingData([]);
           setSelectedKeys(new Set([]));
-          setProductivityFile(null);
         } else {
           setRankingData(res);
         }
@@ -306,11 +251,12 @@ export default function Productivity() {
       .catch((err) => {
         console.log("err", err);
         toast.error("Algo deu errado obtendo ranking, tente novamente!");
-        setProductivityFile(null);
         setRankingData([]);
         setSelectedKeys(new Set([]));
+      })
+      .finally(() => {
+        setButtonDisabled(false);
       });
-    setButtonDisabled(false);
   };
 
   const filterSeriesByIndicators = (
@@ -618,17 +564,6 @@ export default function Productivity() {
     });
   }, [chartDataProdByResource]);
 
-  // const handleRefreshData = (year: string, month: string, shift: string) => {
-  //   if (year === "" || month === "" || shift === "") {
-  //     return;
-  //   }
-
-  //   if(wssChartFinished && wssRankingFinished) {
-
-  //   }
-  //   handleGetInfoByData();
-  // };
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
@@ -636,13 +571,11 @@ export default function Productivity() {
           <Card className="p-4 h-full flex-col w-full">
             <CardBody className="overflow-visible">
               <div>
-                {/* <Subtitle>Produtividade</Subtitle> */}
                 <Subtitle>Produção x Recurso em atividade</Subtitle>
               </div>
               <MixedChart state={chartDataProdByResource} />
               <Divider />
               <div className="mt-3">
-                {/* <Subtitle>Produtividade</Subtitle> */}
                 <Subtitle>Produtividade x Horas diretas</Subtitle>
               </div>
               <MixedChart state={chartDataProductivityByHour} />
@@ -690,15 +623,15 @@ export default function Productivity() {
                   }
                   value={dateInfo.month}
                 >
-                  <option value="1">Janeiro</option>
-                  <option value="2">Fevereiro</option>
-                  <option value="3">Março</option>
-                  <option value="4">Abril</option>
-                  <option value="5">Maio</option>
-                  <option value="6">Junho</option>
-                  <option value="7">Julho</option>
-                  <option value="8">Agosto</option>
-                  <option value="9">Setembro</option>
+                  <option value="01">Janeiro</option>
+                  <option value="02">Fevereiro</option>
+                  <option value="03">Março</option>
+                  <option value="04">Abril</option>
+                  <option value="05">Maio</option>
+                  <option value="06">Junho</option>
+                  <option value="07">Julho</option>
+                  <option value="08">Agosto</option>
+                  <option value="09">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
                   <option value="12">Dezembro</option>
@@ -710,90 +643,39 @@ export default function Productivity() {
                     ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                     : "bg-blue-900 text-white"
                 } text-sm font-medium mt-2`}
-                onClick={handleGetInfoByData}
+                onClick={() => handleGetInfoByData({ ...dateInfo })}
                 disabled={buttonDisabled}
               >
                 Buscar
               </button>
             </CardBody>
           </Card>
-          <Card className="p-4 h-fit ">
-            <CardHeader className="p-0 pb-2 flex-col items-start">
-              <Subtitle>Base Produtividade</Subtitle>
-            </CardHeader>
-            <CardBody className="overflow-visible !p-0 !pt-2">
-              <Dropzone
-                file={productivityFile}
-                setFile={onFileSelect}
-                dateRangeChart={dateRangeChart}
-                setWSSChartFinished={setWSSChartFinished}
-                setWSSRankingFinished={setWSSRankingFinished}
-                setDateInfo={setDateInfoCallback}
-              />
-            </CardBody>
-          </Card>
+          <DropzoneProductivity
+            setDateInfo={setDateInfo}
+            setWSSChartFinished={setWSSChartFinished}
+            wssChartFinished={wssChartFinished}
+            buttonDisabled={buttonDisabled}
+            dateRangeChart={dateRangeChart}
+          />
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">
         <div className="w-1/2">
-          <Card className="p-4 w-full">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <div className="flex w-full justify-between">
-                <div className="w-1/2">
-                  <Subtitle>Ranking de usuários</Subtitle>
-                </div>
-              </div>
-            </CardHeader>
-            <CardBody className="overflow-visible py-2 gap-6">
-              <div className="flex gap-4 mt-5 justify-around">
-                <UserCard
-                  name={rankingData[0]?.worker_code || ""}
-                  position={1}
-                  medal="gold"
-                  score={rankingData[0]?.score || ""}
-                />
-                <UserCard
-                  name={rankingData[1]?.worker_code || ""}
-                  position={2}
-                  medal="silver"
-                  score={rankingData[1]?.score || ""}
-                />
-                <UserCard
-                  name={rankingData[2]?.worker_code || ""}
-                  position={3}
-                  medal="bronze"
-                  score={rankingData[2]?.score || ""}
-                />
-              </div>
-              <div>
-                <Table
-                  rankingTable={rankingData}
-                  selectedKeys={selectedKeys}
-                  setSelectedKeys={setSelectedKeys}
-                />
-              </div>
-            </CardBody>
-          </Card>
+          <Ranking
+            rankingData={rankingData}
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
         </div>
-        <div className="flex justify-center w-1/2">
-          <Card className="p-4 w-full h-min">
-            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-              <Subtitle>Informações do Usuário</Subtitle>
-            </CardHeader>
-            <CardBody>
-              <UserProfile
-                rankingData={rankingData}
-                user={selectedKeys}
-                date={{
-                  month: dateInfo.month,
-                  year: dateInfo.year,
-                  shift: dateInfo.shift,
-                }}
-                selectedKeys={selectedKeys}
-              />
-            </CardBody>
-          </Card>
-        </div>
+        <User
+          rankingData={rankingData}
+          dateInfo={{
+            month: dateInfo.month,
+            year: dateInfo.year,
+            shift: dateInfo.shift,
+          }}
+          selectedKeys={selectedKeys}
+        />
       </div>
     </div>
   );

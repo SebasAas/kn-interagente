@@ -11,7 +11,7 @@ export const WebSocketRanking = ({
   setWSSRankingFinished: (status: boolean) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `wss://kn-workers-emachzhqzq-uc.a.run.app/ws/status_ranking`
+    `wss://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/status_ranking`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 

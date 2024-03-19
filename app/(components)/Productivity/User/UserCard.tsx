@@ -1,7 +1,7 @@
 import Medal from "@/app/(assets)/MedalIcon";
 import { Avatar, Card, CardBody, CardFooter, Divider } from "@nextui-org/react";
 import React from "react";
-import Text from "../Text/Text";
+import Text from "../../Text/Text";
 
 function UserCard({
   name,

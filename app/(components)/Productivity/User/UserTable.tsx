@@ -17,7 +17,7 @@ interface Workload {
   profile: number;
 }
 
-export interface Data {
+export interface UserTableProps {
   _id: string;
   worker_code: string;
   month_year: string;
@@ -28,9 +28,9 @@ export interface Data {
   workloads: Workload[];
 }
 
-const UserTable = ({ data }: { data: Data }) => {
+const UserTable = ({ userData }: { userData: UserTableProps }) => {
   // Accumulate production for "AERO", "HPC", and "FOODS"
-  const productionData = data?.workloads?.reduce(
+  const productionData = userData?.workloads?.reduce(
     (acc: Record<string, number>, workload: Workload) => {
       if (["AERO", "HPC", "FOODS"].includes(workload.product_type)) {
         acc[workload.product_type] =
@@ -41,14 +41,27 @@ const UserTable = ({ data }: { data: Data }) => {
     {}
   );
 
-  const palets: any = data?.workloads?.filter(
+  const palets: any = userData?.workloads?.filter(
     (el) => el.product_type === "AALL"
   );
 
   // Add new element to productionData that will be "pallets" and the value palets[0]?.pallets
   const productionDataWithPallets = {
     PALLETS: palets && palets.length > 0 && palets[0]?.pallets,
+    DIRECT_HOURS: palets[0]?.direct_hours,
+    DISTANCE: palets[0]?.distance,
     ...productionData,
+  };
+
+  const refactorName = (key: string) => {
+    switch (key) {
+      case "DIRECT_HOURS":
+        return "HORAS DIRETAS";
+      case "DISTANCE":
+        return "DISTÂNCIA";
+      default:
+        return key;
+    }
   };
 
   return (
@@ -57,15 +70,15 @@ const UserTable = ({ data }: { data: Data }) => {
         <tbody>
           {productionDataWithPallets &&
             Object.entries(productionDataWithPallets).map(
-              ([productType, production], index) => (
+              ([key, value], index) => (
                 <tr
                   className={`text-sm  ${
                     index % 2 === 0 ? "bg-gray-100" : "bg-white"
                   }`}
-                  key={productType}
+                  key={key}
                 >
-                  <td className="pl-2 py-2 pr-12">{productType}</td>
-                  <td className="ml-auto pr-2">{production}</td>
+                  <td className="pl-2 py-2 pr-12">{refactorName(key)}</td>
+                  <td className="ml-auto pr-2">{value}</td>
                 </tr>
               )
             )}
