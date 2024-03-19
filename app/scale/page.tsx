@@ -130,7 +130,6 @@ const ScalePage: React.FC = () => {
                 newest_updated_visit: "",
               }}
               setWSSChartFinished={() => {}}
-              setWSSRankingFinished={() => {}}
               setDateInfo={setDateInfoCallback}
               isEnabled={true}
               hasWSS={false}

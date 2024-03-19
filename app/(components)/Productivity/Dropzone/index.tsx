@@ -76,7 +76,7 @@ function DropzoneProductivity({
           dateRangeChart={dateRangeChart}
           setWSSChartFinished={setWSSChartFinished}
           setDateInfo={setDateInfo}
-          buttonDisabled={buttonDisabled}
+          isEnabled={buttonDisabled}
         />
       </CardBody>
     </Card>

@@ -16,7 +16,6 @@ export default function Dropzone({
   setDateInfo,
   isEnabled = false,
   hasWSS = true,
-  buttonDisabled,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -28,9 +27,8 @@ export default function Dropzone({
   setDateInfo: any;
   isEnabled?: boolean;
   hasWSS?: boolean;
-  buttonDisabled: boolean;
 }) {
-  const isDisable = !buttonDisabled ? false : true;
+  const isDisable = !isEnabled ? false : true;
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
