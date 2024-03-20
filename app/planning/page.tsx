@@ -161,12 +161,12 @@ const PlanningPage: React.FC = () => {
         <div className="flex flex-col gap-4">
           <h3 className="text-[#353535] font-medium">Separação de Caixas - </h3>
           <div className="flex flex-col">
-            <div className="flex flex-row">
+            <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
               <a className="tooltip-politicas">
                 <TooltipIcon />
               </a>
-              <button onClick={() => setIsVisible(!isVisible)} className="">
+              <button onClick={() => setIsVisible(!isVisible)} className=" bg-[#003369] rounded-lg px-2 hover:bg-blue-600 text-white">
                 &#8744;
               </button>
 
