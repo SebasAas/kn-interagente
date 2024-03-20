@@ -19,16 +19,16 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 export default function Home() {
   const { data: session, status } = useSession();
 
-  // useEffect(() => {
-  //   if (!session && status === "unauthenticated") {
-  //     console.log("session", session, "status", status);
-  //     const url = new URL("/login", getBaseUrl());
-  //     url.searchParams.append("callbackUrl", "/");
-  //     redirect(url.toString());
-  //   }
+  useEffect(() => {
+    if (!session && status === "unauthenticated") {
+      console.log("session", session, "status", status);
+      const url = new URL("/login", getBaseUrl());
+      url.searchParams.append("callbackUrl", "/");
+      redirect(url.toString());
+    }
 
-  //   redirect("/productivity");
-  // }, [session, status]);
+    redirect("/productivity");
+  }, [session, status]);
 
   return (
     <main className="h-[100vh]">

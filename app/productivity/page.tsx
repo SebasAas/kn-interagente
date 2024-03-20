@@ -567,22 +567,7 @@ export default function Productivity() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <div className="flex flex-1 flex-col gap-6">
-          <Card className="p-4 h-full flex-col w-full">
-            <CardBody className="overflow-visible">
-              <div>
-                <Subtitle>Produção x Recurso em atividade</Subtitle>
-              </div>
-              <MixedChart state={chartDataProdByResource} />
-              <Divider />
-              <div className="mt-3">
-                <Subtitle>Produtividade x Horas diretas</Subtitle>
-              </div>
-              <MixedChart state={chartDataProductivityByHour} />
-            </CardBody>
-          </Card>
-        </div>
-        <div className="flex flex-col h-full w-[20%] gap-6">
+        <div className="flex flex-col h-full w-[20%] gap-6 max-w-[240px]">
           <Card className="p-4 h-fit">
             <CardHeader className="p-0 pb-2 flex-col items-start">
               <Subtitle>Filtros</Subtitle>
@@ -657,6 +642,21 @@ export default function Productivity() {
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
           />
+        </div>
+        <div className="flex flex-1 flex-col gap-6">
+          <Card className="p-4 h-full flex-col w-full">
+            <CardBody className="overflow-visible">
+              <div>
+                <Subtitle>Produção x Recurso em atividade</Subtitle>
+              </div>
+              <MixedChart state={chartDataProdByResource} />
+              <Divider />
+              <div className="mt-3">
+                <Subtitle>Produtividade x Horas diretas</Subtitle>
+              </div>
+              <MixedChart state={chartDataProductivityByHour} />
+            </CardBody>
+          </Card>
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">

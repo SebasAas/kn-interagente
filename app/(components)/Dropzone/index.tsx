@@ -14,7 +14,7 @@ export default function Dropzone({
   dateRangeChart,
   setWSSChartFinished,
   setDateInfo,
-  isEnabled = false,
+  isDisable = false,
   hasWSS = true,
 }: {
   file: File | null;
@@ -25,14 +25,12 @@ export default function Dropzone({
   };
   setWSSChartFinished: (newFiles: boolean) => void;
   setDateInfo: any;
-  isEnabled?: boolean;
+  isDisable?: boolean;
   hasWSS?: boolean;
 }) {
-  const isDisable = !isEnabled ? false : true;
-
   const onDrop = useCallback(
     (acceptedFiles: any) => {
-      if (isEnabled) {
+      if (!isDisable) {
         return setFile(acceptedFiles[0]);
       }
 

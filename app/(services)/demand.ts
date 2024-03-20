@@ -1,5 +1,25 @@
 export const BASE_URL = "https://kn-demand-dev-emachzhqzq-uc.a.run.app/";
 
+export type FamilyProps = {
+  families: [
+    {
+      family: "aero";
+      workers_per_shift: { shift_1: number; shift_2: number; shift_3: number };
+      max_storage: number;
+    },
+    {
+      family: "hpc";
+      workers_per_shift: { shift_1: number; shift_2: number; shift_3: number };
+      max_storage: number;
+    },
+    {
+      family: "foods";
+      workers_per_shift: { shift_1: number; shift_2: number; shift_3: number };
+      max_storage: number;
+    }
+  ];
+};
+
 export const demandFiles = async (files: File[]) => {
   const formData = new FormData();
 
@@ -16,7 +36,20 @@ export const demandFiles = async (files: File[]) => {
 };
 
 export const fetchUploadStatus = async () => {
-  const response = await fetch(`${BASE_URL}demand/uploadsstatus`);
+  const response = await fetch(`${BASE_URL}demand/uploadstatus`);
   const data = await response.json();
   return data;
+};
+
+export const demandSimulation = async (data: FamilyProps) => {
+  const promise = fetch(`${BASE_URL}demand/simulation`, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return promise;
 };
