@@ -9,14 +9,10 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const getInitialState = async () => {
-  const result = await generateDates()
-    .then((data) => data)
-    .catch((err) => [{ date: new Date().toISOString(), uploaded: false }]);
-
+const getInitialState = () => {
   const initialState = {
     demands: {
-      uploadStatus: result,
+      uploadStatus: [],
     },
     productivity: {
       HPC: [],
@@ -28,11 +24,9 @@ const getInitialState = async () => {
   return initialState;
 };
 
-export const Providers = async ({ children }: Props) => {
-  const initialState = await getInitialState();
-
+export const Providers = ({ children }: Props) => {
   return (
-    <AppProvider initialState={initialState}>
+    <AppProvider initialState={getInitialState()}>
       <NextUIProvider>
         <SessionProvider>{children}</SessionProvider>
       </NextUIProvider>

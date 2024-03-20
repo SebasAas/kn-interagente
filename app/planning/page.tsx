@@ -14,8 +14,14 @@ import { toast } from "react-toastify";
 import Dropzone from "../(components)/Dropzone";
 import { demandFiles, fetchUploadStatus } from "../(services)/demand";
 import { useAppContext } from "../(context)/AppContext";
+import { useSession } from "next-auth/react";
+import { getBaseUrl } from "../(helpers)/env";
+import { redirect } from "next/navigation";
+import { generateDates } from "../(helpers)/generateDates";
+import useGetUploadDatesTrucks from "../(hooks)/useGetUploadDatesTrucks";
 
 const PlanningPage: React.FC = () => {
+  const { data: session, status } = useSession();
   const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +31,17 @@ const PlanningPage: React.FC = () => {
     month: "03",
     shift: "0",
   });
+
+  const { isLoading, error } = useGetUploadDatesTrucks();
+
+  useEffect(() => {
+    if (!session && status === "unauthenticated") {
+      console.log("session", session, "status", status);
+      const url = new URL("/login", getBaseUrl());
+      url.searchParams.append("callbackUrl", "/");
+      redirect(url.toString());
+    }
+  }, [session, status]);
 
   function handleDateSelect(date: Date) {
     //Lógica pra carregar dados do back
@@ -152,6 +169,7 @@ const PlanningPage: React.FC = () => {
               <button onClick={() => setIsVisible(!isVisible)} className="">
                 &#8744;
               </button>
+
               <Tooltip
                 anchorSelect=".tooltip-politicas"
                 content="Defina aqui as regras de negócio por família e gere novas simulações"
@@ -163,7 +181,7 @@ const PlanningPage: React.FC = () => {
         </div>
       </Card>
 
-      <div className="flex flex-col gap-4 mt-8 w-4/12">
+      <div className="flex flex-col gap-4 mt-8 w-3/12">
         <div className=" flex flex-row border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
           <AlertBoard />
         </div>

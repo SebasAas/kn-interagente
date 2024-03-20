@@ -1,6 +1,4 @@
-export async function generateDates(): Promise<
-  { date: string; uploaded: boolean }[]
-> {
+export async function generateDates() {
   const data = (await (
     await fetch(
       "https://kn-demand-dev-emachzhqzq-uc.a.run.app/demand/uploadstatus"

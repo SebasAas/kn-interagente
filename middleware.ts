@@ -19,7 +19,3 @@ export async function middleware(request: NextRequest) {
   //   return NextResponse.redirect(url);
   // }
 }
-
-export const config = {
-  matcher: ["/productivity", "/"],
-};
