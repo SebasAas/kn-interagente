@@ -10,14 +10,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // Components
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -36,6 +29,7 @@ import { fetchRanking } from "../(services)/ranking";
 import User from "../(components)/Productivity/User";
 import Ranking from "../(components)/Productivity/Ranking";
 import DropzoneProductivity from "../(components)/Productivity/Dropzone";
+import { useAppContext } from "../(context)/AppContext";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -85,7 +79,9 @@ const reorderJsonData = (data: any, order: any) => {
 };
 
 export default function Productivity() {
+  const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
+
   const [chartDataProdByResource, setChartDataProdByResource] = useState<any>({
     options: {},
     series: [],
@@ -202,6 +198,8 @@ export default function Productivity() {
             );
           }
         } else {
+          dispatch({ type: "SET_CHART_DATA", payload: res });
+
           const reorderedData = reorderJsonData(res, indicatorOrder);
 
           handleBuildChart(reorderedData);
@@ -417,6 +415,14 @@ export default function Productivity() {
       productivity: lengthEstimatedProd || 0,
     });
 
+    dispatch({
+      type: "SET_LENGTH_SERIES",
+      payload: {
+        resource: lengthEstimatedProd || 0,
+        productivity: lengthEstimatedProd || 0,
+      },
+    });
+
     // Special check for second chart
     let mergedProductivitySeries;
 
@@ -469,6 +475,25 @@ export default function Productivity() {
     const resourceChart = {
       options: {
         ...stateProductionxResources.options,
+        chart: {
+          ...stateProductionxResources.options.chart,
+          events: {
+            legendClick: function () {
+              // const series = type.config.series;
+              // console.log("chartData", chartData);
+              // if (series[0].data.length === 0) {
+              //   setTimeout(() => {
+              //     const reorderedData = reorderJsonData(
+              //       chartData,
+              //       indicatorOrder
+              //     );
+              //     handleBuildChart(reorderedData);
+              //   }, 0);
+              //   return;
+              // }
+            },
+          },
+        },
         xaxis: {
           type: "category",
           labels: {
@@ -491,6 +516,14 @@ export default function Productivity() {
     const productivityChart = {
       options: {
         ...stateProductivityxHour.options,
+        chart: {
+          ...stateProductivityxHour.options.chart,
+          events: {
+            legendClick: function () {
+              updateUnfillEstimatedBarsProdictivity();
+            },
+          },
+        },
         xaxis: {
           type: "category",
           labels: {
@@ -517,24 +550,21 @@ export default function Productivity() {
     setChartDataProductivityByHour(productivityChart);
   };
 
-  useEffect(() => {
-    if (estimatedLengthSeries.resource === 0) return;
-
+  const updateUnfillEstimatedBarsResource = () => {
     const lineResources = document.querySelector('g[seriesname="recursos"]');
-    const lineProductivity = document.querySelector(
-      'g[seriesname="produtividade"]'
-    );
 
     if (!lineResources) return;
 
     // Select all path elements inside the lineProductivity element
     const pathsResource = lineResources.querySelectorAll("path");
 
-    if (pathsResource.length < estimatedLengthSeries.resource) return;
+    const estimatedLength = estimatedLengthSeries.resource || lengthSeries;
+
+    if (pathsResource.length < estimatedLength) return;
 
     // Get the last two path elements
     const lastTwoPathsResource = Array.from(pathsResource).slice(
-      -estimatedLengthSeries.resource
+      -estimatedLength
     );
 
     // Apply styles to the last two path elements
@@ -543,6 +573,12 @@ export default function Productivity() {
       path.style.stroke = "#6AB187";
       path.style.strokeWidth = "2";
     });
+  };
+
+  const updateUnfillEstimatedBarsProdictivity = () => {
+    const lineProductivity = document.querySelector(
+      'g[seriesname="produtividade"]'
+    );
 
     if (!lineProductivity) return;
 
@@ -562,6 +598,17 @@ export default function Productivity() {
       path.style.stroke = "#003369";
       path.style.strokeWidth = "2";
     });
+  };
+
+  const updateUnfillEstimatedBars = () => {
+    updateUnfillEstimatedBarsResource();
+    updateUnfillEstimatedBarsProdictivity();
+  };
+
+  useEffect(() => {
+    if (estimatedLengthSeries.resource === 0) return;
+
+    updateUnfillEstimatedBars();
   }, [chartDataProdByResource]);
 
   return (

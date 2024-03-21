@@ -122,207 +122,215 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
   return (
     <>
       {isVisible && (
-        <div className="flex flex-row justify-between py-2">
-          <div className="flex flex-col gap-4">
-            <p className="text-semibold text-center invisible">-</p>
-            <div className="flex flex-row items-center h-8">
-              <label htmlFor="stage" className="text-sm font-medium">
-                Stage
-              </label>
-              <button className="tooltip-stage ml-1">
-                <TooltipIcon />
-              </button>
-              <Tooltip
-                anchorSelect=".tooltip-stage"
-                content="Defina aqui o limite máximo de estoque de caixas para cada família"
-                className="z-50"
-              />
+        <>
+          <div className="flex flex-row justify-between py-2">
+            <div className="flex flex-col gap-4">
+              <p className="text-semibold text-center invisible">-</p>
+              <div className="flex flex-row items-center h-8">
+                <label htmlFor="stage" className="text-sm font-medium">
+                  Stage
+                </label>
+                <button className="tooltip-stage ml-1">
+                  <TooltipIcon />
+                </button>
+                <Tooltip
+                  anchorSelect=".tooltip-stage"
+                  content="Defina aqui o limite máximo de estoque de caixas para cada família"
+                  className="z-50"
+                />
+              </div>
+              <div className="flex flex-row items-center h-8">
+                <label htmlFor="user-turno" className="text-sm font-medium">
+                  Usuário/Turno
+                </label>
+                <button className="tooltip-usuarioturno">
+                  <TooltipIcon />
+                </button>
+                <Tooltip
+                  anchorSelect=".tooltip-usuarioturno"
+                  content="Defina aqui a quantidade de usuários escalados para cada turno e familia"
+                  className="z-50"
+                />
+              </div>
             </div>
-            <div className="flex flex-row items-center h-8">
-              <label htmlFor="user-turno" className="text-sm font-medium">
-                Usuário/Turno
-              </label>
-              <button className="tooltip-usuarioturno">
-                <TooltipIcon />
-              </button>
-              <Tooltip
-                anchorSelect=".tooltip-usuarioturno"
-                content="Defina aqui a quantidade de usuários escalados para cada turno e familia"
-                className="z-50"
-              />
+            <div className="flex flex-row gap-4">
+              <div className="flex flex-col gap-4 w-fit">
+                <p className="font-medium text-center">Aero</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8 min-h-unit-8",
+                  }}
+                  placeholder="stage"
+                  value={politicsData.aero.max_storage.toString()}
+                  onChange={(e) =>
+                    handleUpdatePolitics("aero", "max_storage", e)
+                  }
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 1"
+                    value={politicsData.aero.shift_1.toString()}
+                    onChange={(e) => handleUpdatePolitics("aero", "shift_1", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 2"
+                    value={politicsData.aero.shift_2.toString()}
+                    onChange={(e) => handleUpdatePolitics("aero", "shift_2", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 3"
+                    value={politicsData.aero.shift_3.toString()}
+                    onChange={(e) => handleUpdatePolitics("aero", "shift_3", e)}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 w-fit">
+                <p className="font-medium text-center">HPC</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="stage"
+                  value={politicsData.hpc.max_storage.toString()}
+                  onChange={(e) =>
+                    handleUpdatePolitics("hpc", "max_storage", e)
+                  }
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 1"
+                    value={politicsData.hpc.shift_1.toString()}
+                    onChange={(e) => handleUpdatePolitics("hpc", "shift_1", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 2"
+                    value={politicsData.hpc.shift_2.toString()}
+                    onChange={(e) => handleUpdatePolitics("hpc", "shift_2", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 3"
+                    value={politicsData.hpc.shift_3.toString()}
+                    onChange={(e) => handleUpdatePolitics("hpc", "shift_3", e)}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 w-fit">
+                <p className="font-medium text-center">Food</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="stage"
+                  value={politicsData.food.max_storage.toString()}
+                  onChange={(e) =>
+                    handleUpdatePolitics("food", "max_storage", e)
+                  }
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 1"
+                    value={politicsData.food.shift_1.toString()}
+                    onChange={(e) => handleUpdatePolitics("food", "shift_1", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 2"
+                    value={politicsData.food.shift_2.toString()}
+                    onChange={(e) => handleUpdatePolitics("food", "shift_2", e)}
+                  />
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="turno 3"
+                    value={politicsData.food.shift_3.toString()}
+                    onChange={(e) => handleUpdatePolitics("food", "shift_3", e)}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex flex-row gap-4">
-            <div className="flex flex-col gap-4 w-fit">
-              <p className="font-medium text-center">Aero</p>
-              <Input
-                type="number"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  label: "text-[0.8rem]",
-                  inputWrapper: "h-2 min-h-unit-8 min-h-unit-8",
-                }}
-                placeholder="stage"
-                value={politicsData.aero.max_storage.toString()}
-                onChange={(e) => handleUpdatePolitics("aero", "max_storage", e)}
-              />
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 1"
-                  value={politicsData.aero.shift_1.toString()}
-                  onChange={(e) => handleUpdatePolitics("aero", "shift_1", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 2"
-                  value={politicsData.aero.shift_2.toString()}
-                  onChange={(e) => handleUpdatePolitics("aero", "shift_2", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 3"
-                  value={politicsData.aero.shift_3.toString()}
-                  onChange={(e) => handleUpdatePolitics("aero", "shift_3", e)}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-fit">
-              <p className="font-medium text-center">HPC</p>
-              <Input
-                type="number"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  label: "text-[0.8rem]",
-                  inputWrapper: "h-2 min-h-unit-8",
-                }}
-                placeholder="stage"
-                value={politicsData.hpc.max_storage.toString()}
-                onChange={(e) => handleUpdatePolitics("hpc", "max_storage", e)}
-              />
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 1"
-                  value={politicsData.hpc.shift_1.toString()}
-                  onChange={(e) => handleUpdatePolitics("hpc", "shift_1", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 2"
-                  value={politicsData.hpc.shift_2.toString()}
-                  onChange={(e) => handleUpdatePolitics("hpc", "shift_2", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 3"
-                  value={politicsData.hpc.shift_3.toString()}
-                  onChange={(e) => handleUpdatePolitics("hpc", "shift_3", e)}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-fit">
-              <p className="font-medium text-center">Food</p>
-              <Input
-                type="number"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  label: "text-[0.8rem]",
-                  inputWrapper: "h-2 min-h-unit-8",
-                }}
-                placeholder="stage"
-                value={politicsData.food.max_storage.toString()}
-                onChange={(e) => handleUpdatePolitics("food", "max_storage", e)}
-              />
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 1"
-                  value={politicsData.food.shift_1.toString()}
-                  onChange={(e) => handleUpdatePolitics("food", "shift_1", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 2"
-                  value={politicsData.food.shift_2.toString()}
-                  onChange={(e) => handleUpdatePolitics("food", "shift_2", e)}
-                />
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="turno 3"
-                  value={politicsData.food.shift_3.toString()}
-                  onChange={(e) => handleUpdatePolitics("food", "shift_3", e)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+          <Button
+            onClick={onSubmit}
+            variant="shadow"
+            radius="none"
+            className="h-9 text-sm font-medium bg-[#1e3a8a] text-white mt-3"
+          >
+            Simular
+          </Button>
+        </>
       )}
-      <Button
-        onClick={onSubmit}
-        variant="shadow"
-        radius="none"
-        className="h-9 text-sm font-medium bg-[#1e3a8a] text-white mt-3"
-      >
-        Simular
-      </Button>
     </>
   );
 };

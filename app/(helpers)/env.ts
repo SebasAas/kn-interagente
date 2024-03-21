@@ -12,6 +12,6 @@ export const getBaseUrl = () => {
     // Local development
     return "http://localhost:3000";
   } else {
-    return "https://develop--dev-kn-interagente.netlify.app/";
+    return "https://dev-kn-interagente.netlify.app/";
   }
 };

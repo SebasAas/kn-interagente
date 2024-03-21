@@ -19,6 +19,9 @@ import { getBaseUrl } from "../(helpers)/env";
 import { redirect } from "next/navigation";
 import { generateDates } from "../(helpers)/generateDates";
 import useGetUploadDatesTrucks from "../(hooks)/useGetUploadDatesTrucks";
+import { ArrowDownIcon } from "../(assets)/ArrowIcon";
+import mockedSimulation from "../(helpers)/mockedSimulation";
+import { formatDateToDDMM } from "../(helpers)/dates";
 
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
@@ -49,39 +52,6 @@ const PlanningPage: React.FC = () => {
   }
   const handleUploadComplete = () => {
     console.log("Upload completo!");
-  };
-
-  const productData = {
-    HPC: [
-      { hora: "06:00", estimado: 10, caixas: 22, visitas: 5 },
-      { hora: "07:00", estimado: 12, caixas: 27, visitas: 6 },
-      { hora: "08:00", estimado: 10, caixas: 22, visitas: 5 },
-      { hora: "09:00", estimado: 12, caixas: 27, visitas: 6 },
-      { hora: "10:00", estimado: 10, caixas: 22, visitas: 5 },
-      { hora: "11:00", estimado: 12, caixas: 27, visitas: 6 },
-      { hora: "12:00", estimado: 10, caixas: 22, visitas: 5 },
-      { hora: "13:00", estimado: 12, caixas: 27, visitas: 6 },
-    ],
-    AERO: [
-      { hora: "06:00", estimado: 11, caixas: 21, visitas: 7 },
-      { hora: "07:00", estimado: 13, caixas: 26, visitas: 8 },
-      { hora: "08:00", estimado: 11, caixas: 21, visitas: 7 },
-      { hora: "09:00", estimado: 13, caixas: 26, visitas: 8 },
-      { hora: "10:00", estimado: 11, caixas: 21, visitas: 7 },
-      { hora: "11:00", estimado: 13, caixas: 26, visitas: 8 },
-      { hora: "12:00", estimado: 11, caixas: 21, visitas: 7 },
-      { hora: "13:00", estimado: 13, caixas: 26, visitas: 8 },
-    ],
-    FOODS: [
-      { hora: "06:00", estimado: 12, caixas: 20, visitas: 4 },
-      { hora: "07:00", estimado: 14, caixas: 25, visitas: 9 },
-      { hora: "08:00", estimado: 12, caixas: 20, visitas: 4 },
-      { hora: "09:00", estimado: 14, caixas: 25, visitas: 9 },
-      { hora: "10:00", estimado: 12, caixas: 20, visitas: 4 },
-      { hora: "11:00", estimado: 14, caixas: 25, visitas: 9 },
-      { hora: "12:00", estimado: 12, caixas: 20, visitas: 4 },
-      { hora: "13:00", estimado: 14, caixas: 25, visitas: 9 },
-    ],
   };
 
   // Handler for file upload
@@ -159,15 +129,21 @@ const PlanningPage: React.FC = () => {
 
       <Card className="p-4 h-fit flex-1">
         <div className="flex flex-col gap-4">
-          <h3 className="text-[#353535] font-medium">Separação de Caixas - </h3>
+          <h3 className="text-[#353535] font-medium text-lg">
+            Separação de Caixas -{" "}
+            {formatDateToDDMM(mockedSimulation.simulation_day)}
+          </h3>
           <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
               <a className="tooltip-politicas">
                 <TooltipIcon />
               </a>
-              <button onClick={() => setIsVisible(!isVisible)} className=" bg-[#003369] rounded-lg px-2 hover:bg-blue-600 text-white">
-                &#8744;
+              <button
+                onClick={() => setIsVisible(!isVisible)}
+                className={isVisible ? "rotate-180" : ""}
+              >
+                <ArrowDownIcon />
               </button>
 
               <Tooltip
@@ -177,18 +153,16 @@ const PlanningPage: React.FC = () => {
             </div>
             <PoliticsForm isVisible={isVisible} />
           </div>
-          <ProductTable productData={productData} />
+          <ProductTable simulation={mockedSimulation.simulation} />
         </div>
       </Card>
 
-      <div className="flex flex-col gap-4 mt-8 w-3/12">
-        <div className=" flex flex-row border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
-          <AlertBoard />
-        </div>
-        <div className="border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
+      <Card className="p-4 h-fit w-fit max-w-[300px]">
+        <AlertBoard />
+        {/* <div className="border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
           <p>Gráfico Produção x Recursos</p>
-        </div>
-      </div>
+        </div> */}
+      </Card>
     </div>
   );
 };

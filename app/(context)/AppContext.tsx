@@ -4,6 +4,18 @@ import type { ReactNode } from "react";
 
 import { createContext, useReducer, useMemo, useContext } from "react";
 
+export type ChartProps = {
+  color: string;
+  data: number[];
+  indicator: string;
+  label: number[];
+  linetype: string;
+  month: number;
+  shift: number;
+  type: string;
+  year: number;
+};
+
 export type State = {
   productivity: {
     HPC: {
@@ -31,6 +43,8 @@ export type State = {
       uploaded: boolean;
     }[];
   };
+  chartData: ChartProps[];
+  lengthSeries: any;
 };
 
 type ProviderProps = {
@@ -42,10 +56,19 @@ type ContextValue = State & {
   dispatch: React.Dispatch<Action>;
 };
 
-type Action = {
-  type: "SET_UPLOAD_STATUS";
-  payload: State["demands"]["uploadStatus"];
-};
+type Action =
+  | {
+      type: "SET_UPLOAD_STATUS";
+      payload: State["demands"]["uploadStatus"];
+    }
+  | {
+      type: "SET_CHART_DATA";
+      payload: State["chartData"];
+    }
+  | {
+      type: "SET_LENGTH_SERIES";
+      payload: any;
+    };
 
 const AppContext = createContext<ContextValue | undefined>(undefined);
 
@@ -55,9 +78,18 @@ const stateReducer = (state: State, action: Action): State => {
       return {
         ...state,
         demands: {
-          ...state.demands,
           uploadStatus: action.payload,
         },
+      };
+    case "SET_CHART_DATA":
+      return {
+        ...state,
+        chartData: action.payload,
+      };
+    case "SET_LENGTH_SERIES":
+      return {
+        ...state,
+        lengthSeries: action.payload,
       };
     default:
       return state;
