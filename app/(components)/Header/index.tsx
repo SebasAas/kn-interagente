@@ -1,9 +1,10 @@
 "use client";
 
 // Next
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession, } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 // UI
 import { Avatar, Spinner } from "@nextui-org/react";
@@ -20,6 +21,12 @@ const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 const Header = ({ activePath }: { activePath: string }) => {
   const { data: session, status } = useSession();
   const user = session?.user;
+
+  const [selectedLink, setSelectedLink] = useState(null);
+
+  const handleLinkClick = (link:any) => {
+    setSelectedLink(link);
+  };
 
   console.log("status", status);
 
@@ -52,16 +59,26 @@ const Header = ({ activePath }: { activePath: string }) => {
               </li> */}
               <li className="flex flex-row gap-4">
                 <Link
-                  href="/productivity"
-                  aria-current="page"
-                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                href="/productivity"
+                onClick={() => handleLinkClick('productivity')}
+          aria-current={selectedLink === 'productivity' ? 'page' : undefined}
+          className={`text-sm block py-2 pr-4 pl-3 rounded ${
+            selectedLink === 'productivity'
+              ? 'text-white bg-[#003369]'
+              : 'text-primary-700 bg-transparent lg:bg-transparent'
+          } lg:p-0 dark:text-white hover:bg-[#003369] hover:text-white`}
                 >
                   Produtividade
                 </Link>
                 <Link
                   href="/planning"
-                  aria-current="page"
-                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                  onClick={() => handleLinkClick('planning')}
+                  aria-current={selectedLink === 'planning' ? 'page' : undefined}
+                  className={`text-sm block py-2 pr-4 pl-3 rounded ${
+                    selectedLink === 'planning'
+                      ? 'text-white bg-[#003369]'
+                      : 'text-primary-700 bg-transparent lg:bg-transparent'
+                  } lg:p-0 dark:text-white hover:bg-[#003369] hover:text-white`}
                 >
                   Planejamento
                 </Link>
