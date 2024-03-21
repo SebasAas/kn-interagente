@@ -9,24 +9,22 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const getInitialState = () => {
-  const initialState = {
-    demands: {
-      uploadStatus: [],
-    },
-    productivity: {
-      HPC: [],
-      AERO: [],
-      FOODS: [],
-    },
-  };
-
-  return initialState;
+const initialState = {
+  demands: {
+    uploadStatus: [],
+  },
+  productivity: {
+    HPC: [],
+    AERO: [],
+    FOODS: [],
+  },
+  chartData: [],
+  lengthSeries: {},
 };
 
 export const Providers = ({ children }: Props) => {
   return (
-    <AppProvider initialState={getInitialState()}>
+    <AppProvider initialState={initialState}>
       <NextUIProvider>
         <SessionProvider>{children}</SessionProvider>
       </NextUIProvider>
