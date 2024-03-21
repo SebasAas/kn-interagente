@@ -475,25 +475,6 @@ export default function Productivity() {
     const resourceChart = {
       options: {
         ...stateProductionxResources.options,
-        chart: {
-          ...stateProductionxResources.options.chart,
-          events: {
-            legendClick: function () {
-              // const series = type.config.series;
-              // console.log("chartData", chartData);
-              // if (series[0].data.length === 0) {
-              //   setTimeout(() => {
-              //     const reorderedData = reorderJsonData(
-              //       chartData,
-              //       indicatorOrder
-              //     );
-              //     handleBuildChart(reorderedData);
-              //   }, 0);
-              //   return;
-              // }
-            },
-          },
-        },
         xaxis: {
           type: "category",
           labels: {
@@ -516,14 +497,6 @@ export default function Productivity() {
     const productivityChart = {
       options: {
         ...stateProductivityxHour.options,
-        chart: {
-          ...stateProductivityxHour.options.chart,
-          events: {
-            legendClick: function () {
-              updateUnfillEstimatedBarsProdictivity();
-            },
-          },
-        },
         xaxis: {
           type: "category",
           labels: {
@@ -550,21 +523,24 @@ export default function Productivity() {
     setChartDataProductivityByHour(productivityChart);
   };
 
-  const updateUnfillEstimatedBarsResource = () => {
+  useEffect(() => {
+    if (estimatedLengthSeries.resource === 0) return;
+
     const lineResources = document.querySelector('g[seriesname="recursos"]');
+    const lineProductivity = document.querySelector(
+      'g[seriesname="produtividade"]'
+    );
 
     if (!lineResources) return;
 
     // Select all path elements inside the lineProductivity element
     const pathsResource = lineResources.querySelectorAll("path");
 
-    const estimatedLength = estimatedLengthSeries.resource || lengthSeries;
-
-    if (pathsResource.length < estimatedLength) return;
+    if (pathsResource.length < estimatedLengthSeries.resource) return;
 
     // Get the last two path elements
     const lastTwoPathsResource = Array.from(pathsResource).slice(
-      -estimatedLength
+      -estimatedLengthSeries.resource
     );
 
     // Apply styles to the last two path elements
@@ -573,12 +549,6 @@ export default function Productivity() {
       path.style.stroke = "#6AB187";
       path.style.strokeWidth = "2";
     });
-  };
-
-  const updateUnfillEstimatedBarsProdictivity = () => {
-    const lineProductivity = document.querySelector(
-      'g[seriesname="produtividade"]'
-    );
 
     if (!lineProductivity) return;
 
@@ -598,17 +568,6 @@ export default function Productivity() {
       path.style.stroke = "#003369";
       path.style.strokeWidth = "2";
     });
-  };
-
-  const updateUnfillEstimatedBars = () => {
-    updateUnfillEstimatedBarsResource();
-    updateUnfillEstimatedBarsProdictivity();
-  };
-
-  useEffect(() => {
-    if (estimatedLengthSeries.resource === 0) return;
-
-    updateUnfillEstimatedBars();
   }, [chartDataProdByResource]);
 
   return (
