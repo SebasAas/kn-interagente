@@ -1,6 +1,6 @@
 import React from "react";
 
-function ArrowRigthIcon() {
+function ArrowRightIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -57,4 +57,4 @@ function ArrowDownIcon() {
   );
 }
 
-export { ArrowRigthIcon, ArrowLeftIcon, ArrowDownIcon };
+export { ArrowRightIcon, ArrowLeftIcon, ArrowDownIcon };
