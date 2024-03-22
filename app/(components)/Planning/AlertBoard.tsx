@@ -1,4 +1,5 @@
 "use client";
+import { useAppContext } from "@/app/(context)/AppContext";
 import { useEffect, useState } from "react";
 
 interface Alert {
@@ -7,7 +8,10 @@ interface Alert {
 }
 
 const AlertBoard: React.FC = () => {
+  const { simulation, selectedSimulationDate } = useAppContext();
   const [alerts, setAlerts] = useState<Alert[]>([]);
+
+  console.log("simulation", simulation?.alarms?.[selectedSimulationDate]);
 
   useEffect(() => {
     fetchAlerts()
@@ -31,15 +35,17 @@ const AlertBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-around gap-2 flex-wrap ">
-      {alerts.map((alert) => (
-        <div
-          key={alert.id}
-          className="min-w-[100px] p-3 my-2 bg-[#ac3e31] rounded-lg"
-        >
-          <p className="text-sm text-center text-white">{alert.message}</p>
-        </div>
-      ))}
+    <div className="flex justify-around gap-2 flex-wrap min-w-[100px]">
+      {simulation?.alarms?.[selectedSimulationDate]?.map(
+        ({ day, message, criticity }) => (
+          <div
+            key={day}
+            className={`min-w-[100px] p-3 my-2 bg-[${criticity}] rounded-lg`}
+          >
+            <p className="text-sm text-center text-white">{message}</p>
+          </div>
+        )
+      )}
     </div>
   );
 };

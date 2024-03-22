@@ -20,6 +20,11 @@ const initialState = {
   },
   chartData: [],
   lengthSeries: {},
+  selectedSimulationDate: "",
+  simulation: {
+    alarms: {},
+    simulation: {},
+  },
 };
 
 export const Providers = ({ children }: Props) => {

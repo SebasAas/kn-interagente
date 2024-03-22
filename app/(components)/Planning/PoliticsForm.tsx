@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import TooltipIcon from "@/app/(assets)/TooltipIcon";
 import { Tooltip } from "react-tooltip";
-import { Button, Input } from "@nextui-org/react";
-import { demandSimulation } from "@/app/(services)/demand";
+import { Button, Input, Spinner } from "@nextui-org/react";
+import { FamilyProps, demandSimulation } from "@/app/(services)/demand";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
 import { toast } from "react-toastify";
+import { useAppContext } from "@/app/(context)/AppContext";
+import Loader from "../Loader";
 
 const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
-  const { handleSend, isLoading, error } = useDemandSimulation();
+  const { dispatch } = useAppContext();
+  const { handleSendSimulation, isLoading, error } = useDemandSimulation();
   const [politicsData, setPoliticsData] = useState({
     aero: {
       max_storage: "",
@@ -60,39 +63,37 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
   };
 
   const transformPoliticsData = (data: typeof politicsData) => {
-    const transformedData = [
-      {
-        families: [
-          {
-            family: "aero",
-            workers_per_shift: {
-              shift_1: parseInt(data.aero.shift_1),
-              shift_2: parseInt(data.aero.shift_2),
-              shift_3: parseInt(data.aero.shift_3),
-            },
-            max_storage: parseInt(data.aero.max_storage),
+    const transformedData: FamilyProps = {
+      families: [
+        {
+          family: "aero",
+          workers_per_shift: {
+            shift_1: parseInt(data.aero.shift_1),
+            shift_2: parseInt(data.aero.shift_2),
+            shift_3: parseInt(data.aero.shift_3),
           },
-          {
-            family: "hpc",
-            workers_per_shift: {
-              shift_1: parseInt(data.hpc.shift_1),
-              shift_2: parseInt(data.hpc.shift_2),
-              shift_3: parseInt(data.hpc.shift_3),
-            },
-            max_storage: parseInt(data.hpc.max_storage),
+          max_storage: parseInt(data.aero.max_storage),
+        },
+        {
+          family: "hpc",
+          workers_per_shift: {
+            shift_1: parseInt(data.hpc.shift_1),
+            shift_2: parseInt(data.hpc.shift_2),
+            shift_3: parseInt(data.hpc.shift_3),
           },
-          {
-            family: "foods",
-            workers_per_shift: {
-              shift_1: parseInt(data.food.shift_1),
-              shift_2: parseInt(data.food.shift_2),
-              shift_3: parseInt(data.food.shift_3),
-            },
-            max_storage: parseInt(data.food.max_storage),
+          max_storage: parseInt(data.hpc.max_storage),
+        },
+        {
+          family: "foods",
+          workers_per_shift: {
+            shift_1: parseInt(data.food.shift_1),
+            shift_2: parseInt(data.food.shift_2),
+            shift_3: parseInt(data.food.shift_3),
           },
-        ],
-      },
-    ];
+          max_storage: parseInt(data.food.max_storage),
+        },
+      ],
+    };
 
     return transformedData;
   };
@@ -112,11 +113,11 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
       );
     }
 
-    const politicsDataTransformed: any = transformPoliticsData(politicsData);
+    const politicsDataTransformed = transformPoliticsData(politicsData);
 
-    const res = handleSend(politicsDataTransformed);
+    const res = handleSendSimulation(politicsDataTransformed);
 
-    console.log(res);
+    dispatch({ type: "SET_SIMULATION", payload: await res });
   };
 
   return (
@@ -179,9 +180,10 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.aero.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_1", e)}
+                    min={0}
                   />
                   <Input
                     type="number"
@@ -191,9 +193,10 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.aero.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_2", e)}
+                    min={0}
                   />
                   <Input
                     type="number"
@@ -203,9 +206,10 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.aero.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_3", e)}
+                    min={0}
                   />
                 </div>
               </div>
@@ -234,7 +238,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.hpc.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_1", e)}
                   />
@@ -246,7 +250,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.hpc.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_2", e)}
                   />
@@ -258,7 +262,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.hpc.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_3", e)}
                   />
@@ -289,7 +293,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.food.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_1", e)}
                   />
@@ -301,7 +305,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.food.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_2", e)}
                   />
@@ -313,7 +317,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.food.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_3", e)}
                   />
@@ -325,9 +329,13 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
             onClick={onSubmit}
             variant="shadow"
             radius="none"
-            className="h-9 text-sm font-medium bg-[#1e3a8a] text-white mt-3"
+            className="h-9 text-sm font-medium bg-[#003369] rounded text-white mt-3"
           >
-            Simular
+            {isLoading ? (
+              <Spinner size="sm" classNames={{}} color="white" />
+            ) : (
+              "Simular"
+            )}
           </Button>
         </>
       )}

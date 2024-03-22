@@ -20,6 +20,49 @@ export type FamilyProps = {
   ];
 };
 
+export type FamilyPropsResponse = {
+  simulation: {
+    [key: string]: {
+      aero: {
+        hour: string;
+        boxes: number;
+        visits: number;
+        workers: number;
+        criticity: string;
+      }[];
+      foods: {
+        hour: string;
+        boxes: number;
+        visits: number;
+        workers: number;
+        criticity: string;
+      }[];
+      hpc: {
+        hour: string;
+        boxes: number;
+        visits: number;
+        workers: number;
+        criticity: string;
+      }[];
+      all: {
+        hour: string;
+        boxes: number;
+        visits: number;
+        workers: number;
+        base_workers: number;
+        criticity: string;
+      }[];
+    };
+  };
+  alarms: {
+    [key: string]: {
+      day: string;
+      message: string;
+      criticity: string;
+    }[];
+  };
+};
+
 export const demandFiles = async (files: File[]) => {
   const formData = new FormData();
 
@@ -42,7 +85,7 @@ export const fetchUploadStatus = async () => {
 };
 
 export const demandSimulation = async (data: FamilyProps) => {
-  const promise = fetch(`${BASE_URL}demand/simulation`, {
+  const promise = await fetch(`${BASE_URL}demand/simulation`, {
     method: "POST",
     headers: {
       accept: "application/json",
@@ -51,5 +94,7 @@ export const demandSimulation = async (data: FamilyProps) => {
     body: JSON.stringify(data),
   });
 
-  return promise;
+  const simulationData = await promise.json();
+
+  return simulationData;
 };

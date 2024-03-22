@@ -12,6 +12,7 @@ const COLORS = {
 
 const DateSelector: React.FC<DateSelectorProps> = ({ onDateSelect }) => {
   const {
+    dispatch,
     demands: { uploadStatus },
   } = useAppContext();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -43,6 +44,10 @@ const DateSelector: React.FC<DateSelectorProps> = ({ onDateSelect }) => {
             onClick={() => {
               onDateSelect(new Date(status.date));
               setSelectedDate(new Date(status.date));
+              dispatch({
+                type: "SET_SELECTED_SIMULATION_DATE",
+                payload: status.date,
+              });
             }}
           >
             {new Date(status.date).toLocaleDateString("pt-BR", {

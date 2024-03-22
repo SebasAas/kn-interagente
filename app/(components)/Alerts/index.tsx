@@ -40,7 +40,7 @@ function Alerts() {
               <option>Turno</option>
             </select>
           </div>
-        </div> 
+        </div>
       </CardHeader>
       <CardBody className="overflow-visible flex flex-row px-4 gap-4">
         {arr.map((item) => (

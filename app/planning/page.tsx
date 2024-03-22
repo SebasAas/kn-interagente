@@ -25,7 +25,7 @@ import { formatDateToDDMM } from "../(helpers)/dates";
 
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
-  const { dispatch } = useAppContext();
+  const { dispatch, simulation, selectedSimulationDate } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -131,7 +131,9 @@ const PlanningPage: React.FC = () => {
         <div className="flex flex-col gap-4">
           <h3 className="text-[#353535] font-medium text-lg">
             Separação de Caixas -{" "}
-            {formatDateToDDMM(mockedSimulation.simulation_day)}
+            {selectedSimulationDate
+              ? formatDateToDDMM(selectedSimulationDate)
+              : ""}
           </h3>
           <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
@@ -153,7 +155,7 @@ const PlanningPage: React.FC = () => {
             </div>
             <PoliticsForm isVisible={isVisible} />
           </div>
-          <ProductTable simulation={mockedSimulation.simulation} />
+          <ProductTable simulation={simulation?.simulation || []} />
         </div>
       </Card>
 

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { createContext, useReducer, useMemo, useContext } from "react";
+import { FamilyProps, FamilyPropsResponse } from "../(services)/demand";
 
 export type ChartProps = {
   color: string;
@@ -45,6 +46,8 @@ export type State = {
   };
   chartData: ChartProps[];
   lengthSeries: any;
+  selectedSimulationDate: string;
+  simulation: FamilyPropsResponse;
 };
 
 type ProviderProps = {
@@ -68,6 +71,14 @@ type Action =
   | {
       type: "SET_LENGTH_SERIES";
       payload: any;
+    }
+  | {
+      type: "SET_SIMULATION";
+      payload: FamilyProps;
+    }
+  | {
+      type: "SET_SELECTED_SIMULATION_DATE";
+      payload: string;
     };
 
 const AppContext = createContext<ContextValue | undefined>(undefined);
@@ -90,6 +101,19 @@ const stateReducer = (state: State, action: Action): State => {
       return {
         ...state,
         lengthSeries: action.payload,
+      };
+    case "SET_SIMULATION":
+      return {
+        ...state,
+        simulation: {
+          ...state.simulation,
+          ...action.payload,
+        },
+      };
+    case "SET_SELECTED_SIMULATION_DATE":
+      return {
+        ...state,
+        selectedSimulationDate: action.payload,
       };
     default:
       return state;

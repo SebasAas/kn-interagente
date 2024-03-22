@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { FamilyProps, demandSimulation } from "../(services)/demand";
+import { toast } from "react-toastify";
 
 const useDemandSimulation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSend = async (politics: FamilyProps) => {
+  const handleSendSimulation = async (politics: FamilyProps) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await demandSimulation(politics);
       setIsLoading(false);
-      return res; // Optionally return the response if it might be used
+      toast.success(
+        "Processo completo, escolha uma data para visualizar simulação"
+      );
+      return res;
     } catch (error) {
       console.error(error);
       setError(error as any);
@@ -20,7 +24,7 @@ const useDemandSimulation = () => {
     }
   };
 
-  return { handleSend, isLoading, error };
+  return { handleSendSimulation, isLoading, error };
 };
 
 export default useDemandSimulation;
