@@ -50,11 +50,14 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
     key: string,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
+
+    const newValue = e.target.value === "" || parseInt(e.target.value) >= 0 ? e.target.value : politicsData[family][key];
+
     setPoliticsData({
       ...politicsData,
       [family]: {
         ...politicsData[family],
-        [key]: e.target.value,
+        [key]: newValue,
       },
     });
   };
@@ -179,7 +182,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.aero.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_1", e)}
                   />
@@ -191,7 +194,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.aero.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_2", e)}
                   />
@@ -203,7 +206,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.aero.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("aero", "shift_3", e)}
                   />
@@ -234,7 +237,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.hpc.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_1", e)}
                   />
@@ -246,7 +249,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.hpc.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_2", e)}
                   />
@@ -258,7 +261,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.hpc.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("hpc", "shift_3", e)}
                   />
@@ -289,7 +292,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 1"
+                    placeholder="1º"
                     value={politicsData.food.shift_1.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_1", e)}
                   />
@@ -301,7 +304,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 2"
+                    placeholder="2º"
                     value={politicsData.food.shift_2.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_2", e)}
                   />
@@ -313,7 +316,7 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
                       label: "text-[0.8rem]",
                       inputWrapper: "h-2 min-h-unit-8",
                     }}
-                    placeholder="turno 3"
+                    placeholder="3º"
                     value={politicsData.food.shift_3.toString()}
                     onChange={(e) => handleUpdatePolitics("food", "shift_3", e)}
                   />
