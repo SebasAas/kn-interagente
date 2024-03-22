@@ -59,7 +59,7 @@ function RadarChart({ data }: { data: UserTableProps }) {
     ],
     options: {
       chart: {
-        height: 250,
+        height: 350,
         type: "radar",
       },
       dataLabels: {

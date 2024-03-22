@@ -10,14 +10,7 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // Components
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -36,6 +29,7 @@ import { fetchRanking } from "../(services)/ranking";
 import User from "../(components)/Productivity/User";
 import Ranking from "../(components)/Productivity/Ranking";
 import DropzoneProductivity from "../(components)/Productivity/Dropzone";
+import { useAppContext } from "../(context)/AppContext";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -85,7 +79,9 @@ const reorderJsonData = (data: any, order: any) => {
 };
 
 export default function Productivity() {
+  const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
+
   const [chartDataProdByResource, setChartDataProdByResource] = useState<any>({
     options: {},
     series: [],
@@ -202,6 +198,8 @@ export default function Productivity() {
             );
           }
         } else {
+          dispatch({ type: "SET_CHART_DATA", payload: res });
+
           const reorderedData = reorderJsonData(res, indicatorOrder);
 
           handleBuildChart(reorderedData);
@@ -417,6 +415,14 @@ export default function Productivity() {
       productivity: lengthEstimatedProd || 0,
     });
 
+    dispatch({
+      type: "SET_LENGTH_SERIES",
+      payload: {
+        resource: lengthEstimatedProd || 0,
+        productivity: lengthEstimatedProd || 0,
+      },
+    });
+
     // Special check for second chart
     let mergedProductivitySeries;
 
@@ -567,22 +573,7 @@ export default function Productivity() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
-        <div className="flex flex-1 flex-col gap-6">
-          <Card className="p-4 h-full flex-col w-full">
-            <CardBody className="overflow-visible">
-              <div>
-                <Subtitle>Produção x Recurso em atividade</Subtitle>
-              </div>
-              <MixedChart state={chartDataProdByResource} />
-              <Divider />
-              <div className="mt-3">
-                <Subtitle>Produtividade x Horas diretas</Subtitle>
-              </div>
-              <MixedChart state={chartDataProductivityByHour} />
-            </CardBody>
-          </Card>
-        </div>
-        <div className="flex flex-col h-full w-[20%] gap-6">
+        <div className="flex flex-col h-full w-[20%] gap-6 max-w-[240px]">
           <Card className="p-4 h-fit">
             <CardHeader className="p-0 pb-2 flex-col items-start">
               <Subtitle>Filtros</Subtitle>
@@ -657,6 +648,21 @@ export default function Productivity() {
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
           />
+        </div>
+        <div className="flex flex-1 flex-col gap-6">
+          <Card className="p-4 h-full flex-col w-full">
+            <CardBody className="overflow-visible">
+              <div>
+                <Subtitle>Produção x Recurso em atividade</Subtitle>
+              </div>
+              <MixedChart state={chartDataProdByResource} />
+              <Divider />
+              <div className="mt-3">
+                <Subtitle>Produtividade x Horas diretas</Subtitle>
+              </div>
+              <MixedChart state={chartDataProductivityByHour} />
+            </CardBody>
+          </Card>
         </div>
       </div>
       <div className="flex flex-row gap-4 mt-4 justify-between">

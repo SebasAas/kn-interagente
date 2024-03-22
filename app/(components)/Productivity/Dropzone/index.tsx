@@ -47,18 +47,22 @@ function DropzoneProductivity({
       await toastPromise
         .then((response) => response.json())
         .then((res: any) => {
-          if (res === null) {
+          console.log(res);
+          if (res.detail) {
+            toast.error(
+              <div>
+                <h2>{res.detail}</h2>
+              </div>
+            );
+            setProductivityFile(null);
             return;
           }
-          toast.error(
-            <div>
-              <h2>Algo deu errado enviando o arquivo, tente novamente!</h2>
-            </div>
-          );
-          setProductivityFile(null);
         })
         .catch((err) => {
-          toast.error("Algo deu errado enviando o arquivo, tente novamente!");
+          console.log("Aquiiiii");
+          toast.error(
+            `Algo deu errado enviando o arquivo, tente novamente! ${err.message}`
+          );
           setProductivityFile(null);
         });
     }
@@ -76,7 +80,7 @@ function DropzoneProductivity({
           dateRangeChart={dateRangeChart}
           setWSSChartFinished={setWSSChartFinished}
           setDateInfo={setDateInfo}
-          buttonDisabled={buttonDisabled}
+          isDisable={buttonDisabled}
         />
       </CardBody>
     </Card>
