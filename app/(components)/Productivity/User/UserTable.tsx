@@ -49,7 +49,7 @@ const UserTable = ({ userData }: { userData: UserTableProps }) => {
   const productionDataWithPallets = {
     PALLETS: palets && palets.length > 0 && palets[0]?.pallets,
     DIRECT_HOURS: palets[0]?.direct_hours,
-    DISTANCE: palets[0]?.distance,
+    DISTANCE: palets[0]?.distance.toFixed(0),
     ...productionData,
   };
 
