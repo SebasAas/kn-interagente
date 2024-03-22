@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRigthIcon } from "@/app/(assets)/ArrowIcon";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/app/(assets)/ArrowIcon";
 import { useAppContext } from "@/app/(context)/AppContext";
 import { formatDateToHHMM } from "@/app/(helpers)/dates";
 import { FamilyPropsResponse } from "@/app/(services)/demand";
@@ -33,7 +33,7 @@ const Swapper = ({ selectFamily }: { selectFamily: any }) => {
         {data[index]}
       </p>
       <button onClick={() => handleSwap("next")}>
-        <ArrowRigthIcon />
+        <ArrowRightIcon />
       </button>
     </div>
   );
@@ -72,7 +72,7 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           key={index}
           className={`text-center ${
             isEndOfShift(index)
-              ? "border-solid border-0  border-b-1.5 border-black "
+              ? "border-solid border-0 border-b-1.5 border-black"
               : ""
           }`}
         >
@@ -80,15 +80,17 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             <div
               className={`${
                 isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              }  bg-[${data.criticity}] text-white`}
+              } text-white`}
+              style={{ backgroundColor: data.criticity }}
             >
               {data.workers}
             </div>
           </td>
           <td>
             <div
-              className={
-                isNoWorkTime(index) ? `bg-[${data.criticity}] text-white` : ""
+              className={isNoWorkTime(index) ? "text-white" : ""}
+              style={
+                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
               }
             >
               {data.visits}
@@ -96,8 +98,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           </td>
           <td>
             <div
-              className={
-                isNoWorkTime(index) ? `bg-[${data.criticity}] text-white` : ""
+              className={isNoWorkTime(index) ? "text-white" : ""}
+              style={
+                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
               }
             >
               {data.boxes}
@@ -117,27 +120,27 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
         key={index}
         className={`text-center ${
           isEndOfShift(index)
-            ? "border-solid border-0  border-b-1.5 border-black "
+            ? "border-solid border-0 border-b-1.5 border-black"
             : ""
         }`}
       >
         <td className="py-0.5 text-center flex justify-center">
           <div
             className={`${
-              isNoWorkTime(index)
-                ? `w-full bg-[${data.criticity}] text-white`
-                : "min-w-[70px] w-min rounded"
-            }  `}
+              isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
+            } text-white`}
+            style={{ backgroundColor: data.criticity }}
           >
             {data.base_workers}
           </div>
         </td>
-        <td className="text-center ">
+        <td className="text-center">
           <div className="w-full flex justify-center">
             <div
               className={`${
                 isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              }  bg-[${data.criticity}] text-white`}
+              } text-white`}
+              style={{ backgroundColor: data.criticity }}
             >
               {data.workers}
             </div>
@@ -145,8 +148,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
         </td>
         <td>
           <div
-            className={
-              isNoWorkTime(index) ? `bg-[${data.criticity}] text-white` : ""
+            className={isNoWorkTime(index) ? "text-white" : ""}
+            style={
+              isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
             }
           >
             {data.visits}
@@ -156,7 +160,8 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           <div
             className={`${
               isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-            }  bg-[${data.criticity}] text-white`}
+            } text-white`}
+            style={{ backgroundColor: data.criticity }}
           >
             {data.boxes}
           </div>
@@ -179,15 +184,16 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           key={index}
           className={`text-center ${
             isEndOfShift(index)
-              ? "border-solid border-0  border-b-1.5 border-black "
+              ? "border-solid border-0 border-b-1.5 border-black"
               : ""
           }`}
         >
-          <td className={`py-0.5 text-center flex justify-center`}>
+          <td className="py-0.5 text-center flex justify-center">
             <div
-              className={`px-3 ${
-                isNoWorkTime(index) ? `bg-[${data.criticity}] text-white` : ""
-              } `}
+              className={`px-3 ${isNoWorkTime(index) ? "text-white" : ""}`}
+              style={
+                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+              }
             >
               {formatDateToHHMM(data.hour)}
             </div>
