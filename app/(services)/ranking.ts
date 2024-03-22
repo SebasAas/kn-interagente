@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-export const BASE_URL = "https://kn-workers-dev-emachzhqzq-uc.a.run.app/";
+export const BASE_URL = "https://kn-workers-emachzhqzq-uc.a.run.app/";
 
 export const fetchRanking = async (
   month: string,
