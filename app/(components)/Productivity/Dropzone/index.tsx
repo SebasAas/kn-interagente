@@ -48,10 +48,10 @@ function DropzoneProductivity({
         .then((response) => response.json())
         .then((res: any) => {
           console.log(res);
-          if (res.detail) {
+          if (res?.detail) {
             toast.error(
               <div>
-                <h2>{res.detail}</h2>
+                <h2>{res?.detail}</h2>
               </div>
             );
             setProductivityFile(null);

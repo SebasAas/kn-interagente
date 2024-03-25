@@ -183,8 +183,8 @@ export default function Productivity() {
 
     await toastPromiseGraph
       .then((res: any) => {
-        if (res.detail) {
-          if (res.detail.includes("Não tem dados")) {
+        if (res?.detail) {
+          if (res?.detail.includes("Não tem dados")) {
             toast.info(
               <div>
                 <h2>Não encontramos dados de grafico para essa data</h2>
@@ -224,8 +224,8 @@ export default function Productivity() {
 
     await toastPromiseRanking
       .then((res: any) => {
-        if (res.detail) {
-          if (res.detail.includes("No ranking data found")) {
+        if (res?.detail) {
+          if (res?.detail.includes("No ranking data found")) {
             toast.info(
               <div>
                 <h2>Não encontramos dados de ranking para essa data</h2>
