@@ -63,6 +63,274 @@ const indicatorOrder = [
   "Média horas diretas estimados",
 ];
 
+const filterSeriesByIndicators = (
+  series: Series[],
+  indicators: string[]
+): Series[] => {
+  return series.filter((s) => indicators.includes(s.name));
+};
+
+const mergeArrays = (
+  series: Series[],
+  name: string,
+  seriesName: string
+): Series => {
+  const recursos =
+    series.find((s) => s.name?.toLowerCase() === name?.toLowerCase())?.data ||
+    [];
+  const recursosEstimados =
+    series.find((s) => s.name?.toLowerCase() === seriesName?.toLowerCase())
+      ?.data || [];
+
+  // Replace nulls in 'recursos' with values from 'recursos estimados'
+  for (let i = 0; i < recursos.length; i++) {
+    if (recursos[i] === null && recursosEstimados[i] !== undefined) {
+      recursos[i] = recursosEstimados[i];
+    }
+  }
+
+  // Append any remaining 'recursos estimados' values to 'recursos'
+  if (recursosEstimados.length > recursos.length) {
+    const additionalData = recursosEstimados.slice(recursos.length);
+    recursos.push(...additionalData);
+  }
+
+  return {
+    name: name,
+    type: "bar",
+    data: recursos,
+  };
+};
+
+const handleBuildChart = (
+  data: ChartData[],
+  setEstimatedLengthSeries: React.Dispatch<
+    React.SetStateAction<{ resource: number; productivity: number }>
+  >,
+  dispatch: React.Dispatch<React.SetStateAction<any>>,
+  setChartDataProdByResource: React.Dispatch<React.SetStateAction<any>>,
+  setChartDataProductivityByHour: React.Dispatch<React.SetStateAction<any>>
+) => {
+  const totalLabels = Math.max(...data.flatMap((obj) => obj.label));
+
+  const getMergedLabels = (
+    regularIndicator: string,
+    estimatedIndicator: string
+  ): number[] => {
+    const regularLabels =
+      data.find((obj) => obj.indicator.toLowerCase() === regularIndicator)
+        ?.label || [];
+    const estimatedLabels =
+      data.find((obj) => obj.indicator.toLowerCase() === estimatedIndicator)
+        ?.label || [];
+
+    return [...regularLabels, ...estimatedLabels];
+  };
+
+  // Adjusts data array by filling with nulls up to the total number of labels
+  const adjustDataArray = (
+    dataArray: number[],
+    totalLabels: number
+  ): (number | null)[] => {
+    const adjustedArray: (number | null)[] = [...dataArray];
+    while (adjustedArray.length < totalLabels) {
+      adjustedArray.push(null); // Append nulls without removing existing data
+    }
+    return adjustedArray;
+  };
+
+  const prependNullsToEstimatedData = (
+    estimatedData: number[],
+    regularDataLength: number
+  ): (number | null)[] => {
+    const nullArray = Array(regularDataLength).fill(null);
+    return [...nullArray, ...estimatedData];
+  };
+
+  // Combines regular and estimated data for an indicator
+  const getAdjustedEstimatedData = (
+    estimatedIndicator: string,
+    regularIndicator: string
+  ): (number | null)[] => {
+    const regularData =
+      data.find((obj) => obj.indicator === regularIndicator)?.data || [];
+    const estimatedData =
+      data.find((obj) => obj.indicator === estimatedIndicator)?.data || [];
+    return prependNullsToEstimatedData(estimatedData, regularData.length);
+  };
+
+  // Process each indicator
+  const series: Series[] = data.map((indicatorData) => {
+    let combinedData: (number | null)[];
+
+    if (
+      indicatorData.indicator.endsWith("estimada") ||
+      indicatorData.indicator.endsWith("estimados") ||
+      indicatorData.indicator.endsWith("estimadas")
+    ) {
+      const indicatorParts = indicatorData.indicator.split(" ");
+      indicatorParts.pop();
+      const regularIndicator = indicatorParts.join(" ");
+      combinedData = getAdjustedEstimatedData(
+        indicatorData.indicator,
+        regularIndicator
+      );
+    } else {
+      combinedData = adjustDataArray(indicatorData.data, totalLabels);
+    }
+
+    return {
+      name: indicatorData.indicator.toLowerCase(),
+      type: indicatorData.indicator.includes("Recursos") ? "bar" : "line",
+      data: combinedData,
+    };
+  });
+
+  const resourceIndicators = ["produção", "produção estimada"];
+  const prodctivityLineIndicators = [
+    "média horas diretas",
+    "média horas diretas estimados",
+    "target horas diretas",
+    "target produtividade",
+  ];
+  const prodctivityBarIndicators = ["produtividade", "produtividade estimada"];
+
+  const filteredSeriesResourceChart = filterSeriesByIndicators(
+    series,
+    resourceIndicators
+  );
+
+  const filteredSeriesProductivityLinesChart = filterSeriesByIndicators(
+    series,
+    prodctivityLineIndicators
+  );
+
+  const filteredSeriesProductivityBarsChart = filterSeriesByIndicators(
+    series,
+    prodctivityBarIndicators
+  );
+
+  // Get all the not null values from the resource and productivity serie to remove bg from barchart
+  const estimatedProdValues = series.filter((s) =>
+    ["produção estimada"].includes(s.name)
+  ) as Array<any>;
+
+  const lengthEstimatedProd = estimatedProdValues[0]?.data?.filter(
+    (item: any) => {
+      return item !== null;
+    }
+  ).length;
+
+  setEstimatedLengthSeries({
+    resource: lengthEstimatedProd || 0,
+    productivity: lengthEstimatedProd || 0,
+  });
+
+  dispatch({
+    type: "SET_LENGTH_SERIES",
+    payload: {
+      resource: lengthEstimatedProd || 0,
+      productivity: lengthEstimatedProd || 0,
+    },
+  });
+
+  // Special check for second chart
+  let mergedProductivitySeries;
+
+  const serieProductivity = filteredSeriesProductivityBarsChart[0].data;
+
+  if (serieProductivity.includes(null)) {
+    const productivity = filteredSeriesProductivityBarsChart[0].data;
+    const productivityEstimate = filteredSeriesProductivityBarsChart[1].data;
+
+    const productivityWithoutNull = productivity.filter(
+      (item) => item !== null
+    );
+
+    const productivityEstimateWithoutNull = productivityEstimate.filter(
+      (item) => item !== null
+    );
+
+    const productivityMerged = productivityWithoutNull.concat(
+      productivityEstimateWithoutNull
+    );
+
+    mergedProductivitySeries = {
+      name: "produtividade",
+      type: "bar",
+      data: productivityMerged,
+    };
+  } else {
+    mergedProductivitySeries = {
+      name: "produtividade",
+      type: "bar",
+      data: serieProductivity,
+    };
+  }
+
+  const getLabelsRecursos = getMergedLabels("produção", "produção estimada");
+
+  const mergedRecursosSeries = mergeArrays(
+    series,
+    "recursos",
+    "recursos estimados"
+  );
+
+  // Remove all the nulls from [mergedRecursosSeries, ...filteredSeriesResourceChart][0].data
+  const mergedRecursosSeriesWithoutNull = mergedRecursosSeries?.data?.filter(
+    (item) => item !== null
+  );
+
+  mergedRecursosSeries.data = mergedRecursosSeriesWithoutNull;
+
+  const resourceChart = {
+    options: {
+      ...stateProductionxResources.options,
+      xaxis: {
+        type: "category",
+        labels: {
+          formatter: function (val: string) {
+            // Based in the date
+            return `${val}`;
+          },
+          style: {
+            fontSize: "12px",
+            fontWeight: 600,
+            colors: "#000",
+          },
+        },
+        categories: getLabelsRecursos,
+      },
+    },
+    series: [mergedRecursosSeries, ...filteredSeriesResourceChart],
+  };
+
+  const productivityChart = {
+    options: {
+      ...stateProductivityxHour.options,
+      xaxis: {
+        type: "category",
+        labels: {
+          formatter: function (val: string) {
+            // Based in the date
+            return `${val}`;
+          },
+          style: {
+            fontSize: "12px",
+            fontWeight: 600,
+            colors: "#000",
+          },
+        },
+        categories: getLabelsRecursos,
+      },
+    },
+    series: [mergedProductivitySeries, ...filteredSeriesProductivityLinesChart],
+  };
+
+  setChartDataProdByResource(resourceChart);
+  setChartDataProductivityByHour(productivityChart);
+};
+
 // Function to reorder the JSON data based on the indicator order
 const reorderJsonData = (data: any, order: any) => {
   // Create a mapping of indicators to their order index
@@ -202,7 +470,13 @@ export default function Productivity() {
 
           const reorderedData = reorderJsonData(res, indicatorOrder);
 
-          handleBuildChart(reorderedData);
+          handleBuildChart(
+            reorderedData,
+            setEstimatedLengthSeries,
+            dispatch,
+            setChartDataProdByResource,
+            setChartDataProductivityByHour
+          );
         }
 
         if (res.error) {
@@ -255,272 +529,6 @@ export default function Productivity() {
       .finally(() => {
         setButtonDisabled(false);
       });
-  };
-
-  const filterSeriesByIndicators = (
-    series: Series[],
-    indicators: string[]
-  ): Series[] => {
-    return series.filter((s) => indicators.includes(s.name));
-  };
-
-  const mergeArrays = (
-    series: Series[],
-    name: string,
-    seriesName: string
-  ): Series => {
-    const recursos =
-      series.find((s) => s.name?.toLowerCase() === name?.toLowerCase())?.data ||
-      [];
-    const recursosEstimados =
-      series.find((s) => s.name?.toLowerCase() === seriesName?.toLowerCase())
-        ?.data || [];
-
-    // Replace nulls in 'recursos' with values from 'recursos estimados'
-    for (let i = 0; i < recursos.length; i++) {
-      if (recursos[i] === null && recursosEstimados[i] !== undefined) {
-        recursos[i] = recursosEstimados[i];
-      }
-    }
-
-    // Append any remaining 'recursos estimados' values to 'recursos'
-    if (recursosEstimados.length > recursos.length) {
-      const additionalData = recursosEstimados.slice(recursos.length);
-      recursos.push(...additionalData);
-    }
-
-    return {
-      name: name,
-      type: "bar",
-      data: recursos,
-    };
-  };
-
-  const handleBuildChart = (data: ChartData[]) => {
-    const totalLabels = Math.max(...data.flatMap((obj) => obj.label));
-
-    const getMergedLabels = (
-      regularIndicator: string,
-      estimatedIndicator: string
-    ): number[] => {
-      const regularLabels =
-        data.find((obj) => obj.indicator.toLowerCase() === regularIndicator)
-          ?.label || [];
-      const estimatedLabels =
-        data.find((obj) => obj.indicator.toLowerCase() === estimatedIndicator)
-          ?.label || [];
-
-      return [...regularLabels, ...estimatedLabels];
-    };
-
-    // Adjusts data array by filling with nulls up to the total number of labels
-    const adjustDataArray = (
-      dataArray: number[],
-      totalLabels: number
-    ): (number | null)[] => {
-      const adjustedArray: (number | null)[] = [...dataArray];
-      while (adjustedArray.length < totalLabels) {
-        adjustedArray.push(null); // Append nulls without removing existing data
-      }
-      return adjustedArray;
-    };
-
-    const prependNullsToEstimatedData = (
-      estimatedData: number[],
-      regularDataLength: number
-    ): (number | null)[] => {
-      const nullArray = Array(regularDataLength).fill(null);
-      return [...nullArray, ...estimatedData];
-    };
-
-    // Combines regular and estimated data for an indicator
-    const getAdjustedEstimatedData = (
-      estimatedIndicator: string,
-      regularIndicator: string
-    ): (number | null)[] => {
-      const regularData =
-        data.find((obj) => obj.indicator === regularIndicator)?.data || [];
-      const estimatedData =
-        data.find((obj) => obj.indicator === estimatedIndicator)?.data || [];
-      return prependNullsToEstimatedData(estimatedData, regularData.length);
-    };
-
-    // Process each indicator
-    const series: Series[] = data.map((indicatorData) => {
-      let combinedData: (number | null)[];
-
-      if (
-        indicatorData.indicator.endsWith("estimada") ||
-        indicatorData.indicator.endsWith("estimados") ||
-        indicatorData.indicator.endsWith("estimadas")
-      ) {
-        const indicatorParts = indicatorData.indicator.split(" ");
-        indicatorParts.pop();
-        const regularIndicator = indicatorParts.join(" ");
-        combinedData = getAdjustedEstimatedData(
-          indicatorData.indicator,
-          regularIndicator
-        );
-      } else {
-        combinedData = adjustDataArray(indicatorData.data, totalLabels);
-      }
-
-      return {
-        name: indicatorData.indicator.toLowerCase(),
-        type: indicatorData.indicator.includes("Recursos") ? "bar" : "line",
-        data: combinedData,
-      };
-    });
-
-    const resourceIndicators = ["produção", "produção estimada"];
-    const prodctivityLineIndicators = [
-      "média horas diretas",
-      "média horas diretas estimados",
-      "target horas diretas",
-      "target produtividade",
-    ];
-    const prodctivityBarIndicators = [
-      "produtividade",
-      "produtividade estimada",
-    ];
-
-    const filteredSeriesResourceChart = filterSeriesByIndicators(
-      series,
-      resourceIndicators
-    );
-
-    const filteredSeriesProductivityLinesChart = filterSeriesByIndicators(
-      series,
-      prodctivityLineIndicators
-    );
-
-    const filteredSeriesProductivityBarsChart = filterSeriesByIndicators(
-      series,
-      prodctivityBarIndicators
-    );
-
-    // Get all the not null values from the resource and productivity serie to remove bg from barchart
-    const estimatedProdValues = series.filter((s) =>
-      ["produção estimada"].includes(s.name)
-    ) as Array<any>;
-
-    const lengthEstimatedProd = estimatedProdValues[0]?.data?.filter(
-      (item: any) => {
-        return item !== null;
-      }
-    ).length;
-
-    setEstimatedLengthSeries({
-      resource: lengthEstimatedProd || 0,
-      productivity: lengthEstimatedProd || 0,
-    });
-
-    dispatch({
-      type: "SET_LENGTH_SERIES",
-      payload: {
-        resource: lengthEstimatedProd || 0,
-        productivity: lengthEstimatedProd || 0,
-      },
-    });
-
-    // Special check for second chart
-    let mergedProductivitySeries;
-
-    const serieProductivity = filteredSeriesProductivityBarsChart[0].data;
-
-    if (serieProductivity.includes(null)) {
-      const productivity = filteredSeriesProductivityBarsChart[0].data;
-      const productivityEstimate = filteredSeriesProductivityBarsChart[1].data;
-
-      const productivityWithoutNull = productivity.filter(
-        (item) => item !== null
-      );
-
-      const productivityEstimateWithoutNull = productivityEstimate.filter(
-        (item) => item !== null
-      );
-
-      const productivityMerged = productivityWithoutNull.concat(
-        productivityEstimateWithoutNull
-      );
-
-      mergedProductivitySeries = {
-        name: "produtividade",
-        type: "bar",
-        data: productivityMerged,
-      };
-    } else {
-      mergedProductivitySeries = {
-        name: "produtividade",
-        type: "bar",
-        data: serieProductivity,
-      };
-    }
-
-    const getLabelsRecursos = getMergedLabels("produção", "produção estimada");
-
-    const mergedRecursosSeries = mergeArrays(
-      series,
-      "recursos",
-      "recursos estimados"
-    );
-
-    // Remove all the nulls from [mergedRecursosSeries, ...filteredSeriesResourceChart][0].data
-    const mergedRecursosSeriesWithoutNull = mergedRecursosSeries?.data?.filter(
-      (item) => item !== null
-    );
-
-    mergedRecursosSeries.data = mergedRecursosSeriesWithoutNull;
-
-    const resourceChart = {
-      options: {
-        ...stateProductionxResources.options,
-        xaxis: {
-          type: "category",
-          labels: {
-            formatter: function (val: string) {
-              // Based in the date
-              return `${val}`;
-            },
-            style: {
-              fontSize: "12px",
-              fontWeight: 600,
-              colors: "#000",
-            },
-          },
-          categories: getLabelsRecursos,
-        },
-      },
-      series: [mergedRecursosSeries, ...filteredSeriesResourceChart],
-    };
-
-    const productivityChart = {
-      options: {
-        ...stateProductivityxHour.options,
-        xaxis: {
-          type: "category",
-          labels: {
-            formatter: function (val: string) {
-              // Based in the date
-              return `${val}`;
-            },
-            style: {
-              fontSize: "12px",
-              fontWeight: 600,
-              colors: "#000",
-            },
-          },
-          categories: getLabelsRecursos,
-        },
-      },
-      series: [
-        mergedProductivitySeries,
-        ...filteredSeriesProductivityLinesChart,
-      ],
-    };
-
-    setChartDataProdByResource(resourceChart);
-    setChartDataProductivityByHour(productivityChart);
   };
 
   useEffect(() => {
@@ -634,8 +642,13 @@ export default function Productivity() {
                     ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                     : "bg-blue-900 text-white"
                 } text-sm font-medium mt-2`}
-                onClick={() => handleGetInfoByData({ ...dateInfo })}
-                disabled={buttonDisabled}
+                onClick={() =>
+                  handleGetInfoByData({
+                    month: dateInfo?.month || "01",
+                    year: dateInfo?.year || "2024",
+                    shift: dateInfo?.shift || "0",
+                  })
+                }
               >
                 Buscar
               </button>
