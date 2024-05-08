@@ -104,7 +104,7 @@ const PlanningPage: React.FC = () => {
             <h3 className="text-[#353535] font-medium">Data</h3>
             <TruckIcon />
           </div>
-          <DateSelector onDateSelect={handleDateSelect} />
+          <DateSelector onDateSelect={handleDateSelect} isLoading={isLoading} />
         </Card>
         <Card className="p-4 h-fit ">
           <CardHeader className="p-0 pb-2 flex-col items-start">
