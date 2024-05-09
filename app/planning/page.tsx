@@ -74,14 +74,16 @@ const PlanningPage: React.FC = () => {
 
           toast.error(
             <div>
-              <h2>Algo deu errado enviando o arquivo, tente novamente!</h2>
+              <h2>Algo deu errado enviando o arquivo, {res.detail}</h2>
             </div>
           );
           setDemandFile(null);
           // uploadStatus();
         })
         .catch((err) => {
-          toast.error("Algo deu errado enviando o arquivo, tente novamente!");
+          toast.error(
+            `Algo deu errado enviando o arquivo, tente novamente! ${err.detail}`
+          );
           setDemandFile(null);
         });
     }

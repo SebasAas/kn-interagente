@@ -59,7 +59,6 @@ function DropzoneProductivity({
           }
         })
         .catch((err) => {
-          console.log("Aquiiiii");
           toast.error(
             `Algo deu errado enviando o arquivo, tente novamente! ${err.message}`
           );
