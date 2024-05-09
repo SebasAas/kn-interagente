@@ -1,8 +1,10 @@
 import { useAppContext } from "@/app/(context)/AppContext";
+import { Spinner } from "@nextui-org/react";
 import React, { useReducer, useState } from "react";
 
 interface DateSelectorProps {
   onDateSelect: (date: Date) => void;
+  isLoading: boolean;
 }
 
 const COLORS = {
@@ -10,7 +12,10 @@ const COLORS = {
   notUploaded: "bg-[#AC3E31]",
 };
 
-const DateSelector: React.FC<DateSelectorProps> = ({ onDateSelect }) => {
+const DateSelector: React.FC<DateSelectorProps> = ({
+  onDateSelect,
+  isLoading,
+}) => {
   const {
     dispatch,
     demands: { uploadStatus },
@@ -30,6 +35,11 @@ const DateSelector: React.FC<DateSelectorProps> = ({ onDateSelect }) => {
 
   return (
     <div className="flex flex-col space-y-2 justify-between">
+      {isLoading && !uploadStatus.length && (
+        <div className="w-full flex justify-center items-center">
+          <Spinner size="sm" classNames={{}} />
+        </div>
+      )}
       {uploadStatus.map((status, index) => (
         <div key={index} className="flex flex-row justify-between">
           <div
