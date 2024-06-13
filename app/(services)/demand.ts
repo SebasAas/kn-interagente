@@ -98,3 +98,9 @@ export const demandSimulation = async (data: FamilyProps) => {
 
   return simulationData;
 };
+
+export const fetchProductivityStats = async () => {
+  const response = await fetch(`${BASE_URL}production/statistics`);
+  const data = await response.json();
+  return data;
+};

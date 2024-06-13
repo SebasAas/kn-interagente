@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import DateSelector from "../(components)/Planning/DateSelector";
 import AlertBoard from "../(components)/Planning/AlertBoard";
 import UploadButton from "../(components)/Planning/UploadButton";
@@ -17,23 +17,17 @@ import { useAppContext } from "../(context)/AppContext";
 import { useSession } from "next-auth/react";
 import { getBaseUrl } from "../(helpers)/env";
 import { redirect } from "next/navigation";
-import { generateDates } from "../(helpers)/generateDates";
 import useGetUploadDatesTrucks from "../(hooks)/useGetUploadDatesTrucks";
 import { ArrowDownIcon } from "../(assets)/ArrowIcon";
-import mockedSimulation from "../(helpers)/mockedSimulation";
 import { formatDateToDDMM } from "../(helpers)/dates";
+import AttatchIcon from "../(assets)/AttatchIcon";
 
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
-  const { dispatch, simulation, selectedSimulationDate } = useAppContext();
+  const { dispatch, simulation, selectedSimulationDate, productivityStats } =
+    useAppContext();
   const [demandFile, setDemandFile] = useState<File | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-
-  const [dateInfoCallback, setDateInfoCallback] = useState({
-    year: "2024",
-    month: "03",
-    shift: "0",
-  });
 
   const { isLoading, error } = useGetUploadDatesTrucks();
 
@@ -103,7 +97,7 @@ const PlanningPage: React.FC = () => {
       <div className="flex flex-col gap-6 w-[20%] max-w-[240px]">
         <Card className="p-4 h-fit ">
           <div className="flex flex-row justify-between mb-4">
-            <h3 className="text-[#353535] font-medium">Data</h3>
+            <Subtitle>Data</Subtitle>
             <TruckIcon />
           </div>
           <DateSelector onDateSelect={handleDateSelect} isLoading={isLoading} />
@@ -113,30 +107,121 @@ const PlanningPage: React.FC = () => {
             <Subtitle>Demanda</Subtitle>
           </CardHeader>
           <CardBody className="overflow-visible !p-0 !pt-2">
-            <Dropzone
-              file={demandFile}
-              setFile={onFileSelect}
-              dateRangeChart={{
-                latest_updated_visit: "",
-                newest_updated_visit: "",
-              }}
-              setWSSChartFinished={() => {}}
-              setDateInfo={setDateInfoCallback}
-              isDisable={false}
-              hasWSS={false}
-            />
+            <div>
+              <label
+                onClick={() => {}}
+                className="h-7 text-xs bg-[#003369] rounded text-white cursor-pointer flex justify-center items-center"
+              >
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".csv,.xls,.xlsx"
+                />
+                <div className="flex w-full justify-between ml-2 mr-3">
+                  <span className="ml-2">Adicionar dock</span>
+                  <AttatchIcon />
+                </div>
+              </label>
+              <div className="text-xs text-gray-500 flex gap-2 mt-1.5 pl-1.5">
+                Ultimo upload: <p className="text-black font-semibold">-</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label
+                onClick={() => {}}
+                className="h-7 text-xs bg-[#003369] rounded text-white cursor-pointer flex justify-center items-center"
+              >
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".csv,.xls,.xlsx"
+                />
+                <div className="flex w-full justify-between ml-2 mr-3">
+                  <span className="ml-2">Adicionar caixa/pallets</span>
+                  <AttatchIcon />
+                </div>
+              </label>
+              <div className="text-xs text-gray-500 flex gap-2 mt-1.5 pl-1.5">
+                Ultimo upload: <p className="text-black font-semibold">-</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+        <Card className="p-4 h-fit ">
+          <CardHeader className="p-0 pb-2 flex-col items-start">
+            <Subtitle>Parâmetros de produtividade</Subtitle>
+          </CardHeader>
+          <CardBody className="overflow-visible !p-0 !pt-2">
+            <div className="mt-4 flex flex-col gap-3">
+              <div className="flex gap-3 items-center">
+                <p className="font-medium invisible">HPC</p>
+                <div className={`p-1 w-1/2 text-center text-xs text-gray-400`}>
+                  <p>Perfil</p>
+                </div>
+                <div className={`p-1 w-1/2 text-center text-xs text-gray-400`}>
+                  <p>Media</p>
+                  <p>Visitas</p>
+                </div>
+              </div>
+              <div className="flex gap-3 items-center">
+                <p className="font-medium">HPC</p>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "HPC")
+                    ?.mean_profile || "-"}
+                </div>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "HPC")
+                    ?.mean_visits_per_hour || "-"}
+                </div>
+              </div>
+              <div className="flex gap-3 items-center">
+                <p className="font-medium">Aero</p>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "AERO")
+                    ?.mean_profile || "-"}
+                </div>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "AERO")
+                    ?.mean_visits_per_hour || "-"}
+                </div>
+              </div>
+              <div className="flex gap-3 items-center">
+                <p className="font-medium">Food</p>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "FOODS")
+                    ?.mean_profile || "-"}
+                </div>
+                <div
+                  className={`cursor-pointer rounded p-1 w-1/2 text-center bg-gray-100 font-medium`}
+                >
+                  {productivityStats.find((el) => el.family === "FOODS")
+                    ?.mean_visits_per_hour || "-"}
+                </div>
+              </div>
+            </div>
           </CardBody>
         </Card>
       </div>
 
       <Card className="p-4 h-fit flex-1">
         <div className="flex flex-col gap-4">
-          <h3 className="text-[#353535] font-medium text-lg">
-            Separação de Caixas -{" "}
+          <Subtitle>
+            Separação de Caixas{" "}
             {selectedSimulationDate
-              ? formatDateToDDMM(selectedSimulationDate)
+              ? `- ${formatDateToDDMM(selectedSimulationDate)}`
               : ""}
-          </h3>
+          </Subtitle>
           <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
@@ -161,12 +246,12 @@ const PlanningPage: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="p-4 h-fit w-fit max-w-[300px]">
+      {/* <Card className="p-4 h-fit w-fit max-w-[300px]">
         <AlertBoard />
-        {/* <div className="border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
+        <div className="border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
           <p>Gráfico Produção x Recursos</p>
-        </div> */}
-      </Card>
+        </div>
+      </Card> */}
     </div>
   );
 };

@@ -7,10 +7,12 @@ import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
 import { toast } from "react-toastify";
 import { useAppContext } from "@/app/(context)/AppContext";
 import Loader from "../Loader";
+import useGetProductivityStats from "@/app/(hooks)/useGetProductivityStats";
 
 const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
   const { dispatch } = useAppContext();
   const { handleSendSimulation, isLoading, error } = useDemandSimulation();
+  const { handleGetProducitivityStats } = useGetProductivityStats();
   const [politicsData, setPoliticsData] = useState({
     aero: {
       max_storage: "",
@@ -118,6 +120,13 @@ const PoliticsForm = ({ isVisible }: { isVisible: boolean }) => {
     const res = handleSendSimulation(politicsDataTransformed);
 
     dispatch({ type: "SET_SIMULATION", payload: await res });
+
+    const productivityStats = await handleGetProducitivityStats();
+
+    dispatch({
+      type: "SET_PRODUCTIVITY_STATS",
+      payload: productivityStats,
+    });
   };
 
   return (

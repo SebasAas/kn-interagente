@@ -25,6 +25,7 @@ const initialState = {
     alarms: {},
     simulation: {},
   },
+  productivityStats: [],
 };
 
 export const Providers = ({ children }: Props) => {

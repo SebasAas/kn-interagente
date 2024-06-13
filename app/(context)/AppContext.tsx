@@ -48,11 +48,22 @@ export type State = {
   lengthSeries: any;
   selectedSimulationDate: string;
   simulation: FamilyPropsResponse;
+  productivityStats: ProductivityStats[];
 };
+
+type FamilyTypes = "AERO" | "HPC" | "FOODS";
 
 type ProviderProps = {
   children: ReactNode;
   initialState: State;
+};
+
+type ProductivityStats = {
+  family: FamilyTypes;
+  median_profile: number;
+  mean_profile: number;
+  median_visits_per_hour: number;
+  mean_visits_per_hour: number;
 };
 
 type ContextValue = State & {
@@ -79,6 +90,10 @@ type Action =
   | {
       type: "SET_SELECTED_SIMULATION_DATE";
       payload: string;
+    }
+  | {
+      type: "SET_PRODUCTIVITY_STATS";
+      payload: ProductivityStats[];
     };
 
 const AppContext = createContext<ContextValue | undefined>(undefined);
@@ -114,6 +129,11 @@ const stateReducer = (state: State, action: Action): State => {
       return {
         ...state,
         selectedSimulationDate: action.payload,
+      };
+    case "SET_PRODUCTIVITY_STATS":
+      return {
+        ...state,
+        productivityStats: action.payload,
       };
     default:
       return state;

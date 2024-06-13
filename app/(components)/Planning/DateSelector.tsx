@@ -43,7 +43,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       {uploadStatus.map((status, index) => (
         <div key={index} className="flex flex-row justify-between">
           <div
-            className={`cursor-pointer rounded p-1 w-1/2 text-center ${
+            className={`cursor-pointer rounded p-1 w-1/2 text-center font-medium ${
               selectedDate &&
               selectedDate.getTime() === new Date(status.date).getTime()
                 ? "bg-[#003369] text-white"
