@@ -1,4 +1,4 @@
-export const BASE_URL = "https://kn-demand-emachzhqzq-uc.a.run.app/";
+export const BASE_URL = "https://kn-demand-dev-emachzhqzq-uc.a.run.app/";
 
 export type FamilyProps = {
   families: [
