@@ -25,6 +25,11 @@ const initialState = {
     alarms: {},
     simulation: {},
   },
+  modal: {
+    open: false,
+    header: null,
+    body: null,
+  },
 };
 
 export const Providers = ({ children }: Props) => {

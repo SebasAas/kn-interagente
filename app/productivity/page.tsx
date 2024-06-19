@@ -10,7 +10,14 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 // Components
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from "@nextui-org/react";
 
 // Helpers
 import { getBaseUrl } from "../(helpers)/env";
@@ -30,6 +37,7 @@ import User from "../(components)/Productivity/User";
 import Ranking from "../(components)/Productivity/Ranking";
 import DropzoneProductivity from "../(components)/Productivity/Dropzone";
 import { useAppContext } from "../(context)/AppContext";
+import ToolIcon from "../(assets)/ToolIcon";
 
 const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
   ssr: false,
@@ -578,6 +586,141 @@ export default function Productivity() {
     });
   }, [chartDataProdByResource]);
 
+  const handleOpenConfigurationModal = () => {
+    dispatch({
+      type: "SET_MODAL",
+      payload: {
+        open: true,
+        header: <h2>Configurações</h2>,
+        body: (
+          <div className="flex flex-col">
+            <p className="text-xs">Horas diretas</p>
+            <div className="flex gap-4 mt-1">
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">de:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">até:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+            </div>
+            <p className="text-xs mt-3">Visitas</p>
+            <div className="flex gap-4 mt-1">
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">de:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">até:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+            </div>
+            <p className="text-xs mt-3">Caixas</p>
+            <div className="flex gap-4 mt-1">
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">de:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">até:</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-14",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="2º"
+                  value="0"
+                  onChange={(e) => console.log(e.target.value)}
+                  min={0}
+                />
+              </div>
+            </div>
+            <button
+              className={`px-2 py-1 mt-7 mb-4 rounded-md ${
+                buttonDisabled
+                  ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                  : "bg-blue-900 text-white"
+              } text-sm font-medium`}
+              onClick={() => console.log("click")}
+            >
+              Salvar
+            </button>
+          </div>
+        ),
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4">
@@ -588,20 +731,7 @@ export default function Productivity() {
             </CardHeader>
             <CardBody className="overflow-visible !p-0 !pt-2 gap-3">
               {/* Create two select with the years 2023, 2024 and a select with the months */}
-              <select
-                name="shift"
-                id=""
-                className="p-1 bg-[#F1F0F9] rounded-md text-sm"
-                onChange={(e) =>
-                  setDateInfo({ ...dateInfo, shift: e.target.value })
-                }
-                value={dateInfo.shift}
-              >
-                <option value="0">Todos</option>
-                <option value="1">1° turno</option>
-                <option value="2">2° turno</option>
-                <option value="3">3° turno</option>
-              </select>
+
               <div className="flex justify-between gap-2">
                 <select
                   name="year"
@@ -636,6 +766,27 @@ export default function Productivity() {
                   <option value="12">Dezembro</option>
                 </select>
               </div>
+              <select
+                name="shift"
+                id=""
+                className="p-1 bg-[#F1F0F9] rounded-md text-sm"
+                onChange={(e) =>
+                  setDateInfo({ ...dateInfo, shift: e.target.value })
+                }
+                value={dateInfo.shift}
+              >
+                <option value="0">Todos</option>
+                <option value="1">1° turno</option>
+                <option value="2">2° turno</option>
+                <option value="3">3° turno</option>
+              </select>
+              <button
+                className="flex gap-1 text-gray-500 items-center mt-2 border-none bg-transparent"
+                onClick={handleOpenConfigurationModal}
+              >
+                <ToolIcon />
+                <p className="text-xs">Configurações avançadas</p>
+              </button>
               <button
                 className={`px-2 py-1 rounded-md ${
                   buttonDisabled
