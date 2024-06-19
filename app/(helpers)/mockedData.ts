@@ -18,8 +18,16 @@ function minTommssString(hour: string) {
 
   // If hour is a string, I want to return the same string
 
-  const minutesInternal = hour?.toString().substring(0, 1);
-  const secondsInternal = hour?.toString().substring(1);
+  let minutesInternal;
+  let secondsInternal;
+
+  if (hour?.toString().length === 4) {
+    minutesInternal = hour?.toString().substring(0, 2);
+    secondsInternal = hour?.toString().substring(2);
+  } else {
+    minutesInternal = hour?.toString().substring(0, 1);
+    secondsInternal = hour?.toString().substring(1);
+  }
 
   // if minutes length is 1 and seconds length is 1 return 00:minutesseconds
   if (minutesInternal?.length === 1 && secondsInternal?.length === 1) {
