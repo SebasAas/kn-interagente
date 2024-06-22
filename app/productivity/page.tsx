@@ -48,6 +48,7 @@ interface Series {
   name: string;
   type: string;
   data: (number | null)[];
+  zIndex?: number;
 }
 
 // Define the order of the indicators
@@ -58,9 +59,9 @@ const indicatorOrder = [
   "Produção potencial",
   "Produtividade",
   "Target produtividade",
+  "Média horas diretas estimados",
   "Média horas diretas",
   "Target horas diretas",
-  "Média horas diretas estimados",
 ];
 
 const filterSeriesByIndicators = (
@@ -190,8 +191,6 @@ const handleBuildChart = (
   const prodctivityLineIndicators = [
     "média horas diretas",
     "média horas diretas estimados",
-    "target horas diretas",
-    "target produtividade",
   ];
   const prodctivityBarIndicators = ["produtividade", "produtividade estimada"];
 
@@ -283,6 +282,26 @@ const handleBuildChart = (
 
   mergedRecursosSeries.data = mergedRecursosSeriesWithoutNull;
 
+  const mergedProductivitysSeries = mergeArrays(
+    series,
+    "média horas diretas",
+    "média horas diretas estimados"
+  );
+
+  const mergedProductivitysSeriesWithoutNull =
+    mergedProductivitysSeries?.data?.filter((item) => item !== null);
+
+  mergedProductivitysSeries.data = mergedProductivitysSeriesWithoutNull;
+
+  // Add to the filteredSeriesProductivityLinesChart.name.média horas diretas estimados the zIndex 100
+  const productivityEstimados = filteredSeriesProductivityLinesChart.find(
+    (item) => item.name === "média horas diretas estimados"
+  );
+
+  if (productivityEstimados) {
+    productivityEstimados.zIndex = 100;
+  }
+
   const resourceChart = {
     options: {
       ...stateProductionxResources.options,
@@ -300,6 +319,28 @@ const handleBuildChart = (
           },
         },
         categories: getLabelsRecursos,
+      },
+      tooltip: {
+        y: {
+          title: {
+            formatter: function (
+              value: any,
+              { series, seriesIndex, dataPointIndex, w }: any
+            ) {
+              const max = series[0].length || 0;
+              const min = max - lengthEstimatedProd;
+
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "recursos"
+              ) {
+                return "recursos estimados";
+              }
+              return value;
+            },
+          },
+        },
       },
     },
     series: [mergedRecursosSeries, ...filteredSeriesResourceChart],
@@ -322,6 +363,55 @@ const handleBuildChart = (
           },
         },
         categories: getLabelsRecursos,
+      },
+      tooltip: {
+        hideEmptySeries: true,
+        z: {
+          formatter: function (
+            value: any,
+            { series, seriesIndex, dataPointIndex, w }: any
+          ) {
+            const max = series[0].length || 0;
+            const min = max - lengthEstimatedProd;
+
+            if (
+              dataPointIndex >= min &&
+              dataPointIndex <= max &&
+              value === "média horas diretas"
+            ) {
+              return null;
+            }
+            return value;
+          },
+          title: "",
+        },
+        y: {
+          title: {
+            formatter: function (
+              value: any,
+              { series, seriesIndex, dataPointIndex, w }: any
+            ) {
+              const max = series[0].length || 0;
+              const min = max - lengthEstimatedProd;
+
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "média horas diretas"
+              ) {
+                return null;
+              }
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "produtividade"
+              ) {
+                return "produtividade estimada";
+              }
+              return value;
+            },
+          },
+        },
       },
     },
     series: [mergedProductivitySeries, ...filteredSeriesProductivityLinesChart],
