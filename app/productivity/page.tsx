@@ -399,7 +399,7 @@ const handleBuildChart = (
                 dataPointIndex <= max &&
                 value === "média horas diretas"
               ) {
-                return null;
+                return "média horas diretas estimados";
               }
               if (
                 dataPointIndex >= min &&
