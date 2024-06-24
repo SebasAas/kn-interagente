@@ -129,12 +129,11 @@ const handleChangeLineChartProductivityByHour = () => {
     if (linePotentialProductivityFirstChild) {
       linePotentialProductivityFirstChild.setAttribute("stroke", "#FF0000");
       linePotentialProductivityFirstChild.setAttribute("stroke-width", "2");
-      // dashed line
       linePotentialProductivityFirstChild.setAttribute("stroke-dasharray", "7");
     }
     if (lineEstimatedAvgDirectHoursFirstChild) {
-      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#6AB187");
-      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "2");
+      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke", "#FFF");
+      lineEstimatedAvgDirectHoursFirstChild.setAttribute("stroke-width", "3");
       // dashed line
       lineEstimatedAvgDirectHoursFirstChild.setAttribute(
         "stroke-dasharray",
@@ -234,7 +233,10 @@ export const stateProductionxResources = {
         },
         labels: {
           formatter: (value: number) => {
-            return value;
+            // add the thousands separator
+            if (!value) return undefined;
+            const valueString = value?.toString();
+            return valueString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
           },
           style: {
             colors: "#CCCCCC",
@@ -256,7 +258,8 @@ export const stateProductionxResources = {
             ) {
               return undefined;
             }
-            return value;
+            const valueString = value?.toString();
+            return valueString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
           },
           style: {
             colors: "#CCCCCC",
@@ -318,6 +321,9 @@ export const stateProductionxResources = {
       },
       itemMargin: {
         horizontal: 10,
+      },
+      onItemClick: {
+        toggleDataSeries: false,
       },
     },
     colors: [
@@ -460,10 +466,6 @@ export const stateProductivityxHour = {
         forceNiceScale: true,
       },
       {
-        seriesName: "target produtividade",
-        show: false,
-      },
-      {
         seriesName: "media horas diretas",
         opposite: true,
         title: {
@@ -491,19 +493,6 @@ export const stateProductivityxHour = {
         forceNiceScale: true,
       },
       {
-        seriesName: "target horas directas",
-        show: false,
-        opposite: true,
-        labels: {
-          formatter: function (value: string) {
-            if (!value || value === null || value === undefined) {
-              return undefined;
-            }
-            return minTommssString(value);
-          },
-        },
-      },
-      {
         seriesName: "media horas diretas estimados",
         show: false,
         opposite: true,
@@ -516,45 +505,7 @@ export const stateProductivityxHour = {
           },
         },
       },
-      // {
-      //   seriesName: "media horas diretas estimados",
-      //   show: false,
-      //   opposite: true,
-      //   labels: {
-      //     formatter: function (value: number) {
-      //       // the value will be a 3 digits number, I want to separate the first digit is the minute and the last two are the seconds
-      //       const minutes = value?.toString().substring(0, 1);
-      //       const seconds = value?.toString().substring(1);
-
-      //       const total = minutes + seconds;
-
-      //       // @ts-ignore
-      //       const val = (total * 0.0168).toFixed(2);
-
-      //       if (minTommss(Number(val)) === "NaN:NaN") {
-      //         return null;
-      //       }
-
-      //       return minTommss(Number(val));
-      //     },
-      //   },
-      // },
     ],
-    // tooltip: {
-    //     shared: true,
-    //     intersect: false,
-    //     y: {
-    //         formatter: function (val: any) {
-    //             console.log(val)
-    //             return val
-    //             // if (typeof val !== "undefined" && val != null && isNaN(val) === false) {
-    //             //     return val.toFixed(0);
-    //             // }
-    //             // return null;
-    //         },
-    //     },
-
-    // },
     dataLabels: {
       enabled: true,
       enabledOnSeries: [0],
@@ -596,6 +547,9 @@ export const stateProductivityxHour = {
       itemMargin: {
         horizontal: 10,
       },
+      onItemClick: {
+        toggleDataSeries: false,
+      },
     },
     colors: [
       function (props: any) {
@@ -603,18 +557,11 @@ export const stateProductivityxHour = {
         if (props.seriesIndex === 0) {
           return "#003369";
         }
-        // First Line
-        if (props.seriesIndex === 1) {
-          return "#FF0000";
-        }
         // Second Line
         if (props.seriesIndex === 2) {
           return "#6AB187";
         }
-        if (props.seriesIndex === 3) {
-          return "#003369";
-        }
-        if (props.seriesIndex === 4) {
+        if (props.seriesIndex === 1) {
           return "#6AB187";
         }
       },
@@ -647,18 +594,6 @@ export const stateProductivityxHour = {
     {
       // Pedir para Joao mandar as horas assim...
       name: "media horas diretas",
-      type: "line",
-      //   31 random numbers btw 800 and 200, not being the same as avobe
-      data: [],
-    },
-    {
-      name: "target horas directas",
-      type: "line",
-      //   31 random numbers btw 800 and 200, not being the same as avobe
-      data: [],
-    },
-    {
-      name: "target produtividade",
       type: "line",
       //   31 random numbers btw 800 and 200, not being the same as avobe
       data: [],
