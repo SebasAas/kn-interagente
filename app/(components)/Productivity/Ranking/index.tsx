@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
 import Subtitle from "../../Text/Subtitle";

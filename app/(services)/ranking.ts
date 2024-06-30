@@ -8,7 +8,7 @@ export const fetchRanking = async (
   shift: string
 ) => {
   const response = await fetch(
-    `${BASE_URL}/ranking?month=${month}&year=${year}&shift=${shift}`
+    `${BASE_URL}ranking?month=0${month}&year=${year}&shift=${shift}`
   );
   const data = await response.json();
   return data;

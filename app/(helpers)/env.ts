@@ -1,6 +1,3 @@
-export const isDevVercel = process.env.VERCEL_ENV === "development";
-export const isDevNetlify = process.env.NODE_ENV === "development";
-
 export const getBaseUrl = () => {
   const hostname = window.location.hostname;
 
@@ -8,8 +5,10 @@ export const getBaseUrl = () => {
     return "https://kn-interagente.vercel.app";
   }
 
-  if (hostname.includes("localhost")) {
-    // Local development
+  // Local development
+  if (hostname.includes("127")) {
+    return "http://127.0.0.1:3000";
+  } else if (hostname.includes("localhost")) {
     return "http://localhost:3000";
   } else {
     return "https://dev-kn-interagente.netlify.app/";
