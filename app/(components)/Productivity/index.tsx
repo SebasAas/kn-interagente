@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 
 // Next
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
 
 // Auth
 import { useSession } from "next-auth/react";
@@ -13,28 +12,25 @@ import { useSession } from "next-auth/react";
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 
 // Helpers
-import { getBaseUrl } from "../(helpers)/env";
-import Subtitle from "../(components)/Text/Subtitle";
-import Loader from "../(components)/Loader";
 import {
   stateProductionxResources,
   stateProductivityxHour,
-} from "../(helpers)/mockedData";
-import {
-  checkNewestDateUploadFiles,
-  fetchProductionCharts,
-} from "../(services)/productivity";
+} from "../../(helpers)/mockedData";
 import { toast } from "react-toastify";
-import { fetchRanking } from "../(services)/ranking";
-import User from "../(components)/Productivity/User";
-import Ranking from "../(components)/Productivity/Ranking";
-import DropzoneProductivity from "../(components)/Productivity/Dropzone";
-import { useAppContext } from "../(context)/AppContext";
+import { useAppContext } from "@/app/(context)/AppContext";
+import { fetchProductionCharts } from "@/app/(services)/productivity";
+import { fetchRanking } from "@/app/(services)/ranking";
+import DropzoneProductivity from "./Dropzone";
+import Subtitle from "../Text/Subtitle";
+import Ranking from "./Ranking";
+import User from "./User";
 
-const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
+const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
   loading: () => (
-    <Loader className="h-[350px] flex justify-center items-center" />
+    <div className="h-[280px] flex justify-center items-center">
+      <p>Carregando grafico...</p>
+    </div>
   ),
 });
 
@@ -436,7 +432,24 @@ const reorderJsonData = (data: any, order: any) => {
   });
 };
 
-export default function Productivity() {
+export default function Productivity({
+  charts,
+  date,
+  ranking,
+  lastUpdate,
+}: {
+  charts: any;
+  date: {
+    month: string;
+    year: string;
+    shift: string;
+  };
+  ranking: any[];
+  lastUpdate: {
+    latest_updated_visit: string;
+    newest_updated_visit: string;
+  };
+}) {
   const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
 
@@ -460,64 +473,73 @@ export default function Productivity() {
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  const [rankingData, setRankingData] = useState<any[]>([]);
+  const [rankingData, setRankingData] = useState<any[]>(ranking);
 
   const [wssChartFinished, setWSSChartFinished] = useState(false);
 
-  const [dateRangeChart, setDateRangeChart] = useState<any>({
-    latest_updated_visit: "",
-    newest_updated_visit: "",
-  });
+  const [dateRangeChart, setDateRangeChart] = useState<any>(lastUpdate);
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [dateInfo, setDateInfo] = useState({
-    year: "",
-    month: "",
-    shift: "0",
+    year: date?.year,
+    month: date?.month,
+    shift: date?.shift,
   });
 
-  useEffect(() => {
-    if (!session && status === "unauthenticated") {
-      console.log("session", session, "status", status);
-      const url = new URL("/login", getBaseUrl());
-      url.searchParams.append("callbackUrl", "/");
-      redirect(url.toString());
-    }
-  }, [session, status]);
+  // useEffect(() => {
+  //   if (!session && status === "unauthenticated") {
+  //     console.log("session", session, "status", status);
+  //     const url = new URL("/login", getBaseUrl());
+  //     url.searchParams.append("callbackUrl", "/");
+  //     redirect(url.toString());
+  //   }
+  // }, [session, status]);
 
   useEffect(() => {
-    getNewestDateChart();
+    // getNewestDateChart();
+
+    dispatch({ type: "SET_CHART_DATA", payload: charts });
+
+    const reorderedData = reorderJsonData(charts, indicatorOrder);
+
+    handleBuildChart(
+      reorderedData,
+      setEstimatedLengthSeries,
+      dispatch,
+      setChartDataProdByResource,
+      setChartDataProductivityByHour
+    );
   }, []);
 
-  const getNewestDateChart = async () => {
-    await checkNewestDateUploadFiles().then((res) => {
-      if (res && Object.keys(res).length > 0) {
-        setDateRangeChart(res);
-        setDateInfo({
-          year: res.newest_updated_visit.split("-")[0],
-          month: res.newest_updated_visit.split("-")[1],
-          shift: "0",
-        });
+  // const getNewestDateChart = async () => {
+  //   await checkNewestDateUploadFiles().then((res) => {
+  //     if (res && Object.keys(res).length > 0) {
+  //       setDateRangeChart(res);
+  //       setDateInfo({
+  //         year: res.newest_updated_visit.split("-")[0],
+  //         month: res.newest_updated_visit.split("-")[1],
+  //         shift: "0",
+  //       });
 
-        handleGetInfoByData({
-          year: res.newest_updated_visit.split("-")[0],
-          month: res.newest_updated_visit.split("-")[1],
-          shift: "0",
-        });
-      } else {
-        toast.error(
-          <div>
-            <h2>
-              Algo deu errado obtendo ultima data da carga de arquivo, tente
-              buscar novamente!
-            </h2>
-            <p className="text-xs"> {res?.error?.data?.code} </p>
-          </div>
-        );
-      }
-    });
-  };
+  //       handleGetInfoByData({
+  //         year: res.newest_updated_visit.split("-")[0],
+  //         month: res.newest_updated_visit.split("-")[1],
+  //         shift: "0",
+  //       });
+  //     } else {
+  //       toast.error(
+  //         <div>
+  //           <h2>
+  //             Algo deu errado obtendo ultima data da carga de arquivo, tente
+  //             buscar novamente!
+  //           </h2>
+  //           <p className="text-xs"> {res?.error?.data?.code} </p>
+  //         </div>
+  //       );
+  //     }
+  //   });
+  // };
 
   const handleGetInfoByData = async ({
     year,
@@ -712,15 +734,15 @@ export default function Productivity() {
                   }
                   value={dateInfo.month}
                 >
-                  <option value="01">Janeiro</option>
-                  <option value="02">Fevereiro</option>
-                  <option value="03">Março</option>
-                  <option value="04">Abril</option>
-                  <option value="05">Maio</option>
-                  <option value="06">Junho</option>
-                  <option value="07">Julho</option>
-                  <option value="08">Agosto</option>
-                  <option value="09">Setembro</option>
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
                   <option value="12">Dezembro</option>
