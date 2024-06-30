@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 
 // Next
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
 
 // Auth
 import { useSession } from "next-auth/react";
@@ -13,20 +12,20 @@ import { useSession } from "next-auth/react";
 import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 
 // Helpers
-import Subtitle from "../(components)/Text/Subtitle";
 import {
   stateProductionxResources,
   stateProductivityxHour,
-} from "../(helpers)/mockedData";
-import { fetchProductionCharts } from "../(services)/productivity";
+} from "../../(helpers)/mockedData";
 import { toast } from "react-toastify";
-import { fetchRanking } from "../(services)/ranking";
-import User from "../(components)/Productivity/User";
-import Ranking from "../(components)/Productivity/Ranking";
-import DropzoneProductivity from "../(components)/Productivity/Dropzone";
-import { useAppContext } from "../(context)/AppContext";
+import { useAppContext } from "@/app/(context)/AppContext";
+import { fetchProductionCharts } from "@/app/(services)/productivity";
+import { fetchRanking } from "@/app/(services)/ranking";
+import DropzoneProductivity from "./Dropzone";
+import Subtitle from "../Text/Subtitle";
+import Ranking from "./Ranking";
+import User from "./User";
 
-const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
+const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
   loading: () => (
     <div className="h-[280px] flex justify-center items-center">

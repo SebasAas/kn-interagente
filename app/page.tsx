@@ -11,7 +11,7 @@ import {
 } from "./(services)/productivity";
 import { fetchRanking } from "./(services)/ranking";
 
-const Productivity = dynamic(() => import("./productivity/page"), {
+const Productivity = dynamic(() => import("./(components)/Productivity"), {
   ssr: false,
 });
 
