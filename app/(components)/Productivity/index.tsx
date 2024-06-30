@@ -298,6 +298,12 @@ const handleBuildChart = (
     productivityEstimados.zIndex = 100;
   }
 
+  // Have to swap the order of the series in order to show the dotted estimated line on top of the productivity line
+  const temp = filteredSeriesProductivityLinesChart[0];
+  filteredSeriesProductivityLinesChart[0] =
+    filteredSeriesProductivityLinesChart[1];
+  filteredSeriesProductivityLinesChart[1] = temp;
+
   const resourceChart = {
     options: {
       ...stateProductionxResources.options,
@@ -487,18 +493,7 @@ export default function Productivity({
     shift: date?.shift,
   });
 
-  // useEffect(() => {
-  //   if (!session && status === "unauthenticated") {
-  //     console.log("session", session, "status", status);
-  //     const url = new URL("/login", getBaseUrl());
-  //     url.searchParams.append("callbackUrl", "/");
-  //     redirect(url.toString());
-  //   }
-  // }, [session, status]);
-
   useEffect(() => {
-    // getNewestDateChart();
-
     dispatch({ type: "SET_CHART_DATA", payload: charts });
 
     const reorderedData = reorderJsonData(charts, indicatorOrder);
@@ -510,7 +505,13 @@ export default function Productivity({
       setChartDataProdByResource,
       setChartDataProductivityByHour
     );
-  }, []);
+  }, [charts, indicatorOrder]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      updateEstimatedBarStyle();
+    }, 1000);
+  }, [chartDataProdByResource]);
 
   // const getNewestDateChart = async () => {
   //   await checkNewestDateUploadFiles().then((res) => {
@@ -643,7 +644,7 @@ export default function Productivity({
       });
   };
 
-  useEffect(() => {
+  const updateEstimatedBarStyle = () => {
     if (estimatedLengthSeries.resource === 0) return;
 
     const lineResources = document.querySelector('g[seriesname="recursos"]');
@@ -688,7 +689,7 @@ export default function Productivity({
       path.style.stroke = "#003369";
       path.style.strokeWidth = "2";
     });
-  }, [chartDataProdByResource]);
+  };
 
   return (
     <div className="flex flex-col gap-4">
