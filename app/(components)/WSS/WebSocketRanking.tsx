@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 export const WebSocketRanking = ({ file }: { file: File | null }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `wss://kn-workers-emachzhqzq-uc.a.run.app/ws/status_ranking`
+    `wss://kn-workers-dev-emachzhqzq-uc.a.run.app/ws/status_ranking`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 

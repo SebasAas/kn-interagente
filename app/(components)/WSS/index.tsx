@@ -17,7 +17,7 @@ export const WebSocket = ({
   }) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `wss://kn-productivity-emachzhqzq-uc.a.run.app/ws/status_csv`
+    `wss://kn-productivity-dev-emachzhqzq-uc.a.run.app/ws/status_csv`
   );
   const [connectionTrigger, setConnectionTrigger] = useState(0); // Used to trigger reconnection
 
