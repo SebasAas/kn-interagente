@@ -10,6 +10,7 @@ import {
   fetchProductionCharts,
 } from "./(services)/productivity";
 import { fetchRanking } from "./(services)/ranking";
+import { fetchConfig } from "./(services)/config";
 
 const Productivity = dynamic(() => import("./(components)/Productivity"), {
   ssr: false,
@@ -24,6 +25,9 @@ export default async function Home() {
   const dataCharts = await fetchProductionCharts(month, year, shift);
   const dataRankings = await fetchRanking(month, year, shift);
   const lastUpdate = await checkNewestDateUploadFiles();
+  const dataConfig = await fetchConfig();
+
+  console.log("dataConfig", dataConfig);
 
   if (dataCharts?.detail) {
     if (dataCharts?.detail.includes("Não tem dados")) {
@@ -54,6 +58,7 @@ export default async function Home() {
         charts={dataCharts}
         ranking={dataRankings}
         lastUpdate={lastUpdate}
+        dataConfig={dataConfig}
       />
     </main>
   );

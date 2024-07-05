@@ -32,6 +32,8 @@ import Subtitle from "../Text/Subtitle";
 import Ranking from "./Ranking";
 import User from "./User";
 import ToolIcon from "@/app/(assets)/ToolIcon";
+import { ConfigType, updateConfig } from "@/app/(services)/config";
+import ModalComponent from "../Modal";
 
 const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
@@ -240,7 +242,7 @@ const handleBuildChart = (
   // Special check for second chart
   let mergedProductivitySeries;
 
-  const serieProductivity = filteredSeriesProductivityBarsChart[0]?.data;
+  const serieProductivity = filteredSeriesProductivityBarsChart[0]?.data || [];
 
   if (serieProductivity?.includes(null)) {
     const productivity = filteredSeriesProductivityBarsChart[0].data;
@@ -427,8 +429,19 @@ const handleBuildChart = (
     series: [mergedProductivitySeries, ...filteredSeriesProductivityLinesChart],
   };
 
-  setChartDataProdByResource(resourceChart);
-  setChartDataProductivityByHour(productivityChart);
+  // Check if it has property series, and remove undefined if it has for resourceChart and productivityChart
+  const resourceChartSeries = resourceChart.series.filter(
+    (item) => item !== undefined
+  );
+  const productivityChartSeries = productivityChart.series.filter(
+    (item) => item !== undefined
+  );
+
+  setChartDataProdByResource({ ...resourceChart, series: resourceChartSeries });
+  setChartDataProductivityByHour({
+    ...productivityChart,
+    series: productivityChartSeries,
+  });
 };
 
 // Function to reorder the JSON data based on the indicator order
@@ -455,6 +468,7 @@ export default function Productivity({
   date,
   ranking,
   lastUpdate,
+  dataConfig,
 }: {
   charts: any;
   date: {
@@ -467,6 +481,7 @@ export default function Productivity({
     latest_updated_visit: string;
     newest_updated_visit: string;
   };
+  dataConfig: ConfigType;
 }) {
   const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
@@ -488,6 +503,17 @@ export default function Productivity({
     resource: 0,
     productivity: 0,
   });
+
+  const [config, setConfig] = useState<ConfigType>(
+    dataConfig || {
+      directed_hours_min: 0,
+      directed_hours_max: 0,
+      visits_min: 0,
+      visits_max: 0,
+      boxes_min: 0,
+      boxes_max: 0,
+    }
+  );
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -709,133 +735,40 @@ export default function Productivity({
       payload: {
         open: true,
         header: <h2>Configurações</h2>,
-        body: (
-          <div className="flex flex-col">
-            <p className="text-xs">Horas diretas</p>
-            <div className="flex gap-4 mt-1">
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">de:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">até:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-            </div>
-            <p className="text-xs mt-3">Visitas</p>
-            <div className="flex gap-4 mt-1">
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">de:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">até:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-            </div>
-            <p className="text-xs mt-3">Caixas</p>
-            <div className="flex gap-4 mt-1">
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">de:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500">até:</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-14",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="2º"
-                  value="0"
-                  onChange={(e) => console.log(e.target.value)}
-                  min={0}
-                />
-              </div>
-            </div>
-            <button
-              className={`px-2 py-1 mt-7 mb-4 rounded-md ${
-                buttonDisabled
-                  ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
-                  : "bg-blue-900 text-white"
-              } text-sm font-medium`}
-              onClick={() => console.log("click")}
-            >
-              Salvar
-            </button>
-          </div>
-        ),
+        body: "",
       },
     });
+  };
+
+  const handleSubmitConfigurationModal = async () => {
+    const toastConfig = toast.promise(updateConfig({ config }), {
+      pending: "Salvando filtro...",
+    });
+
+    await toastConfig
+      .then((res: any) => {
+        if (res?.detail) {
+          if (res?.detail.includes("Não tem dados")) {
+            toast.info(
+              <div>
+                <h2>Não encontramos dados de grafico para essa data</h2>
+              </div>
+            );
+          } else {
+            toast.error(
+              <div>
+                <h2>Algo deu errado obtendo graficos, tente novamente!</h2>
+              </div>
+            );
+          }
+        } else {
+          toast.success("Filtros atualizados com sucesso!");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Algo deu errado salvando filtros, tente novamente!");
+      });
   };
 
   return (
@@ -964,6 +897,149 @@ export default function Productivity({
           selectedKeys={selectedKeys}
         />
       </div>
+      <ModalComponent>
+        <div className="flex flex-col">
+          <p className="text-xs">Horas diretas</p>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">de:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.directed_hours_min?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    directed_hours_min: Number(e.target.value),
+                  })
+                }
+                min={0}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">até:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.directed_hours_max?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    directed_hours_max: Number(e.target.value),
+                  })
+                }
+                min={0}
+              />
+            </div>
+          </div>
+          <p className="text-xs mt-3">Visitas</p>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">de:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.visits_min?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, visits_min: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">até:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.visits_max?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, visits_max: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+          </div>
+          <p className="text-xs mt-3">Caixas</p>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">de:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.boxes_min?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, boxes_min: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">até:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-14",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.boxes_max?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, boxes_max: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+          </div>
+          <button
+            className={`px-2 py-1 mt-7 mb-4 rounded-md ${
+              buttonDisabled
+                ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                : "bg-blue-900 text-white"
+            } text-sm font-medium`}
+            onClick={() => handleSubmitConfigurationModal()}
+          >
+            Salvar
+          </button>
+        </div>
+      </ModalComponent>
     </div>
   );
 }

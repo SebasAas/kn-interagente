@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Header from "./(components)/Header";
 import { Flip, ToastContainer } from "react-toastify";
-import ModalComponent from "./(components)/Modal";
 
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
@@ -48,7 +47,6 @@ export default function RootLayout({
           >
             {children}
           </section>
-          <ModalComponent />
         </Providers>
       </body>
     </html>

@@ -5,10 +5,8 @@ import { useAppContext } from "@/app/(context)/AppContext";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import Subtitle from "../Text/Subtitle";
 
-function ModalComponent() {
+function ModalComponent({ children }: { children: React.ReactNode }) {
   const { dispatch, modal } = useAppContext();
-
-  console.log("modal", modal);
 
   return (
     <Modal
@@ -30,7 +28,7 @@ function ModalComponent() {
             <ModalHeader className="flex flex-col gap-1">
               <Subtitle>{modal.header}</Subtitle>
             </ModalHeader>
-            <ModalBody>{modal.body}</ModalBody>
+            <ModalBody>{children}</ModalBody>
           </>
         )}
       </ModalContent>
