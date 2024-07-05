@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 
 // Next
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
 
 // Auth
 import { useSession } from "next-auth/react";
@@ -20,29 +19,26 @@ import {
 } from "@nextui-org/react";
 
 // Helpers
-import { getBaseUrl } from "../(helpers)/env";
-import Subtitle from "../(components)/Text/Subtitle";
-import Loader from "../(components)/Loader";
 import {
   stateProductionxResources,
   stateProductivityxHour,
-} from "../(helpers)/mockedData";
-import {
-  checkNewestDateUploadFiles,
-  fetchProductionCharts,
-} from "../(services)/productivity";
+} from "../../(helpers)/mockedData";
 import { toast } from "react-toastify";
-import { fetchRanking } from "../(services)/ranking";
-import User from "../(components)/Productivity/User";
-import Ranking from "../(components)/Productivity/Ranking";
-import DropzoneProductivity from "../(components)/Productivity/Dropzone";
-import { useAppContext } from "../(context)/AppContext";
-import ToolIcon from "../(assets)/ToolIcon";
+import { useAppContext } from "@/app/(context)/AppContext";
+import { fetchProductionCharts } from "@/app/(services)/productivity";
+import { fetchRanking } from "@/app/(services)/ranking";
+import DropzoneProductivity from "./Dropzone";
+import Subtitle from "../Text/Subtitle";
+import Ranking from "./Ranking";
+import User from "./User";
+import ToolIcon from "@/app/(assets)/ToolIcon";
 
-const MixedChart = dynamic(() => import("../(components)/Chart/MixedChart"), {
+const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
   loading: () => (
-    <Loader className="h-[350px] flex justify-center items-center" />
+    <div className="h-[280px] flex justify-center items-center">
+      <p>Carregando grafico...</p>
+    </div>
   ),
 });
 
@@ -56,6 +52,7 @@ interface Series {
   name: string;
   type: string;
   data: (number | null)[];
+  zIndex?: number;
 }
 
 // Define the order of the indicators
@@ -66,9 +63,9 @@ const indicatorOrder = [
   "Produção potencial",
   "Produtividade",
   "Target produtividade",
+  "Média horas diretas estimados",
   "Média horas diretas",
   "Target horas diretas",
-  "Média horas diretas estimados",
 ];
 
 const filterSeriesByIndicators = (
@@ -198,8 +195,6 @@ const handleBuildChart = (
   const prodctivityLineIndicators = [
     "média horas diretas",
     "média horas diretas estimados",
-    "target horas diretas",
-    "target produtividade",
   ];
   const prodctivityBarIndicators = ["produtividade", "produtividade estimada"];
 
@@ -245,9 +240,9 @@ const handleBuildChart = (
   // Special check for second chart
   let mergedProductivitySeries;
 
-  const serieProductivity = filteredSeriesProductivityBarsChart[0].data;
+  const serieProductivity = filteredSeriesProductivityBarsChart[0]?.data;
 
-  if (serieProductivity.includes(null)) {
+  if (serieProductivity?.includes(null)) {
     const productivity = filteredSeriesProductivityBarsChart[0].data;
     const productivityEstimate = filteredSeriesProductivityBarsChart[1].data;
 
@@ -291,6 +286,32 @@ const handleBuildChart = (
 
   mergedRecursosSeries.data = mergedRecursosSeriesWithoutNull;
 
+  const mergedProductivitysSeries = mergeArrays(
+    series,
+    "média horas diretas",
+    "média horas diretas estimados"
+  );
+
+  const mergedProductivitysSeriesWithoutNull =
+    mergedProductivitysSeries?.data?.filter((item) => item !== null);
+
+  mergedProductivitysSeries.data = mergedProductivitysSeriesWithoutNull;
+
+  // Add to the filteredSeriesProductivityLinesChart.name.média horas diretas estimados the zIndex 100
+  const productivityEstimados = filteredSeriesProductivityLinesChart.find(
+    (item) => item.name === "média horas diretas estimados"
+  );
+
+  if (productivityEstimados) {
+    productivityEstimados.zIndex = 100;
+  }
+
+  // Have to swap the order of the series in order to show the dotted estimated line on top of the productivity line
+  const temp = filteredSeriesProductivityLinesChart[0];
+  filteredSeriesProductivityLinesChart[0] =
+    filteredSeriesProductivityLinesChart[1];
+  filteredSeriesProductivityLinesChart[1] = temp;
+
   const resourceChart = {
     options: {
       ...stateProductionxResources.options,
@@ -308,6 +329,28 @@ const handleBuildChart = (
           },
         },
         categories: getLabelsRecursos,
+      },
+      tooltip: {
+        y: {
+          title: {
+            formatter: function (
+              value: any,
+              { series, seriesIndex, dataPointIndex, w }: any
+            ) {
+              const max = series[0].length || 0;
+              const min = max - lengthEstimatedProd;
+
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "recursos"
+              ) {
+                return "recursos estimados";
+              }
+              return value;
+            },
+          },
+        },
       },
     },
     series: [mergedRecursosSeries, ...filteredSeriesResourceChart],
@@ -331,6 +374,55 @@ const handleBuildChart = (
         },
         categories: getLabelsRecursos,
       },
+      tooltip: {
+        hideEmptySeries: true,
+        z: {
+          formatter: function (
+            value: any,
+            { series, seriesIndex, dataPointIndex, w }: any
+          ) {
+            const max = series[0].length || 0;
+            const min = max - lengthEstimatedProd;
+
+            if (
+              dataPointIndex >= min &&
+              dataPointIndex <= max &&
+              value === "média horas diretas"
+            ) {
+              return null;
+            }
+            return value;
+          },
+          title: "",
+        },
+        y: {
+          title: {
+            formatter: function (
+              value: any,
+              { series, seriesIndex, dataPointIndex, w }: any
+            ) {
+              const max = series[0].length || 0;
+              const min = max - lengthEstimatedProd;
+
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "média horas diretas"
+              ) {
+                return "média horas diretas estimados";
+              }
+              if (
+                dataPointIndex >= min &&
+                dataPointIndex <= max &&
+                value === "produtividade"
+              ) {
+                return "produtividade estimada";
+              }
+              return value;
+            },
+          },
+        },
+      },
     },
     series: [mergedProductivitySeries, ...filteredSeriesProductivityLinesChart],
   };
@@ -346,6 +438,10 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
+  if (data?.detail.includes("Não tem dados")) {
+    return [];
+  }
+
   // Sort the data based on the order of the indicators
   return data.sort((a: any, b: any) => {
     const orderA = orderMap.get(a.indicator) ?? order.length; // Fallback to a value after the last if not found
@@ -354,7 +450,24 @@ const reorderJsonData = (data: any, order: any) => {
   });
 };
 
-export default function Productivity() {
+export default function Productivity({
+  charts,
+  date,
+  ranking,
+  lastUpdate,
+}: {
+  charts: any;
+  date: {
+    month: string;
+    year: string;
+    shift: string;
+  };
+  ranking: any[];
+  lastUpdate: {
+    latest_updated_visit: string;
+    newest_updated_visit: string;
+  };
+}) {
   const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
 
@@ -378,64 +491,68 @@ export default function Productivity() {
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  const [rankingData, setRankingData] = useState<any[]>([]);
+  const [rankingData, setRankingData] = useState<any[]>(ranking);
 
   const [wssChartFinished, setWSSChartFinished] = useState(false);
 
-  const [dateRangeChart, setDateRangeChart] = useState<any>({
-    latest_updated_visit: "",
-    newest_updated_visit: "",
-  });
+  const [dateRangeChart, setDateRangeChart] = useState<any>(lastUpdate);
 
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const [dateInfo, setDateInfo] = useState({
-    year: "",
-    month: "",
-    shift: "0",
+    year: date?.year,
+    month: date?.month,
+    shift: date?.shift,
   });
 
   useEffect(() => {
-    if (!session && status === "unauthenticated") {
-      console.log("session", session, "status", status);
-      const url = new URL("/login", getBaseUrl());
-      url.searchParams.append("callbackUrl", "/");
-      redirect(url.toString());
-    }
-  }, [session, status]);
+    dispatch({ type: "SET_CHART_DATA", payload: charts });
+
+    const reorderedData = reorderJsonData(charts, indicatorOrder);
+
+    handleBuildChart(
+      reorderedData,
+      setEstimatedLengthSeries,
+      dispatch,
+      setChartDataProdByResource,
+      setChartDataProductivityByHour
+    );
+  }, [charts, indicatorOrder]);
 
   useEffect(() => {
-    getNewestDateChart();
-  }, []);
+    setTimeout(() => {
+      updateEstimatedBarStyle();
+    }, 1000);
+  }, [chartDataProdByResource]);
 
-  const getNewestDateChart = async () => {
-    await checkNewestDateUploadFiles().then((res) => {
-      if (res && Object.keys(res).length > 0) {
-        setDateRangeChart(res);
-        setDateInfo({
-          year: res.newest_updated_visit.split("-")[0],
-          month: res.newest_updated_visit.split("-")[1],
-          shift: "0",
-        });
+  // const getNewestDateChart = async () => {
+  //   await checkNewestDateUploadFiles().then((res) => {
+  //     if (res && Object.keys(res).length > 0) {
+  //       setDateRangeChart(res);
+  //       setDateInfo({
+  //         year: res.newest_updated_visit.split("-")[0],
+  //         month: res.newest_updated_visit.split("-")[1],
+  //         shift: "0",
+  //       });
 
-        handleGetInfoByData({
-          year: res.newest_updated_visit.split("-")[0],
-          month: res.newest_updated_visit.split("-")[1],
-          shift: "0",
-        });
-      } else {
-        toast.error(
-          <div>
-            <h2>
-              Algo deu errado obtendo ultima data da carga de arquivo, tente
-              buscar novamente!
-            </h2>
-            <p className="text-xs"> {res?.error?.data?.code} </p>
-          </div>
-        );
-      }
-    });
-  };
+  //       handleGetInfoByData({
+  //         year: res.newest_updated_visit.split("-")[0],
+  //         month: res.newest_updated_visit.split("-")[1],
+  //         shift: "0",
+  //       });
+  //     } else {
+  //       toast.error(
+  //         <div>
+  //           <h2>
+  //             Algo deu errado obtendo ultima data da carga de arquivo, tente
+  //             buscar novamente!
+  //           </h2>
+  //           <p className="text-xs"> {res?.error?.data?.code} </p>
+  //         </div>
+  //       );
+  //     }
+  //   });
+  // };
 
   const handleGetInfoByData = async ({
     year,
@@ -539,7 +656,7 @@ export default function Productivity() {
       });
   };
 
-  useEffect(() => {
+  const updateEstimatedBarStyle = () => {
     if (estimatedLengthSeries.resource === 0) return;
 
     const lineResources = document.querySelector('g[seriesname="recursos"]');
@@ -584,7 +701,7 @@ export default function Productivity() {
       path.style.stroke = "#003369";
       path.style.strokeWidth = "2";
     });
-  }, [chartDataProdByResource]);
+  };
 
   const handleOpenConfigurationModal = () => {
     dispatch({
@@ -752,15 +869,15 @@ export default function Productivity() {
                   }
                   value={dateInfo.month}
                 >
-                  <option value="01">Janeiro</option>
-                  <option value="02">Fevereiro</option>
-                  <option value="03">Março</option>
-                  <option value="04">Abril</option>
-                  <option value="05">Maio</option>
-                  <option value="06">Junho</option>
-                  <option value="07">Julho</option>
-                  <option value="08">Agosto</option>
-                  <option value="09">Setembro</option>
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
                   <option value="10">Outubro</option>
                   <option value="11">Novembro</option>
                   <option value="12">Dezembro</option>
