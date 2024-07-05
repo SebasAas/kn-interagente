@@ -48,6 +48,11 @@ export type State = {
   lengthSeries: any;
   selectedSimulationDate: string;
   simulation: FamilyPropsResponse;
+  modal: {
+    open: boolean;
+    header: ReactNode;
+    body: ReactNode;
+  };
 };
 
 type ProviderProps = {
@@ -79,6 +84,10 @@ type Action =
   | {
       type: "SET_SELECTED_SIMULATION_DATE";
       payload: string;
+    }
+  | {
+      type: "SET_MODAL";
+      payload: State["modal"];
     };
 
 const AppContext = createContext<ContextValue | undefined>(undefined);
@@ -114,6 +123,11 @@ const stateReducer = (state: State, action: Action): State => {
       return {
         ...state,
         selectedSimulationDate: action.payload,
+      };
+    case "SET_MODAL":
+      return {
+        ...state,
+        modal: action.payload,
       };
     default:
       return state;

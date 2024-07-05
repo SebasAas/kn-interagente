@@ -11,8 +11,6 @@ const AlertBoard: React.FC = () => {
   const { simulation, selectedSimulationDate } = useAppContext();
   const [alerts, setAlerts] = useState<Alert[]>([]);
 
-  console.log("simulation", simulation?.alarms?.[selectedSimulationDate]);
-
   useEffect(() => {
     fetchAlerts()
       .then((data) => setAlerts(data))
