@@ -47,7 +47,6 @@ function DropzoneProductivity({
       await toastPromise
         .then((response) => response.json())
         .then((res: any) => {
-          console.log(res);
           if (res?.detail) {
             toast.error(
               <div>

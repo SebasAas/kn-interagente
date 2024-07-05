@@ -91,7 +91,6 @@ const PlanningPage: React.FC = () => {
 
   // Trigger the upload process when the file is selected
   const onFileSelect = (file: File | null) => {
-    console.log("first", file);
     setDemandFile(file);
     if (file) {
       handleFileUpload(file);

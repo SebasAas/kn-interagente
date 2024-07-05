@@ -27,8 +27,6 @@ export default async function Home() {
   const lastUpdate = await checkNewestDateUploadFiles();
   const dataConfig = await fetchConfig();
 
-  console.log("dataConfig", dataConfig);
-
   if (dataCharts?.detail) {
     if (dataCharts?.detail.includes("Não tem dados")) {
       // toast.info(
