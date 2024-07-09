@@ -34,6 +34,7 @@ import User from "./User";
 import ToolIcon from "@/app/(assets)/ToolIcon";
 import { ConfigType, updateConfig } from "@/app/(services)/config";
 import ModalComponent from "../Modal";
+import { WebSocketFilter } from "../WSS/WebSocketFilter";
 
 const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
@@ -451,7 +452,9 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
-  if (data?.detail.includes("Não tem dados")) {
+  console.log("data", data);
+
+  if (data?.detail?.includes("Não tem dados")) {
     return [];
   }
 
@@ -506,12 +509,12 @@ export default function Productivity({
 
   const [config, setConfig] = useState<ConfigType>(
     dataConfig || {
-      directed_hours_min: 0,
-      directed_hours_max: 0,
+      hours_min: 0,
+      hours_max: 0,
       visits_min: 0,
       visits_max: 0,
-      boxes_min: 0,
-      boxes_max: 0,
+      quantity_min: 0,
+      quantity_max: 0,
     }
   );
 
@@ -520,6 +523,8 @@ export default function Productivity({
   const [rankingData, setRankingData] = useState<any[]>(ranking);
 
   const [wssChartFinished, setWSSChartFinished] = useState(false);
+
+  const [wssChartFilterFinished, setWSSChartFilterFinished] = useState(false);
 
   const [dateRangeChart, setDateRangeChart] = useState<any>(lastUpdate);
 
@@ -602,6 +607,7 @@ export default function Productivity({
 
     await toastPromiseGraph
       .then((res: any) => {
+        console.log("res", res);
         if (res?.detail) {
           if (res?.detail.includes("Não tem dados")) {
             toast.info(
@@ -913,11 +919,11 @@ export default function Productivity({
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
                 placeholder="2º"
-                value={config.directed_hours_min?.toString() || "0"}
+                value={config.hours_min?.toString() || "0"}
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    directed_hours_min: Number(e.target.value),
+                    hours_min: Number(e.target.value),
                   })
                 }
                 min={0}
@@ -935,11 +941,11 @@ export default function Productivity({
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
                 placeholder="2º"
-                value={config.directed_hours_max?.toString() || "0"}
+                value={config.hours_max?.toString() || "0"}
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    directed_hours_max: Number(e.target.value),
+                    hours_max: Number(e.target.value),
                   })
                 }
                 min={0}
@@ -1001,9 +1007,9 @@ export default function Productivity({
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
                 placeholder="2º"
-                value={config.boxes_min?.toString() || "0"}
+                value={config.quantity_min?.toString() || "0"}
                 onChange={(e) =>
-                  setConfig({ ...config, boxes_min: Number(e.target.value) })
+                  setConfig({ ...config, quantity_min: Number(e.target.value) })
                 }
                 min={0}
               />
@@ -1020,9 +1026,9 @@ export default function Productivity({
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
                 placeholder="2º"
-                value={config.boxes_max?.toString() || "0"}
+                value={config.quantity_max?.toString() || "0"}
                 onChange={(e) =>
-                  setConfig({ ...config, boxes_max: Number(e.target.value) })
+                  setConfig({ ...config, quantity_max: Number(e.target.value) })
                 }
                 min={0}
               />
@@ -1039,6 +1045,10 @@ export default function Productivity({
             Salvar
           </button>
         </div>
+        <WebSocketFilter
+          setWSSChartFinished={setWSSChartFilterFinished}
+          setDateInfo={setDateInfo}
+        />
       </ModalComponent>
     </div>
   );
