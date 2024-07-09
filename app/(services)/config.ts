@@ -1,24 +1,24 @@
 export const BASE_URL = "https://kn-productivity-dev-emachzhqzq-uc.a.run.app/";
 
 export type ConfigType = {
-  directed_hours_min: number;
-  directed_hours_max: number;
+  hours_min: number;
+  hours_max: number;
   visits_min: number;
   visits_max: number;
-  boxes_min: number;
-  boxes_max: number;
+  quantity_min: number;
+  quantity_max: number;
 };
 
 export const fetchConfig = async () => {
-  const response = await fetch(`${BASE_URL}filter`);
+  const response = await fetch(`${BASE_URL}production/filter`);
   if (!response.ok) {
     return {
-      directed_hours_min: 0,
-      directed_hours_max: 0,
+      hours_min: 0,
+      hours_max: 0,
       visits_min: 0,
       visits_max: 0,
-      boxes_min: 0,
-      boxes_max: 0,
+      quantity_min: 0,
+      quantity_max: 0,
     };
   }
   const data = await response.json();
@@ -26,7 +26,7 @@ export const fetchConfig = async () => {
 };
 
 export const updateConfig = async ({ config }: { config: ConfigType }) => {
-  const response = await fetch(`${BASE_URL}filter`, {
+  const response = await fetch(`${BASE_URL}production/filter`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
