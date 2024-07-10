@@ -768,7 +768,7 @@ export default function Productivity({
             );
           }
         } else {
-          toast.success("Filtros atualizados com sucesso!");
+          // toast.success("Filtros atualizados com sucesso!");
         }
       })
       .catch((err) => {
@@ -1048,6 +1048,7 @@ export default function Productivity({
         <WebSocketFilter
           setWSSChartFinished={setWSSChartFilterFinished}
           setDateInfo={setDateInfo}
+          setButtonDisabled={setButtonDisabled}
         />
       </ModalComponent>
     </div>

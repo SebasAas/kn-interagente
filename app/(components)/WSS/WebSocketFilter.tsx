@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 export const WebSocketFilter = ({
   setWSSChartFinished,
   setDateInfo,
+  setButtonDisabled,
 }: {
   setWSSChartFinished: (newFiles: boolean) => void;
   setDateInfo: (dateInfo: {
@@ -13,6 +14,7 @@ export const WebSocketFilter = ({
     year: string;
     shift: string;
   }) => void;
+  setButtonDisabled: (isDisabled: boolean) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
     `wss://kn-productivity-dev-emachzhqzq-uc.a.run.app/ws/status_filter`
@@ -29,6 +31,7 @@ export const WebSocketFilter = ({
           toast.success("Arquivo processado com sucesso!");
           getWebSocket()?.close();
           setWSSChartFinished(true);
+          setButtonDisabled(false);
         }, 1000);
       }
     }
@@ -37,8 +40,9 @@ export const WebSocketFilter = ({
   if (lastMessage?.data) {
     const parsedData = JSON.parse(JSON.parse(lastMessage?.data));
     const message = parsedData?.data?.text;
+    const status = parsedData?.data?.status;
 
-    if (message === "Processamento finalizado") {
+    if (message === "Processamento finalizado" || status === "finished") {
       const filters = parsedData?.data?.filter;
 
       setTimeout(() => {
@@ -50,11 +54,19 @@ export const WebSocketFilter = ({
         setWSSChartFinished(true);
       }, 1000);
     }
-    // Display both message and Spinner with progress
+
+    if (status === "idle") {
+      return <></>;
+    }
+
+    setButtonDisabled(true);
+
     return (
       <div className="flex items-center gap-4 mb-3">
-        <Spinner value={undefined} />
-        <p className="font-medium text-sm">{message}</p>
+        <Spinner value={undefined} size="sm" />
+        <p className="font-medium text-sm break-words max-w-[180px]">
+          {message}
+        </p>
       </div>
     );
   }
