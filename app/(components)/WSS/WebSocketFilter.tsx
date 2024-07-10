@@ -17,7 +17,7 @@ export const WebSocketFilter = ({
   setButtonDisabled: (isDisabled: boolean) => void;
 }) => {
   const [socketUrl, setSocketUrl] = useState(
-    `wss://kn-productivity-dev-emachzhqzq-uc.a.run.app/ws/status_filter`
+    `wss://kn-productivity-emachzhqzq-uc.a.run.app/ws/status_filter`
   );
   const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl);
 

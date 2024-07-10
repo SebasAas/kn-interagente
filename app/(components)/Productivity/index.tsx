@@ -452,8 +452,6 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
-  console.log("data", data);
-
   if (data?.detail?.includes("Não tem dados")) {
     return [];
   }
@@ -836,13 +834,13 @@ export default function Productivity({
                 <option value="2">2° turno</option>
                 <option value="3">3° turno</option>
               </select>
-              <button
+              {/* <button
                 className="flex gap-1 text-gray-500 items-center mt-2 border-none bg-transparent"
                 onClick={handleOpenConfigurationModal}
               >
                 <ToolIcon />
                 <p className="text-xs">Configurações avançadas</p>
-              </button>
+              </button> */}
               <button
                 className={`px-2 py-1 rounded-md ${
                   buttonDisabled
@@ -903,7 +901,7 @@ export default function Productivity({
           selectedKeys={selectedKeys}
         />
       </div>
-      <ModalComponent>
+      {/* <ModalComponent>
         <div className="flex flex-col">
           <p className="text-xs">Horas diretas</p>
           <div className="flex gap-4 mt-1">
@@ -1050,7 +1048,7 @@ export default function Productivity({
           setDateInfo={setDateInfo}
           setButtonDisabled={setButtonDisabled}
         />
-      </ModalComponent>
+      </ModalComponent> */}
     </div>
   );
 }
