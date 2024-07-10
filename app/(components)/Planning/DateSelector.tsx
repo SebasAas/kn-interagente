@@ -31,8 +31,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     );
   }
 
-  console.log("uploadStatus", uploadStatus);
-
   return (
     <div className="flex flex-col space-y-2 justify-between">
       {isLoading && !uploadStatus.length && (

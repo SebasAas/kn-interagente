@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Header from "./(components)/Header";
 import { Flip, ToastContainer } from "react-toastify";
-import { generateDates } from "./(helpers)/generateDates";
 
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
