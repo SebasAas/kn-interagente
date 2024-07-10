@@ -160,14 +160,14 @@ export default function Dropzone({
                 />
                 <WebSocketRanking file={file} />
               </div>
-              <div className="flex items-center justify-center mt-4">
+              {/* <div className="flex items-center justify-center mt-4">
                 <button
                   className={`text-red-500 cursor-pointer text-sm border-1 border-solid border-red-500 rounded-md px-2 py-1`}
                   onClick={() => setFile(null)}
                 >
                   Remover
                 </button>
-              </div>
+              </div> */}
             </>
           ) : null}
         </>

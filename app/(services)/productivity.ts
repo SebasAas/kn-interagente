@@ -8,7 +8,17 @@ export const fetchProductionCharts = async (
   const response = await fetch(
     `${BASE_URL}production/charts?month=${month}&year=${year}&shift=${shift}`
   );
+
+  if (!response.ok) {
+    return {
+      detail: "Não tem dados disponíveis para o período selecionado!",
+    };
+  }
+
   const data = await response.json();
+
+  console.log("data", data);
+
   return data;
 };
 
@@ -20,6 +30,13 @@ export const fetchProductionVisits = async (
   const response = await fetch(
     `${BASE_URL}production/visits?month=${month}&year=${year}&shift=${shift}`
   );
+
+  if (!response.ok) {
+    return {
+      detail: "Não tem dados disponíveis para o período selecionado!",
+    };
+  }
+
   const data = await response.json();
   return data;
 };
