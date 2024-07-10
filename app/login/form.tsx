@@ -63,7 +63,7 @@ const Login: NextPage = () => {
       setLoading(false);
 
       if (!res?.error) {
-        router.push(callbackUrl);
+        window.location.href = callbackUrl;
       } else {
         console.error(res?.error);
 
