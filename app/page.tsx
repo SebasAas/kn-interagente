@@ -27,16 +27,7 @@ export default async function Home() {
   const dataRankings = await fetchRanking(month, year, shift);
   const lastUpdate = await checkNewestDateUploadFiles();
   const dataConfig = await fetchConfig();
-  // const dataSummary = await getProducitivitySummary();
-  const dataSummary = [
-    {
-      day: "",
-      state: "",
-      name: "",
-    },
-  ];
-
-  console.log("dataConfig", dataConfig);
+  const dataSummary = await getProducitivitySummary();
 
   if (dataCharts?.detail) {
     if (dataCharts?.detail.includes("Não tem dados")) {

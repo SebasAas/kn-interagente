@@ -517,10 +517,10 @@ export default function Productivity({
     dataConfig || {
       hours_min: 0,
       hours_max: 0,
-      visits_min: 0,
-      visits_max: 0,
-      quantity_min: 0,
-      quantity_max: 0,
+      // visits_min: 0,
+      // visits_max: 0,
+      // quantity_min: 0,
+      // quantity_max: 0,
     }
   );
 
@@ -752,6 +752,21 @@ export default function Productivity({
     });
   };
 
+  const handleGetDataFormat = () => {
+    // Find the obj inside dataSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
+    const uploadData = dataSummary?.find((data) => data?.name === "filter");
+    if (uploadData) {
+      const date = new Date(uploadData.day);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      return `${hours}:${minutes} - ${day}/${month}`;
+    }
+
+    return "-";
+  };
+
   const handleSubmitConfigurationModal = async () => {
     const toastConfig = toast.promise(updateConfig({ config }), {
       pending: "Salvando filtro...",
@@ -873,6 +888,7 @@ export default function Productivity({
             wssChartFinished={wssChartFinished}
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
+            dataSummary={dataSummary}
           />
         </div>
         <div className="flex flex-1 flex-col gap-6">
@@ -958,7 +974,7 @@ export default function Productivity({
               />
             </div>
           </div>
-          <p className="text-xs mt-3">Visitas</p>
+          {/* <p className="text-xs mt-3">Visitas</p>
           <div className="flex gap-4 mt-1">
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">de:</p>
@@ -1039,9 +1055,13 @@ export default function Productivity({
                 min={0}
               />
             </div>
-          </div>
+          </div> */}
+          <span className="text-xs mt-5 text-gray-400">
+            Ultimo processamento:{" "}
+            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+          </span>
           <button
-            className={`px-2 py-1 mt-7 mb-4 rounded-md ${
+            className={`px-2 py-1 mt-5 mb-4 rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-900 text-white"
