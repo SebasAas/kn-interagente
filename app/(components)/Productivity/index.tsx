@@ -25,7 +25,10 @@ import {
 } from "../../(helpers)/mockedData";
 import { toast } from "react-toastify";
 import { useAppContext } from "@/app/(context)/AppContext";
-import { fetchProductionCharts } from "@/app/(services)/productivity";
+import {
+  fetchProductionCharts,
+  getProducitivitySummary,
+} from "@/app/(services)/productivity";
 import { fetchRanking } from "@/app/(services)/ranking";
 import DropzoneProductivity from "./Dropzone";
 import Subtitle from "../Text/Subtitle";
@@ -517,12 +520,16 @@ export default function Productivity({
     dataConfig || {
       hours_min: "00:00",
       hours_max: "00:00",
-      // visits_min: 0,
-      // visits_max: 0,
-      // quantity_min: 0,
-      // quantity_max: 0,
     }
   );
+
+  const [lastUploadFileSummary, setLastUploadFileSummary] = useState<
+    {
+      day: string;
+      state: string;
+      name: string;
+    }[]
+  >(dataSummary);
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -564,35 +571,6 @@ export default function Productivity({
     }, 1000);
   }, [chartDataProdByResource]);
 
-  // const getNewestDateChart = async () => {
-  //   await checkNewestDateUploadFiles().then((res) => {
-  //     if (res && Object.keys(res).length > 0) {
-  //       setDateRangeChart(res);
-  //       setDateInfo({
-  //         year: res.newest_updated_visit.split("-")[0],
-  //         month: res.newest_updated_visit.split("-")[1],
-  //         shift: "0",
-  //       });
-
-  //       handleGetInfoByData({
-  //         year: res.newest_updated_visit.split("-")[0],
-  //         month: res.newest_updated_visit.split("-")[1],
-  //         shift: "0",
-  //       });
-  //     } else {
-  //       toast.error(
-  //         <div>
-  //           <h2>
-  //             Algo deu errado obtendo ultima data da carga de arquivo, tente
-  //             buscar novamente!
-  //           </h2>
-  //           <p className="text-xs"> {res?.error?.data?.code} </p>
-  //         </div>
-  //       );
-  //     }
-  //   });
-  // };
-
   const handleGetInfoByData = async ({
     year,
     month,
@@ -615,7 +593,6 @@ export default function Productivity({
 
     await toastPromiseGraph
       .then((res: any) => {
-        console.log("res", res);
         if (res?.detail) {
           if (res?.detail.includes("Não tem dados")) {
             toast.info(
@@ -694,6 +671,20 @@ export default function Productivity({
       .finally(() => {
         setButtonDisabled(false);
       });
+
+    const toastPromiseGetLastUpload = toast.promise(
+      getProducitivitySummary(),
+      {}
+    );
+
+    await toastPromiseGetLastUpload
+      .then((res: any) => {
+        setLastUploadFileSummary(res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Algo deu errado obtendo ultima data de carregamento!");
+      });
   };
 
   const updateEstimatedBarStyle = () => {
@@ -756,7 +747,9 @@ export default function Productivity({
 
   const handleGetDataFormat = () => {
     // Find the obj inside dataSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
-    const uploadData = dataSummary?.find((data) => data?.name === "filter");
+    const uploadData = lastUploadFileSummary?.find(
+      (data) => data?.name === "filter"
+    );
     if (uploadData) {
       const date = new Date(uploadData.day);
       const hours = date.getHours();
@@ -890,7 +883,8 @@ export default function Productivity({
             wssChartFinished={wssChartFinished}
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
-            dataSummary={dataSummary}
+            lastUploadFileSummary={lastUploadFileSummary}
+            handleGetInfoByData={handleGetInfoByData}
           />
         </div>
         <div className="flex flex-1 flex-col gap-6">
