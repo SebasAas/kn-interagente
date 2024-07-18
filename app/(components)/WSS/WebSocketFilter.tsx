@@ -45,6 +45,7 @@ export const WebSocketFilter = ({
     if (message === "Processamento finalizado" || status === "finished") {
       const filters = parsedData?.data?.filter;
 
+      setButtonDisabled(false);
       setTimeout(() => {
         setDateInfo({
           month: filters?.month,
@@ -62,6 +63,7 @@ export const WebSocketFilter = ({
     setButtonDisabled(true);
 
     if (status === "error") {
+      setButtonDisabled(false);
       return (
         <div className="mb-3">
           <p className="font-medium text-sm break-words text-red-600">

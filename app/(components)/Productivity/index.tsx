@@ -542,6 +542,8 @@ export default function Productivity({
     shift: date?.shift,
   });
 
+  console.log("dataConfig", dataConfig);
+
   useEffect(() => {
     dispatch({ type: "SET_CHART_DATA", payload: charts });
 
