@@ -472,6 +472,7 @@ export default function Productivity({
   ranking,
   lastUpdate,
   dataConfig,
+  dataSummary,
 }: {
   charts: any;
   date: {
@@ -485,6 +486,11 @@ export default function Productivity({
     newest_updated_visit: string;
   };
   dataConfig: ConfigType;
+  dataSummary: {
+    day: string;
+    state: string;
+    name: string;
+  }[];
 }) {
   const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
@@ -910,11 +916,11 @@ export default function Productivity({
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">de:</p>
               <Input
-                type="number"
+                type="time"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -923,7 +929,7 @@ export default function Productivity({
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    hours_min: Number(e.target.value),
+                    hours_min: e.target.value,
                   })
                 }
                 min={0}
@@ -932,11 +938,11 @@ export default function Productivity({
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">até:</p>
               <Input
-                type="number"
+                type="time"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -945,7 +951,7 @@ export default function Productivity({
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    hours_max: Number(e.target.value),
+                    hours_max: e.target.value,
                   })
                 }
                 min={0}
@@ -961,7 +967,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -980,7 +986,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -1002,7 +1008,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -1021,7 +1027,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}

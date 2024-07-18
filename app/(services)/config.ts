@@ -1,8 +1,8 @@
 export const BASE_URL = "https://kn-productivity-dev-emachzhqzq-uc.a.run.app/";
 
 export type ConfigType = {
-  hours_min: number;
-  hours_max: number;
+  hours_min: string;
+  hours_max: string;
   visits_min: number;
   visits_max: number;
   quantity_min: number;

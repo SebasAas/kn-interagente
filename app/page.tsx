@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import {
   checkNewestDateUploadFiles,
   fetchProductionCharts,
+  getProducitivitySummary,
 } from "./(services)/productivity";
 import { fetchRanking } from "./(services)/ranking";
 import { fetchConfig } from "./(services)/config";
@@ -26,6 +27,16 @@ export default async function Home() {
   const dataRankings = await fetchRanking(month, year, shift);
   const lastUpdate = await checkNewestDateUploadFiles();
   const dataConfig = await fetchConfig();
+  // const dataSummary = await getProducitivitySummary();
+  const dataSummary = [
+    {
+      day: "",
+      state: "",
+      name: "",
+    },
+  ];
+
+  console.log("dataConfig", dataConfig);
 
   if (dataCharts?.detail) {
     if (dataCharts?.detail.includes("Não tem dados")) {
@@ -57,6 +68,7 @@ export default async function Home() {
         ranking={dataRankings}
         lastUpdate={lastUpdate}
         dataConfig={dataConfig}
+        dataSummary={dataSummary}
       />
     </main>
   );

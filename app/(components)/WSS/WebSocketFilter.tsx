@@ -61,6 +61,15 @@ export const WebSocketFilter = ({
 
     setButtonDisabled(true);
 
+    if (status === "error") {
+      return (
+        <div className="mb-3">
+          <p className="font-medium text-sm break-words text-red-600">
+            {message}
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="flex items-center gap-4 mb-3">
         <Spinner value={undefined} size="sm" />
