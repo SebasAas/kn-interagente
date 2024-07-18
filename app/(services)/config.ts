@@ -10,15 +10,13 @@ export type ConfigType = {
 };
 
 export const fetchConfig = async () => {
-  const response = await fetch(`${BASE_URL}production/filter`);
+  const response = await fetch(`${BASE_URL}production/filter`, {
+    cache: "no-cache",
+  });
   if (!response.ok) {
     return {
       hours_min: "00:00",
       hours_max: "00:00",
-      // visits_min: 0,
-      // visits_max: 0,
-      // quantity_min: 0,
-      // quantity_max: 0,
     };
   }
   const data = await response.json();
