@@ -66,7 +66,7 @@ export const WebSocketFilter = ({
       setButtonDisabled(false);
       return (
         <div className="mb-3">
-          <p className="font-medium text-sm break-words text-red-600">
+          <p className="font-medium text-sm break-words text-red-600 max-w-[220px]">
             {message}
           </p>
         </div>

@@ -515,8 +515,8 @@ export default function Productivity({
 
   const [config, setConfig] = useState<ConfigType>(
     dataConfig || {
-      hours_min: 0,
-      hours_max: 0,
+      hours_min: "00:00",
+      hours_max: "00:00",
       // visits_min: 0,
       // visits_max: 0,
       // quantity_min: 0,
