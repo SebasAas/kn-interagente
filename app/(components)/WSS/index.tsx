@@ -18,7 +18,7 @@ export const WebSocket = ({
     year: string;
     shift: string;
   }) => void;
-  handleGetInfoByData: ({
+  handleGetInfoByData?: ({
     year,
     month,
     shift,
@@ -85,11 +85,12 @@ export const WebSocket = ({
         shift: filters?.shift || "0",
       });
 
-      handleGetInfoByData({
-        month: filters?.month,
-        year: filters?.year,
-        shift: "0",
-      });
+      handleGetInfoByData &&
+        handleGetInfoByData({
+          month: filters?.month,
+          year: filters?.year,
+          shift: "0",
+        });
       setWSSChartFinished(true);
       hasExecuted = true;
     }

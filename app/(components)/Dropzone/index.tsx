@@ -28,7 +28,7 @@ export default function Dropzone({
   setDateInfo: any;
   isDisable?: boolean;
   hasWSS?: boolean;
-  handleGetInfoByData: ({
+  handleGetInfoByData?: ({
     year,
     month,
     shift,
