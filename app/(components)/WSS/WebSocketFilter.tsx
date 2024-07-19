@@ -42,6 +42,10 @@ export const WebSocketFilter = ({
     const message = parsedData?.data?.text;
     const status = parsedData?.data?.status;
 
+    if (status === "processing_charts") {
+      setButtonDisabled(true);
+    }
+
     if (message === "Processamento finalizado" || status === "finished") {
       const filters = parsedData?.data?.filter;
 
@@ -54,13 +58,13 @@ export const WebSocketFilter = ({
         });
         setWSSChartFinished(true);
       }, 1000);
+
+      return <></>;
     }
 
     if (status === "idle") {
       return <></>;
     }
-
-    setButtonDisabled(true);
 
     if (status === "error") {
       setButtonDisabled(false);
@@ -72,6 +76,7 @@ export const WebSocketFilter = ({
         </div>
       );
     }
+
     return (
       <div className="flex items-center gap-4 mb-3">
         <Spinner value={undefined} size="sm" />

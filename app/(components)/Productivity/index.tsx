@@ -866,11 +866,13 @@ export default function Productivity({
                     : "bg-blue-900 text-white"
                 } text-sm font-medium mt-2`}
                 onClick={() =>
-                  handleGetInfoByData({
-                    month: dateInfo?.month || "01",
-                    year: dateInfo?.year || "2024",
-                    shift: dateInfo?.shift || "0",
-                  })
+                  buttonDisabled
+                    ? () => {}
+                    : handleGetInfoByData({
+                        month: dateInfo?.month || "01",
+                        year: dateInfo?.year || "2024",
+                        shift: dateInfo?.shift || "0",
+                      })
                 }
               >
                 Buscar
@@ -1062,7 +1064,9 @@ export default function Productivity({
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-900 text-white"
             } text-sm font-medium`}
-            onClick={() => handleSubmitConfigurationModal()}
+            onClick={
+              buttonDisabled ? () => {} : () => handleSubmitConfigurationModal()
+            }
           >
             Salvar
           </button>
