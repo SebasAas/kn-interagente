@@ -25,7 +25,10 @@ import {
 } from "../../(helpers)/mockedData";
 import { toast } from "react-toastify";
 import { useAppContext } from "@/app/(context)/AppContext";
-import { fetchProductionCharts } from "@/app/(services)/productivity";
+import {
+  fetchProductionCharts,
+  getProducitivitySummary,
+} from "@/app/(services)/productivity";
 import { fetchRanking } from "@/app/(services)/ranking";
 import DropzoneProductivity from "./Dropzone";
 import Subtitle from "../Text/Subtitle";
@@ -452,6 +455,8 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
+  console.log("data", data);
+
   if (data?.detail?.includes("Não tem dados")) {
     return [];
   }
@@ -470,6 +475,7 @@ export default function Productivity({
   ranking,
   lastUpdate,
   dataConfig,
+  dataSummary,
 }: {
   charts: any;
   date: {
@@ -483,6 +489,11 @@ export default function Productivity({
     newest_updated_visit: string;
   };
   dataConfig: ConfigType;
+  dataSummary: {
+    day: string;
+    state: string;
+    name: string;
+  }[];
 }) {
   const { dispatch, chartData, lengthSeries } = useAppContext();
   const { data: session, status } = useSession();
@@ -507,14 +518,18 @@ export default function Productivity({
 
   const [config, setConfig] = useState<ConfigType>(
     dataConfig || {
-      hours_min: 0,
-      hours_max: 0,
-      visits_min: 0,
-      visits_max: 0,
-      quantity_min: 0,
-      quantity_max: 0,
+      hours_min: "00:00",
+      hours_max: "00:00",
     }
   );
+
+  const [lastUploadFileSummary, setLastUploadFileSummary] = useState<
+    {
+      day: string;
+      state: string;
+      name: string;
+    }[]
+  >(dataSummary);
 
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -533,6 +548,8 @@ export default function Productivity({
     month: date?.month,
     shift: date?.shift,
   });
+
+  console.log("dataConfig", dataConfig);
 
   useEffect(() => {
     dispatch({ type: "SET_CHART_DATA", payload: charts });
@@ -553,35 +570,6 @@ export default function Productivity({
       updateEstimatedBarStyle();
     }, 1000);
   }, [chartDataProdByResource]);
-
-  // const getNewestDateChart = async () => {
-  //   await checkNewestDateUploadFiles().then((res) => {
-  //     if (res && Object.keys(res).length > 0) {
-  //       setDateRangeChart(res);
-  //       setDateInfo({
-  //         year: res.newest_updated_visit.split("-")[0],
-  //         month: res.newest_updated_visit.split("-")[1],
-  //         shift: "0",
-  //       });
-
-  //       handleGetInfoByData({
-  //         year: res.newest_updated_visit.split("-")[0],
-  //         month: res.newest_updated_visit.split("-")[1],
-  //         shift: "0",
-  //       });
-  //     } else {
-  //       toast.error(
-  //         <div>
-  //           <h2>
-  //             Algo deu errado obtendo ultima data da carga de arquivo, tente
-  //             buscar novamente!
-  //           </h2>
-  //           <p className="text-xs"> {res?.error?.data?.code} </p>
-  //         </div>
-  //       );
-  //     }
-  //   });
-  // };
 
   const handleGetInfoByData = async ({
     year,
@@ -605,7 +593,6 @@ export default function Productivity({
 
     await toastPromiseGraph
       .then((res: any) => {
-        console.log("res", res);
         if (res?.detail) {
           if (res?.detail.includes("Não tem dados")) {
             toast.info(
@@ -684,6 +671,20 @@ export default function Productivity({
       .finally(() => {
         setButtonDisabled(false);
       });
+
+    const toastPromiseGetLastUpload = toast.promise(
+      getProducitivitySummary(),
+      {}
+    );
+
+    await toastPromiseGetLastUpload
+      .then((res: any) => {
+        setLastUploadFileSummary(res);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Algo deu errado obtendo ultima data de carregamento!");
+      });
   };
 
   const updateEstimatedBarStyle = () => {
@@ -742,6 +743,23 @@ export default function Productivity({
         body: "",
       },
     });
+  };
+
+  const handleGetDataFormat = () => {
+    // Find the obj inside dataSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
+    const uploadData = lastUploadFileSummary?.find(
+      (data) => data?.name === "filter"
+    );
+    if (uploadData) {
+      const date = new Date(uploadData.day);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      return `${hours}:${minutes} - ${day}/${month}`;
+    }
+
+    return "-";
   };
 
   const handleSubmitConfigurationModal = async () => {
@@ -834,13 +852,13 @@ export default function Productivity({
                 <option value="2">2° turno</option>
                 <option value="3">3° turno</option>
               </select>
-              {/* <button
+              <button
                 className="flex gap-1 text-gray-500 items-center mt-2 border-none bg-transparent"
                 onClick={handleOpenConfigurationModal}
               >
                 <ToolIcon />
                 <p className="text-xs">Configurações avançadas</p>
-              </button> */}
+              </button>
               <button
                 className={`px-2 py-1 rounded-md ${
                   buttonDisabled
@@ -848,11 +866,13 @@ export default function Productivity({
                     : "bg-blue-900 text-white"
                 } text-sm font-medium mt-2`}
                 onClick={() =>
-                  handleGetInfoByData({
-                    month: dateInfo?.month || "01",
-                    year: dateInfo?.year || "2024",
-                    shift: dateInfo?.shift || "0",
-                  })
+                  buttonDisabled
+                    ? () => {}
+                    : handleGetInfoByData({
+                        month: dateInfo?.month || "01",
+                        year: dateInfo?.year || "2024",
+                        shift: dateInfo?.shift || "0",
+                      })
                 }
               >
                 Buscar
@@ -865,6 +885,8 @@ export default function Productivity({
             wssChartFinished={wssChartFinished}
             buttonDisabled={buttonDisabled}
             dateRangeChart={dateRangeChart}
+            lastUploadFileSummary={lastUploadFileSummary}
+            handleGetInfoByData={handleGetInfoByData}
           />
         </div>
         <div className="flex flex-1 flex-col gap-6">
@@ -901,18 +923,18 @@ export default function Productivity({
           selectedKeys={selectedKeys}
         />
       </div>
-      {/* <ModalComponent>
+      <ModalComponent>
         <div className="flex flex-col">
           <p className="text-xs">Horas diretas</p>
           <div className="flex gap-4 mt-1">
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">de:</p>
               <Input
-                type="number"
+                type="time"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -921,7 +943,7 @@ export default function Productivity({
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    hours_min: Number(e.target.value),
+                    hours_min: e.target.value,
                   })
                 }
                 min={0}
@@ -930,11 +952,11 @@ export default function Productivity({
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">até:</p>
               <Input
-                type="number"
+                type="time"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -943,14 +965,14 @@ export default function Productivity({
                 onChange={(e) =>
                   setConfig({
                     ...config,
-                    hours_max: Number(e.target.value),
+                    hours_max: e.target.value,
                   })
                 }
                 min={0}
               />
             </div>
           </div>
-          <p className="text-xs mt-3">Visitas</p>
+          {/* <p className="text-xs mt-3">Visitas</p>
           <div className="flex gap-4 mt-1">
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">de:</p>
@@ -959,7 +981,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -978,7 +1000,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -1000,7 +1022,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -1019,7 +1041,7 @@ export default function Productivity({
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  input: "w-14",
+                  input: "w-[70px]",
                   label: "text-[0.8rem]",
                   inputWrapper: "h-2 min-h-unit-8",
                 }}
@@ -1031,14 +1053,20 @@ export default function Productivity({
                 min={0}
               />
             </div>
-          </div>
+          </div> */}
+          <span className="text-xs mt-5 text-gray-400">
+            Ultimo processamento:{" "}
+            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+          </span>
           <button
-            className={`px-2 py-1 mt-7 mb-4 rounded-md ${
+            className={`px-2 py-1 mt-5 mb-4 rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-900 text-white"
             } text-sm font-medium`}
-            onClick={() => handleSubmitConfigurationModal()}
+            onClick={
+              buttonDisabled ? () => {} : () => handleSubmitConfigurationModal()
+            }
           >
             Salvar
           </button>
@@ -1048,7 +1076,7 @@ export default function Productivity({
           setDateInfo={setDateInfo}
           setButtonDisabled={setButtonDisabled}
         />
-      </ModalComponent> */}
+      </ModalComponent>
     </div>
   );
 }

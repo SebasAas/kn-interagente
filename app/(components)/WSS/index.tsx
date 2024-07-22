@@ -3,16 +3,28 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Spinner } from "../Spinner";
 import { toast } from "react-toastify";
 
+let hasExecuted = false;
+
 export const WebSocket = ({
   file,
   setWSSChartFinished,
   setDateInfo,
+  handleGetInfoByData,
 }: {
   file: File | null;
   setWSSChartFinished: (newFiles: boolean) => void;
   setDateInfo: (dateInfo: {
     month: string;
     year: string;
+    shift: string;
+  }) => void;
+  handleGetInfoByData?: ({
+    year,
+    month,
+    shift,
+  }: {
+    year: string;
+    month: string;
     shift: string;
   }) => void;
 }) => {
@@ -59,21 +71,28 @@ export const WebSocket = ({
     }
   }, [lastMessage, file, getWebSocket]);
 
-  if (lastMessage?.data && file) {
+  if (lastMessage?.data && file && !hasExecuted) {
     const parsedData = JSON.parse(JSON.parse(lastMessage?.data));
     const message = parsedData?.data?.text;
 
-    if (message === "Processamento finalizado") {
+    if (message === "Processamento finalizado" && !hasExecuted) {
       const filters = parsedData?.data?.filter;
 
-      setTimeout(() => {
-        setDateInfo({
+      // Only excecute once no mater how many rerenders this component has
+      setDateInfo({
+        month: filters?.month,
+        year: filters?.year,
+        shift: filters?.shift || "0",
+      });
+
+      handleGetInfoByData &&
+        handleGetInfoByData({
           month: filters?.month,
           year: filters?.year,
-          shift: filters?.shift,
+          shift: "0",
         });
-        setWSSChartFinished(true);
-      }, 1000);
+      setWSSChartFinished(true);
+      hasExecuted = true;
     }
     // Display both message and Spinner with progress
     return (

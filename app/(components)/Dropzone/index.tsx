@@ -16,6 +16,7 @@ export default function Dropzone({
   setDateInfo,
   isDisable = false,
   hasWSS = true,
+  handleGetInfoByData,
 }: {
   file: File | null;
   setFile: (newFiles: File | null) => void;
@@ -27,6 +28,15 @@ export default function Dropzone({
   setDateInfo: any;
   isDisable?: boolean;
   hasWSS?: boolean;
+  handleGetInfoByData?: ({
+    year,
+    month,
+    shift,
+  }: {
+    year: string;
+    month: string;
+    shift: string;
+  }) => void;
 }) {
   const onDrop = useCallback(
     (acceptedFiles: any) => {
@@ -157,6 +167,7 @@ export default function Dropzone({
                   file={file}
                   setWSSChartFinished={setWSSChartFinished}
                   setDateInfo={setDateInfo}
+                  handleGetInfoByData={handleGetInfoByData}
                 />
                 <WebSocketRanking file={file} />
               </div>
