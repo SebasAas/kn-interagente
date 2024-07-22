@@ -59,3 +59,14 @@ export const checkNewestDateUploadFiles = async () => {
   const data = await response.json();
   return data;
 };
+
+export const getProducitivitySummary = async () => {
+  const response = await fetch(`${BASE_URL}production/summary`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await response.json();
+  return data;
+};
