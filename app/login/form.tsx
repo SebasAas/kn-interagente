@@ -86,13 +86,10 @@ const Login: NextPage = () => {
   return (
     <form className="flex flex-row h-full" onSubmit={onSubmit}>
       <div className="w-[70%]">
-        <Image
+        <img
           className="w-full h-full object-cover"
           alt="woman with phone"
-          src="/pexelstimamiroshnichenko6169659-1@2x.png"
-          width="0"
-          height="0"
-          sizes="vh"
+          src={"https://i.ibb.co/805BX7f/banner.png"}
         />
       </div>
       <div className="w-[30%]">
@@ -100,12 +97,12 @@ const Login: NextPage = () => {
           <div className="self-stretch flex flex-col items-start justify-start gap-6">
             <div className="w-full flex flex-col items-center justify-center">
               <div className="relative w-[203px] h-[39px]">
-                <Image
+                <img
                   className="h-full w-full object-cover"
                   alt="k+n logo"
-                  src="/kuehnenagellogoblue-4@2x.png"
-                  width="203"
-                  height="39"
+                  src={
+                    "https://drive.google.com/thumbnail?id=1-AysrkHywcsoNZWc4gv4EPRxsiuEJOAt"
+                  }
                 />
               </div>
               <Progress
