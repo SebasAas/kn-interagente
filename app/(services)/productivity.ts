@@ -6,7 +6,10 @@ export const fetchProductionCharts = async (
   shift: string
 ) => {
   const response = await fetch(
-    `${BASE_URL}production/charts?month=${month}&year=${year}&shift=${shift}`
+    `${BASE_URL}production/charts?month=${month}&year=${year}&shift=${shift}`,
+    {
+      cache: "no-cache",
+    }
   );
 
   if (!response.ok) {
@@ -28,7 +31,10 @@ export const fetchProductionVisits = async (
   shift: string
 ) => {
   const response = await fetch(
-    `${BASE_URL}production/visits?month=${month}&year=${year}&shift=${shift}`
+    `${BASE_URL}production/visits?month=${month}&year=${year}&shift=${shift}`,
+    {
+      cache: "no-cache",
+    }
   );
 
   if (!response.ok) {
