@@ -12,6 +12,8 @@ function DropzoneProductivity({
   setDateInfo,
   dateRangeChart,
   buttonDisabled,
+  lastUploadFileSummary,
+  handleGetInfoByData,
 }: {
   wssChartFinished: boolean;
   setWSSChartFinished: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,6 +23,20 @@ function DropzoneProductivity({
     newest_updated_visit: string;
   };
   buttonDisabled: boolean;
+  lastUploadFileSummary: {
+    day: string;
+    state: string;
+    name: string;
+  }[];
+  handleGetInfoByData: ({
+    year,
+    month,
+    shift,
+  }: {
+    year: string;
+    month: string;
+    shift: string;
+  }) => void;
 }) {
   const [productivityFile, setProductivityFile] = useState<File | null>(null);
 
@@ -66,6 +82,23 @@ function DropzoneProductivity({
     }
   };
 
+  const handleGetDataFormat = () => {
+    // Find the obj inside lastUploadFileSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
+    const uploadData = lastUploadFileSummary?.find(
+      (data) => data?.name === "upload"
+    );
+    if (uploadData) {
+      const date = new Date(uploadData.day);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      return `${hours}:${minutes} - ${day}/${month}`;
+    }
+
+    return "";
+  };
+
   return (
     <Card className="p-4 h-fit ">
       <CardHeader className="p-0 pb-2 flex-col items-start">
@@ -79,7 +112,12 @@ function DropzoneProductivity({
           setWSSChartFinished={setWSSChartFinished}
           setDateInfo={setDateInfo}
           isDisable={buttonDisabled}
+          handleGetInfoByData={handleGetInfoByData}
         />
+        <span className="text-xs mt-5 text-gray-400">
+          Ultimo upload:{" "}
+          <span className="text-xs text-black">{handleGetDataFormat()}</span>
+        </span>
       </CardBody>
     </Card>
   );

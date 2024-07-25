@@ -42,9 +42,14 @@ export const WebSocketFilter = ({
     const message = parsedData?.data?.text;
     const status = parsedData?.data?.status;
 
+    if (status === "processing_charts") {
+      setButtonDisabled(true);
+    }
+
     if (message === "Processamento finalizado" || status === "finished") {
       const filters = parsedData?.data?.filter;
 
+      setButtonDisabled(false);
       setTimeout(() => {
         setDateInfo({
           month: filters?.month,
@@ -53,13 +58,24 @@ export const WebSocketFilter = ({
         });
         setWSSChartFinished(true);
       }, 1000);
+
+      return <></>;
     }
 
     if (status === "idle") {
       return <></>;
     }
 
-    setButtonDisabled(true);
+    if (status === "error") {
+      setButtonDisabled(false);
+      return (
+        <div className="mb-3">
+          <p className="font-medium text-sm break-words text-red-600 max-w-[220px]">
+            {message}
+          </p>
+        </div>
+      );
+    }
 
     return (
       <div className="flex items-center gap-4 mb-3">
