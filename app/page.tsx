@@ -29,6 +29,8 @@ export default async function Home() {
   const dataConfig = await fetchConfig();
   const dataSummary = await getProducitivitySummary();
 
+  console.log("dataCharts", dataCharts);
+
   if (dataCharts?.detail) {
     if (dataCharts?.detail.includes("Não tem dados")) {
       // toast.info(

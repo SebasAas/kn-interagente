@@ -520,6 +520,10 @@ export default function Productivity({
     dataConfig || {
       hours_min: "00:00",
       hours_max: "00:00",
+      visits_min: 0,
+      visits_max: 0,
+      quantity_min: 0,
+      quantity_max: 0,
     }
   );
 
@@ -967,6 +971,88 @@ export default function Productivity({
                     ...config,
                     hours_max: e.target.value,
                   })
+                }
+                min={0}
+              />
+            </div>
+          </div>
+          <p className="text-xs mt-3">Visitas</p>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">de:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-[70px]",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.visits_min?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, visits_min: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">até:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-[70px]",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.visits_max?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, visits_max: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+          </div>
+          <p className="text-xs mt-3">Caixas</p>
+          <div className="flex gap-4 mt-1">
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">de:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-[70px]",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.quantity_min?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, quantity_min: Number(e.target.value) })
+                }
+                min={0}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-500">até:</p>
+              <Input
+                type="number"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  input: "w-[70px]",
+                  label: "text-[0.8rem]",
+                  inputWrapper: "h-2 min-h-unit-8",
+                }}
+                placeholder="2º"
+                value={config.quantity_max?.toString() || "0"}
+                onChange={(e) =>
+                  setConfig({ ...config, quantity_max: Number(e.target.value) })
                 }
                 min={0}
               />
