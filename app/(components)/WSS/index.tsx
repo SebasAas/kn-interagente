@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { Spinner } from "../Spinner";
 import { toast } from "react-toastify";
-
-let hasExecuted = false;
 
 export const WebSocket = ({
   file,
@@ -36,6 +34,7 @@ export const WebSocket = ({
   const { lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl);
 
   const [progress, setProgress] = useState(0);
+  const hasExecuted = useRef(false);
 
   // Mapping statuses to progress values
   const statusToProgress: Record<string, number> = {
@@ -69,16 +68,23 @@ export const WebSocket = ({
         }, 1000);
       }
     }
-  }, [lastMessage, file, getWebSocket]);
+  }, [lastMessage, file, getWebSocket, setWSSChartFinished]);
 
-  if (lastMessage?.data && file && !hasExecuted) {
+  useEffect(() => {
+    hasExecuted.current = false; // Reset hasExecuted when the component mounts
+    return () => {
+      hasExecuted.current = false; // Ensure it resets on unmount
+    };
+  }, [file]);
+
+  if (lastMessage?.data && file) {
     const parsedData = JSON.parse(JSON.parse(lastMessage?.data));
     const message = parsedData?.data?.text;
 
-    if (message === "Processamento finalizado" && !hasExecuted) {
+    if (message === "Processamento finalizado" && !hasExecuted.current) {
       const filters = parsedData?.data?.filter;
 
-      // Only excecute once no mater how many rerenders this component has
+      // Only execute once no matter how many re-renders this component has
       setDateInfo({
         month: filters?.month,
         year: filters?.year,
@@ -92,7 +98,7 @@ export const WebSocket = ({
           shift: "0",
         });
       setWSSChartFinished(true);
-      hasExecuted = true;
+      hasExecuted.current = true;
     }
     // Display both message and Spinner with progress
     return (

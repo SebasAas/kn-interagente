@@ -43,6 +43,7 @@ function DropzoneProductivity({
   useEffect(() => {
     if (wssChartFinished) {
       onFileSelect(null);
+      setWSSChartFinished(false);
     }
   }, [wssChartFinished]);
 

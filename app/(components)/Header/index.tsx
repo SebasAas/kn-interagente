@@ -26,13 +26,12 @@ const Header = ({ activePath }: { activePath: string }) => {
       <nav className="w-full h-full flex justify-between items-center py-1 pl-3 pr-10">
         <div>
           <Link href="/" className="h-full flex justify-center items-center">
-            <Image
+            <img
               className="object-contain w-[200px] h-[30px]"
               alt="k+n logo"
-              src="/kuehnenagellogoblue-4@2x.png"
-              width="0"
-              height="0"
-              sizes="200px, 30px"
+              src={
+                "https://drive.google.com/thumbnail?id=1-AysrkHywcsoNZWc4gv4EPRxsiuEJOAt"
+              }
             />
           </Link>
         </div>

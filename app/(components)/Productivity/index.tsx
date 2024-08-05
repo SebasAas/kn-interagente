@@ -520,6 +520,10 @@ export default function Productivity({
     dataConfig || {
       hours_min: "00:00",
       hours_max: "00:00",
+      visits_min: 0,
+      visits_max: 0,
+      quantity_min: 0,
+      quantity_max: 0,
     }
   );
 
@@ -972,7 +976,7 @@ export default function Productivity({
               />
             </div>
           </div>
-          {/* <p className="text-xs mt-3">Visitas</p>
+          <p className="text-xs mt-3">Visitas</p>
           <div className="flex gap-4 mt-1">
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-500">de:</p>
@@ -1053,7 +1057,7 @@ export default function Productivity({
                 min={0}
               />
             </div>
-          </div> */}
+          </div>
           <span className="text-xs mt-5 text-gray-400">
             Ultimo processamento:{" "}
             <span className="text-xs text-black">{handleGetDataFormat()}</span>
