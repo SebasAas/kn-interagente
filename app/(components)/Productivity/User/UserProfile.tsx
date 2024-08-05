@@ -16,6 +16,8 @@ const RadarChart = dynamic(() => import("../../Chart/RadarChart"), {
 
 import Loader from "../../Loader";
 import dynamic from "next/dynamic";
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../../ErrorBoundary";
 
 const UserProfile = ({
   rankingData,
@@ -231,4 +233,6 @@ const UserProfile = ({
   );
 };
 
-export default UserProfile;
+export default withErrorBoundary(UserProfile, {
+  fallback: <Fallback />,
+});

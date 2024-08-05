@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Table,
@@ -7,32 +9,21 @@ import {
   TableRow,
   TableCell,
   Input,
-  Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Chip,
-  User,
   Pagination,
 } from "@nextui-org/react";
 import { columns, users, statusOptions } from "./data";
-import { capitalize } from "./utils";
 import { SearchIcon } from "@/app/(assets)/SearchIcon";
-import { ChevronDownIcon } from "@/app/(assets)/ChevronDownIcon";
-import { toast } from "react-toastify";
-
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = ["position", "worker_code", "work", "score"];
 
-export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../ErrorBoundary";
+
+function TableComponent({ rankingTable, selectedKeys, setSelectedKeys }) {
   const [filterValue, setFilterValue] = React.useState("");
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [visibleColumns, setVisibleColumns] = React.useState(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState({
@@ -41,33 +32,36 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
   });
   const [page, setPage] = React.useState(1);
 
-
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    if(!rankingTable) return []
+    if (!rankingTable) return [];
 
-    if(rankingTable.detail) {
+    if (rankingTable.detail) {
       return [];
     }
 
-    
     let filteredUsers = [...rankingTable];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+        user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
+    ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
+        Array.from(statusFilter).includes(user.status)
       );
     }
 
@@ -98,7 +92,7 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
 
     switch (columnKey) {
       case "work":
-        return Math.round(cellValue)
+        return Math.round(cellValue);
       default:
         return cellValue;
     }
@@ -131,9 +125,9 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
   }, []);
 
   const onClear = React.useCallback(() => {
-    setFilterValue("")
-    setPage(1)
-  }, [])
+    setFilterValue("");
+    setPage(1);
+  }, []);
 
   const topContent = React.useMemo(() => {
     return (
@@ -220,10 +214,16 @@ export default function App({ rankingTable, selectedKeys, setSelectedKeys }) {
       <TableBody emptyContent={"No users found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.worker_code}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
           </TableRow>
         )}
       </TableBody>
     </Table>
   );
 }
+
+export default withErrorBoundary(TableComponent, {
+  fallback: <Fallback />,
+});
