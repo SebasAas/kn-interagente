@@ -2,6 +2,8 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
 import Subtitle from "../../Text/Subtitle";
 import UserProfile from "./UserProfile";
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../../ErrorBoundary";
 
 function User({
   rankingData,
@@ -39,4 +41,6 @@ function User({
   );
 }
 
-export default User;
+export default withErrorBoundary(User, {
+  fallback: <Fallback />,
+});

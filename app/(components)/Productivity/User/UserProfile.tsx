@@ -16,6 +16,8 @@ const RadarChart = dynamic(() => import("../../Chart/RadarChart"), {
 
 import Loader from "../../Loader";
 import dynamic from "next/dynamic";
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../../ErrorBoundary";
 
 const UserProfile = ({
   rankingData,
@@ -91,7 +93,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-red-700 font-semibold">
-              {userData?.workloads[0]?.work?.toFixed(0)}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.work?.toFixed(0)}
             </p>
           </div>
           <div className="flex flex-col text-center">
@@ -106,7 +110,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.production}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.production}
             </p>
           </div>
           <div className="flex flex-col text-center">
@@ -121,7 +127,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.productivity?.toFixed(0)}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.productivity?.toFixed(0)}
             </p>
           </div>
           <div className="flex flex-col text-center">
@@ -136,7 +144,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.profile?.toFixed(0)}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.profile?.toFixed(0)}
             </p>
           </div>
           {/* <div className="flex flex-col text-center">
@@ -168,7 +178,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.mean_direct_hours}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.mean_direct_hours}
             </p>
           </div>
 
@@ -184,7 +196,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.speed?.toFixed(2)}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.speed?.toFixed(2)}
             </p>
           </div>
           {/* <div className="flex flex-col text-center">
@@ -216,7 +230,9 @@ const UserProfile = ({
               />
             </div>
             <p className="text-2xl text-blue-700 font-semibold">
-              {userData?.workloads[0]?.mean_distance?.toFixed(0)}
+              {userData?.workloads &&
+                userData?.workloads?.length > 0 &&
+                userData?.workloads[0]?.mean_distance?.toFixed(0)}
             </p>
           </div>
         </div>
@@ -231,4 +247,6 @@ const UserProfile = ({
   );
 };
 
-export default UserProfile;
+export default withErrorBoundary(UserProfile, {
+  fallback: <Fallback />,
+});

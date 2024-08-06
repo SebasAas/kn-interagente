@@ -38,6 +38,8 @@ import ToolIcon from "@/app/(assets)/ToolIcon";
 import { ConfigType, updateConfig } from "@/app/(services)/config";
 import ModalComponent from "../Modal";
 import { WebSocketFilter } from "../WSS/WebSocketFilter";
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../ErrorBoundary";
 
 const MixedChart = dynamic(() => import("../Chart/MixedChart"), {
   ssr: false,
@@ -469,7 +471,7 @@ const reorderJsonData = (data: any, order: any) => {
   });
 };
 
-export default function Productivity({
+function Productivity({
   charts,
   date,
   ranking,
@@ -1084,3 +1086,7 @@ export default function Productivity({
     </div>
   );
 }
+
+export default withErrorBoundary(Productivity, {
+  fallback: <Fallback />,
+});

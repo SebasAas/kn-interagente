@@ -7,6 +7,9 @@ import UserCard from "../User/UserCard";
 
 import Table from "../../../(components)/Table";
 
+import { withErrorBoundary } from "react-error-boundary";
+import Fallback from "../../ErrorBoundary";
+
 function Ranking({
   rankingData,
   selectedKeys,
@@ -58,4 +61,6 @@ function Ranking({
   );
 }
 
-export default Ranking;
+export default withErrorBoundary(Ranking, {
+  fallback: <Fallback />,
+});
