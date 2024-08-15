@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+  Switch,
+} from "@nextui-org/react";
 import DateSelector from "../(components)/Planning/DateSelector";
 import AlertBoard from "../(components)/Planning/AlertBoard";
 import UploadButton from "../(components)/Planning/UploadButton";
@@ -22,12 +29,15 @@ import useGetUploadDatesTrucks from "../(hooks)/useGetUploadDatesTrucks";
 import { ArrowDownIcon } from "../(assets)/ArrowIcon";
 import mockedSimulation from "../(helpers)/mockedSimulation";
 import { formatDateToDDMM } from "../(helpers)/dates";
+import PlanningDropzone from "../(components)/Dropzone/PlanningDropzone";
 
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
   const { dispatch, simulation, selectedSimulationDate } = useAppContext();
-  const [demandFile, setDemandFile] = useState<File | null>(null);
+  const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [backlogPrimary, setBacklogPrimary] = useState(false);
 
   const [dateInfoCallback, setDateInfoCallback] = useState({
     year: "2024",
@@ -35,7 +45,56 @@ const PlanningPage: React.FC = () => {
     shift: "0",
   });
 
-  const { isLoading, error } = useGetUploadDatesTrucks();
+  const [data, setData] = useState({
+    aero: {
+      shift_1: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_2: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_3: {
+        user: 0,
+        synergy: 0,
+      },
+      profile: 0,
+      mean_visits_per_hour: 0,
+    },
+    hpc: {
+      shift_1: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_2: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_3: {
+        user: 0,
+        synergy: 0,
+      },
+      profile: 0,
+      mean_visits_per_hour: 0,
+    },
+    food: {
+      shift_1: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_2: {
+        user: 0,
+        synergy: 0,
+      },
+      shift_3: {
+        user: 0,
+        synergy: 0,
+      },
+      profile: 0,
+      mean_visits_per_hour: 0,
+    },
+  });
 
   useEffect(() => {
     if (!session && status === "unauthenticated") {
@@ -55,15 +114,28 @@ const PlanningPage: React.FC = () => {
   };
 
   // Handler for file upload
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (file: File[] | File) => {
+    console.log("filefile", file);
+    let fileToSent = file as File[];
+
     if (file) {
-      const toastPromise = toast.promise(demandFiles([file]), {
+      const toastPromise = toast.promise(demandFiles(fileToSent), {
         pending: "Enviando arquivo...",
       });
 
       await toastPromise
         .then((response) => response.json())
         .then(async (res: any) => {
+          if (res?.detail) {
+            toast.error(
+              <div>
+                <h2>Algo deu errado enviando o arquivo, {res.detail}</h2>
+              </div>
+            );
+            setDemandFile(null);
+            return;
+          }
+
           if (res === null) {
             dispatch({
               type: "SET_UPLOAD_STATUS",
@@ -90,41 +162,337 @@ const PlanningPage: React.FC = () => {
   };
 
   // Trigger the upload process when the file is selected
-  const onFileSelect = (file: File | null) => {
+  const onFileSelect = (file: File[] | File | null) => {
     setDemandFile(file);
     if (file) {
       handleFileUpload(file);
     }
   };
 
+  const handleGetInformation = async () => {
+    console.log("handleGetInformation");
+  };
+
+  const handleGetDataFormat = () => {
+    // Find the obj inside lastUploadFileSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
+    // const uploadData = lastUploadFileSummary?.find(
+    //   (data) => data?.name === "upload"
+    // );
+
+    // if (uploadData) {
+    //   const date = new Date(uploadData.day);
+    //   const hours = date.getHours();
+    //   const minutes = date.getMinutes();
+    //   const day = date.getDate();
+    //   const month = date.getMonth() + 1;
+    //   return `${hours}:${minutes} - ${day}/${month}`;
+    // }
+
+    return "-";
+  };
+
+  const handleSimulate = () => {};
+
   return (
     <div className="flex flex-row gap-4 w-full h-full">
-      <div className="flex flex-col gap-6 w-[20%] max-w-[240px]">
-        <Card className="p-4 h-fit ">
-          <div className="flex flex-row justify-between mb-4">
-            <h3 className="text-[#353535] font-medium">Data</h3>
-            <TruckIcon />
-          </div>
-          <DateSelector onDateSelect={handleDateSelect} isLoading={isLoading} />
-        </Card>
+      <div className="flex flex-col gap-6 w-[240px]">
         <Card className="p-4 h-fit ">
           <CardHeader className="p-0 pb-2 flex-col items-start">
-            <Subtitle>Demanda</Subtitle>
+            <Subtitle>Upload</Subtitle>
           </CardHeader>
           <CardBody className="overflow-visible !p-0 !pt-2">
-            <Dropzone
+            <PlanningDropzone
               file={demandFile}
+              maxFiles={2}
               setFile={onFileSelect}
               dateRangeChart={{
                 latest_updated_visit: "",
                 newest_updated_visit: "",
               }}
-              setWSSChartFinished={() => {}}
-              setDateInfo={setDateInfoCallback}
               isDisable={false}
-              hasWSS={false}
             />
           </CardBody>
+          <button
+            className={`px-2 py-1 mt-3 rounded-md ${
+              buttonDisabled
+                ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                : "bg-blue-900 text-white"
+            } text-sm font-medium mt-2`}
+            onClick={() => (buttonDisabled ? () => {} : handleGetInformation())}
+          >
+            Enviar
+          </button>
+          <span className="text-xs mt-3 text-gray-400">
+            Ultimo upload:{" "}
+            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+          </span>
+          <span className="text-xs mt-2 text-gray-400">
+            Range:{" "}
+            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+          </span>
+        </Card>
+        <Card className="p-4 h-fit ">
+          <CardBody className="overflow-visible !p-0 !pt-2">
+            <div className="flex justify-between items-center">
+              <p className="text-xs">Backlog Primario</p>
+              <Switch
+                isSelected={backlogPrimary}
+                onValueChange={setBacklogPrimary}
+                size="sm"
+                defaultSelected
+                aria-label="Backlog Primario"
+                classNames={{
+                  wrapper: ["group-data-[selected=true]:bg-blue-900"],
+                }}
+              />
+            </div>
+            <div className="flex justify-between items-center mt-3">
+              <p className="text-xs">Stage (n de caixas)</p>
+              <input
+                type="number"
+                placeholder="3º"
+                value={"0"}
+                onChange={(e) => console.log(e.target.value)}
+                min={0}
+                className="w-12 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+              />
+            </div>
+            <div className="mt-4 flex flex-col gap-3">
+              {Object.keys(data).map((key) => (
+                <>
+                  <div className="flex gap-3 items-center">
+                    <p className="font-medium capitalize">{key}</p>
+                    <div
+                      className={`p-1 ml-8 w-1/2 text-center text-xs text-gray-400`}
+                    >
+                      <p>Usuario</p>
+                    </div>
+                    <div
+                      className={`p-1 w-1/2 text-center text-xs text-gray-400`}
+                    >
+                      <p>Sinergia</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <p className="text-xs whitespace-nowrap">Turno 1</p>
+                    <div className="w-1/2">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_1.user
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_1: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_1,
+                                user: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_1.synergy
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_1: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_1,
+                                synergy: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <p className="text-xs whitespace-nowrap">Turno 2</p>
+                    <div className="w-1/2">
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_2.user
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_2: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_2,
+                                user: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_2.synergy
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_2: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_2,
+                                synergy: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <p className="text-xs whitespace-nowrap">Turno 3</p>
+                    <div className="w-1/2">
+                      <input
+                        type="number"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_3.user
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_3: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_3,
+                                user: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        value={
+                          data[key as "aero" | "hpc" | "food"].shift_3.synergy
+                        }
+                        onChange={(e) => {
+                          if (isNaN(Number(e.target.value))) return;
+
+                          setData({
+                            ...data,
+                            [key]: {
+                              ...data[key as "aero" | "hpc" | "food"],
+                              shift_3: {
+                                ...data[key as "aero" | "hpc" | "food"].shift_3,
+                                synergy: Number(e.target.value),
+                              },
+                            },
+                          });
+                        }}
+                        min={0}
+                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3 justify-between">
+                    <p className="text-xs whitespace-nowrap">Perfil</p>
+
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={data[key as "aero" | "hpc" | "food"].profile}
+                      // onChange={(e) => {
+                      //   if (isNaN(Number(e.target.value))) return;
+
+                      //   setData({
+                      //     ...data,
+                      //     [key]: {
+                      //       ...data[key as "aero" | "hpc" | "food"],
+                      //       profile: Number(e.target.value),
+                      //     },
+                      //   });
+                      // }}
+                      disabled
+                      className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    />
+                  </div>
+                  <div className="flex gap-3 justify-between">
+                    <p className="text-xs whitespace-nowrap">Média visitas</p>
+                    <input
+                      type="number"
+                      disabled
+                      className="w-12 invisible text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    />
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={
+                        data[key as "aero" | "hpc" | "food"]
+                          .mean_visits_per_hour
+                      }
+                      // onChange={(e) => {
+                      // if (isNaN(Number(e.target.value))) return;
+                      //   setData({
+                      //     ...data,
+                      //     [key]: {
+                      //       ...data[key as "aero" | "hpc" | "food"],
+                      //       mean_visits_per_hour: Number(e.target.value),
+                      //     },
+                      //   });
+                      // }}
+                      disabled
+                      className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          </CardBody>
+          <span className="text-xs mt-4 text-gray-400">
+            Produtividade atualizadas:{" "}
+            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+          </span>
+          <button
+            className={`px-2 py-1 mt-3 rounded-md ${
+              buttonDisabled
+                ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                : "bg-blue-900 text-white"
+            } text-sm font-medium mt-2`}
+            onClick={() => (buttonDisabled ? () => {} : handleSimulate())}
+          >
+            Simular
+          </button>
         </Card>
       </div>
 
