@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@/app/(assets)/ArrowIcon";
 import { useAppContext } from "@/app/(context)/AppContext";
 import { formatDateToHHMM } from "@/app/(helpers)/dates";
+import { isBackgroundLight } from "@/app/(helpers)/textColor";
 import { FamilyPropsResponse } from "@/app/(services)/demand";
 import React, { useState } from "react";
 
@@ -52,22 +53,82 @@ const isEndOfShift = (index: number) => {
 const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
   simulation,
 }) => {
-  const { selectedSimulationDate } = useAppContext();
   const [selectedFamily, setSelectedFamily] = useState<
-    "hpc" | "aero" | "foods"
+    "hpc" | "aero" | "foods" | "all"
   >("hpc");
 
   //  renderiza os dados da família selecionada
   const getFamilyData = () => {
-    if (
-      !selectedFamily ||
-      !simulation?.[selectedSimulationDate] ||
-      !simulation?.[selectedSimulationDate]?.[selectedFamily]
-    )
-      return null;
+    if (!selectedFamily) return null;
 
-    return simulation?.[selectedSimulationDate]?.[selectedFamily]?.map(
-      (data, index) => (
+    return Object.values(simulation!)?.map((data, index) => {
+      return data[selectedFamily].map((data, index) => {
+        return (
+          <tr
+            key={index}
+            className={`text-center ${
+              isEndOfShift(index)
+                ? "border-solid border-0 border-b-1.5 border-black"
+                : ""
+            }`}
+          >
+            <td className="py-1 text-center flex justify-center">
+              <div
+                className={`${
+                  isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
+                } text-white`}
+                style={{ backgroundColor: data.criticity }}
+              >
+                {data.workers}
+              </div>
+            </td>
+            <td>
+              <div
+                className={
+                  isNoWorkTime(index)
+                    ? isBackgroundLight(data.criticity)
+                      ? "text-black"
+                      : "text-white"
+                    : ""
+                }
+                style={
+                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                }
+              >
+                {data.visits}
+              </div>
+            </td>
+            <td>
+              <div
+                className={isNoWorkTime(index) ? "text-white" : ""}
+                style={
+                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                }
+              >
+                {data.boxes}
+              </div>
+            </td>
+            <td>
+              <div
+                className={isNoWorkTime(index) ? "text-white" : ""}
+                style={
+                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                }
+              >
+                {data.backlog}
+              </div>
+            </td>
+          </tr>
+        );
+      });
+    });
+  };
+
+  const getTotalData = () => {
+    if (!selectedFamily) return null;
+
+    return Object.values(simulation!)?.map((s, index) => {
+      return s?.all.map((data, index) => (
         <tr
           key={index}
           className={`text-center ${
@@ -76,29 +137,55 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
               : ""
           }`}
         >
-          <td className="py-0.5 text-center flex justify-center">
+          <td className="py-1 text-center flex justify-center">
             <div
               className={`${
                 isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              } text-white`}
+              } ${
+                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
+              }`}
               style={{ backgroundColor: data.criticity }}
             >
               {data.workers}
             </div>
           </td>
-          <td>
+          <td className="text-center">
+            <div className="w-full flex justify-center">
+              <div
+                className={`${
+                  isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
+                } ${
+                  isBackgroundLight(data.criticity)
+                    ? "text-black"
+                    : "text-white"
+                }`}
+                style={{ backgroundColor: data.criticity }}
+              >
+                {data.visits}
+              </div>
+            </div>
+          </td>
+          <td className="py-1 text-center flex justify-center">
             <div
-              className={isNoWorkTime(index) ? "text-white" : ""}
-              style={
-                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
-              }
+              className={`${
+                isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
+              } ${
+                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
+              }`}
+              style={{ backgroundColor: data.criticity }}
             >
-              {data.visits}
+              {data.base_workers}
             </div>
           </td>
           <td>
             <div
-              className={isNoWorkTime(index) ? "text-white" : ""}
+              className={
+                isNoWorkTime(index)
+                  ? isBackgroundLight(data?.criticity)
+                    ? "text-black"
+                    : "text-white"
+                  : ""
+              }
               style={
                 isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
               }
@@ -106,80 +193,28 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
               {data.boxes}
             </div>
           </td>
-        </tr>
-      )
-    );
-  };
-
-  const getTotalData = () => {
-    if (!selectedFamily || !simulation?.[selectedSimulationDate]?.all)
-      return null;
-
-    return simulation?.[selectedSimulationDate]?.["all"]?.map((data, index) => (
-      <tr
-        key={index}
-        className={`text-center ${
-          isEndOfShift(index)
-            ? "border-solid border-0 border-b-1.5 border-black"
-            : ""
-        }`}
-      >
-        <td className="py-0.5 text-center flex justify-center">
-          <div
-            className={`${
-              isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-            } text-white`}
-            style={{ backgroundColor: data.criticity }}
-          >
-            {data.base_workers}
-          </div>
-        </td>
-        <td className="text-center">
-          <div className="w-full flex justify-center">
+          <td className="py-1 text-center flex justify-center">
             <div
               className={`${
                 isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              } text-white`}
+              } ${
+                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
+              }`}
               style={{ backgroundColor: data.criticity }}
             >
-              {data.workers}
+              {data.backlog}
             </div>
-          </div>
-        </td>
-        <td>
-          <div
-            className={isNoWorkTime(index) ? "text-white" : ""}
-            style={
-              isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
-            }
-          >
-            {data.visits}
-          </div>
-        </td>
-        <td className="py-0.5 text-center flex justify-center">
-          <div
-            className={`${
-              isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-            } text-white`}
-            style={{ backgroundColor: data.criticity }}
-          >
-            {data.boxes}
-          </div>
-        </td>
-      </tr>
-    ));
+          </td>
+        </tr>
+      ));
+    });
   };
 
   const getDatesData = () => {
-    if (
-      !selectedFamily ||
-      !simulation?.[selectedSimulationDate] ||
-      !simulation?.[selectedSimulationDate]?.[selectedFamily]
-    )
-      return null;
+    if (!selectedFamily) return null;
 
-    return simulation?.[selectedSimulationDate]?.[selectedFamily]?.map(
-      (data, index) => (
+    return Object.values(simulation!)?.map((data, index) => {
+      return data[selectedFamily].map((data, index) => (
         <tr
           key={index}
           className={`text-center ${
@@ -188,9 +223,15 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
               : ""
           }`}
         >
-          <td className="py-0.5 text-center flex justify-center">
+          <td className="py-1 text-center flex justify-center">
             <div
-              className={`px-3 ${isNoWorkTime(index) ? "text-white" : ""}`}
+              className={`px-3 ${
+                isNoWorkTime(index)
+                  ? isBackgroundLight(data.criticity)
+                    ? "text-black"
+                    : "text-white"
+                  : ""
+              }`}
               style={
                 isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
               }
@@ -199,8 +240,8 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </div>
           </td>
         </tr>
-      )
-    );
+      ));
+    });
   };
 
   const datesTable = () => {
@@ -208,12 +249,12 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
       <table
         cellSpacing="0"
         cellPadding="0"
-        className="table-auto w-min border-collapse border-spacing-0 rounded"
+        className="table-auto w-min border-separate border-spacing-0 rounded"
       >
         <thead>
           <tr>
             <th>
-              <p className="text-sm font-medium text-gray-500">Hora</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Hora</p>
             </th>
           </tr>
         </thead>
@@ -227,21 +268,28 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
       <table
         cellSpacing="0"
         cellPadding="0"
-        className="table-auto w-full border-collapse border-spacing-0 rounded"
+        className="table-auto w-full border-separate border-spacing-0 rounded"
       >
         <thead>
           <tr className="text-sm">
             <th>
-              <p className="text-sm font-medium text-gray-500">Escalado</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">
+                Escalado
+              </p>
             </th>
             <th>
-              <p className="text-sm font-medium text-gray-500">Estimado</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">
+                Estimado
+              </p>
             </th>
             <th>
-              <p className="text-sm font-medium text-gray-500">Visitas</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
             </th>
             <th>
-              <p className="text-sm font-medium text-gray-500">Caixas</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
             </th>
           </tr>
         </thead>
@@ -255,18 +303,23 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
       <table
         cellSpacing="0"
         cellPadding="0"
-        className="table-auto w-full border-collapse border-spacing-0 rounded-md border-1 border-solid border-gray-300"
+        className="table-auto w-full border-separate border-spacing-0 rounded-md border-1 border-solid border-gray-300"
       >
         <thead>
-          <tr className="text-sm">
+          <tr className="text-sm bg-[#F2F2F2] ">
             <th>
-              <p className="text-sm font-medium">Estimados</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3 rounded-t-lg">
+                Estimados
+              </p>
             </th>
             <th>
-              <p className="text-sm font-medium">Visitas</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
             </th>
             <th>
-              <p className="text-sm font-medium">Caixas</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
             </th>
           </tr>
         </thead>
@@ -278,23 +331,19 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
   const getTotalBox = (shift: number) => {
     // sum the boxes of all families in three shifts
     let total = 0;
-    if (!selectedFamily || !simulation?.[selectedSimulationDate]?.all)
-      return null;
+    if (!selectedFamily) return null;
 
     // divide the ammount of elements inside the all families in 3, and depending on the shift, return the correspondent value
-    total = simulation?.[selectedSimulationDate]?.["all"]?.reduce(
-      (acc, data, index) => {
-        if (shift === 1 && index < 8) {
-          return acc + data.boxes;
-        } else if (shift === 2 && index > 7 && index < 16) {
-          return acc + data.boxes;
-        } else if (shift === 3 && index > 15) {
-          return acc + data.boxes;
-        }
-        return acc;
-      },
-      0
-    );
+    total = Object.values(simulation!)?.reduce((acc, data, index) => {
+      if (shift === 1 && index < 8) {
+        return acc + data["all"][index].boxes;
+      } else if (shift === 2 && index > 7 && index < 16) {
+        return acc + data["all"][index].boxes;
+      } else if (shift === 3 && index > 15) {
+        return acc + data["all"][index].boxes;
+      }
+      return acc;
+    }, 0);
 
     // Return it as xx.xxx
     return total?.toLocaleString("pt-BR");
@@ -308,51 +357,51 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           {datesTable()}
         </div>
         <div className="flex flex-col items-center w-full">
+          <div className="flex w-full justify-center items-center pb-2 border-b-1 border-b-gray-300">
+            <p className="font-medium text-base ">Total</p>
+          </div>
+          {totalTable()}
+        </div>
+        <div className="flex flex-col items-center w-full">
           <Swapper selectFamily={setSelectedFamily} />
           {familyTable()}
         </div>
-        <div className="flex flex-col items-center w-full">
-          <p className="text-gray-500 font-medium text-base mb-2 ml-16">
-            Total
-          </p>
-          {totalTable()}
-        </div>
-        <div className="pt-11">
+        <div className="pt-[70px]">
           <div className="flex flex-col h-1/3 items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">1</p>
             </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(1)}</p>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
           <div className="flex flex-col h-[calc(33.3%-7px)] my-[6px] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">2</p>
             </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(2)}</p>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
           <div className="flex flex-col h-[calc(33.3%-7px)] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">3</p>
             </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(3)}</p>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
       </div>

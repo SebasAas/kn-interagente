@@ -1,6 +1,7 @@
 "use client";
 import { useAppContext } from "@/app/(context)/AppContext";
 import { useEffect, useState } from "react";
+import Subtitle from "../Text/Subtitle";
 
 interface Alert {
   id: number;
@@ -33,17 +34,28 @@ const AlertBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-around gap-2 flex-wrap min-w-[100px]">
-      {simulation?.alarms?.[selectedSimulationDate]?.map(
-        ({ day, message, criticity }) => (
-          <div
-            key={day}
-            className={`min-w-[100px] p-3 my-2 bg-[${criticity}] rounded-lg`}
-          >
-            <p className="text-sm text-center text-white">{message}</p>
-          </div>
-        )
-      )}
+    <div className="flex justify-around gap-2 flex-wrap min-w-[100px] flex-col">
+      <Subtitle>Alertas</Subtitle>
+      <div>
+        {Object.values(simulation?.alarms).length > 0 ? (
+          Object.values(simulation?.alarms)?.map((date) => {
+            return date?.map((alert) => {
+              return (
+                <div
+                  key={alert.day}
+                  className={`min-w-[100px] p-3 my-2 bg-[${alert.criticity}] rounded-lg`}
+                >
+                  <p className="text-sm text-center text-white">
+                    {alert.message}
+                  </p>
+                </div>
+              );
+            });
+          })
+        ) : (
+          <p className="text-sm font-medium mt-2">Não há alertas</p>
+        )}
+      </div>
     </div>
   );
 };
