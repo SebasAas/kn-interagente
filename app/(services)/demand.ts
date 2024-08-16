@@ -20,50 +20,73 @@ export type FamilyProps = {
   ];
 };
 
-export type FamilyPropsResponse = {
-  simulation: {
-    [key: string]: {
-      aero: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      foods: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      hpc: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      all: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        base_workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-    };
+export type SimulationType = {
+  [key: string]: {
+    aero: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      isWorkingHour: boolean;
+    }[];
+    foods: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      isWorkingHour: boolean;
+    }[];
+    hpc: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      isWorkingHour: boolean;
+    }[];
+    all: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      isWorkingHour: boolean;
+    }[];
   };
+};
+
+export type FamilyPropsResponse = {
+  simulation: SimulationType;
   alarms: {
     [key: string]: {
       day: string;
       message: string;
       criticity: string;
     }[];
+  };
+  additionalData: {
+    [key: string]: {
+      profile: number;
+      mean_visits_per_hour: number;
+    };
   };
 };
 

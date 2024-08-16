@@ -8,44 +8,31 @@ import {
   Input,
   Switch,
 } from "@nextui-org/react";
-import DateSelector from "../(components)/Planning/DateSelector";
 import AlertBoard from "../(components)/Planning/AlertBoard";
-import UploadButton from "../(components)/Planning/UploadButton";
-import TruckIcon from "../(assets)/TruckIcon";
-import TooltipIcon from "../(assets)/TooltipIcon";
-import { Tooltip } from "react-tooltip";
 import ProductTable from "../(components)/Planning/ProductTable";
-import PoliticsForm from "../(components)/Planning/PoliticsForm";
 import Subtitle from "../(components)/Text/Subtitle";
 import { toast } from "react-toastify";
-import Dropzone from "../(components)/Dropzone";
-import { demandFiles, fetchUploadStatus } from "../(services)/demand";
+import {
+  demandFiles,
+  FamilyPropsResponse,
+  fetchUploadStatus,
+  SimulationType,
+} from "../(services)/demand";
 import { useAppContext } from "../(context)/AppContext";
 import { useSession } from "next-auth/react";
 import { getBaseUrl } from "../(helpers)/env";
 import { redirect } from "next/navigation";
-import { generateDates } from "../(helpers)/generateDates";
-import useGetUploadDatesTrucks from "../(hooks)/useGetUploadDatesTrucks";
-import { ArrowDownIcon } from "../(assets)/ArrowIcon";
-import mockedSimulation from "../(helpers)/mockedSimulation";
-import { formatDateToDDMM } from "../(helpers)/dates";
 import PlanningDropzone from "../(components)/Dropzone/PlanningDropzone";
 
 import simulationData from "./fakeDataSimulation.json";
+import { formatDateToDDMM, formatDateToHHMM } from "../(helpers)/dates";
 
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
   const { dispatch, simulation, selectedSimulationDate } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [backlogPrimary, setBacklogPrimary] = useState(false);
-
-  const [dateInfoCallback, setDateInfoCallback] = useState({
-    year: "2024",
-    month: "03",
-    shift: "0",
-  });
 
   const [data, setData] = useState({
     aero: {
@@ -195,6 +182,27 @@ const PlanningPage: React.FC = () => {
 
   const handleSimulate = () => {};
 
+  const getRange = (data: SimulationType) => {
+    // Get first data of the first element and the last that will be the range in simulationData?.simulation
+
+    if (!data || Object.keys(data).length === 0) return "-";
+
+    const first = data[Object?.keys(data)[0]];
+    const last = data[Object?.keys(data)[Object?.keys(data).length - 1]];
+
+    const firstDateDDMM = formatDateToDDMM(first?.all[0]?.hour);
+    const lastDateDDMM = formatDateToDDMM(
+      last?.all[last?.all?.length - 1]?.hour
+    );
+
+    const firstDateHHMM = formatDateToHHMM(first?.all[0]?.hour);
+    const lastDateHHMM = formatDateToHHMM(
+      last?.all[last?.all?.length - 1]?.hour
+    );
+
+    return `${firstDateDDMM} as ${firstDateHHMM} até ${lastDateDDMM} as ${lastDateHHMM}`;
+  };
+
   return (
     <div className="flex flex-row gap-4 w-full h-full">
       <div className="flex flex-col gap-6 w-[240px]">
@@ -226,10 +234,6 @@ const PlanningPage: React.FC = () => {
           </button>
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
-            <span className="text-xs text-black">{handleGetDataFormat()}</span>
-          </span>
-          <span className="text-xs mt-2 text-gray-400">
-            Range:{" "}
             <span className="text-xs text-black">{handleGetDataFormat()}</span>
           </span>
         </Card>
@@ -427,66 +431,12 @@ const PlanningPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-3 justify-between">
-                    <p className="text-xs whitespace-nowrap">Perfil</p>
-
-                    <input
-                      type="number"
-                      placeholder="0"
-                      value={data[key as "aero" | "hpc" | "food"].profile}
-                      // onChange={(e) => {
-                      //   if (isNaN(Number(e.target.value))) return;
-
-                      //   setData({
-                      //     ...data,
-                      //     [key]: {
-                      //       ...data[key as "aero" | "hpc" | "food"],
-                      //       profile: Number(e.target.value),
-                      //     },
-                      //   });
-                      // }}
-                      disabled
-                      className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                    />
-                  </div>
-                  <div className="flex gap-3 justify-between">
-                    <p className="text-xs whitespace-nowrap">Média visitas</p>
-                    <input
-                      type="number"
-                      disabled
-                      className="w-12 invisible text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                    />
-                    <input
-                      type="number"
-                      placeholder="0"
-                      value={
-                        data[key as "aero" | "hpc" | "food"]
-                          .mean_visits_per_hour
-                      }
-                      // onChange={(e) => {
-                      // if (isNaN(Number(e.target.value))) return;
-                      //   setData({
-                      //     ...data,
-                      //     [key]: {
-                      //       ...data[key as "aero" | "hpc" | "food"],
-                      //       mean_visits_per_hour: Number(e.target.value),
-                      //     },
-                      //   });
-                      // }}
-                      disabled
-                      className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                    />
-                  </div>
                 </>
               ))}
             </div>
           </CardBody>
-          <span className="text-xs mt-4 text-gray-400">
-            Produtividade atualizadas:{" "}
-            <span className="text-xs text-black">{handleGetDataFormat()}</span>
-          </span>
           <button
-            className={`px-2 py-1 mt-3 rounded-md ${
+            className={`px-2 py-1 mt-4 rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-900 text-white"
@@ -498,9 +448,15 @@ const PlanningPage: React.FC = () => {
         </Card>
       </div>
 
-      <Card className="p-4 h-fit flex-1">
+      <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
         <div className="flex flex-col gap-4">
-          <Subtitle>Separação de Caixas</Subtitle>
+          <div className="flex flex-col">
+            <Subtitle>Separação de Caixas</Subtitle>
+            <span className="text-xs mt-2 text-gray-400">
+              Range: {getRange(simulationData.simulation)}
+            </span>
+          </div>
+
           {/* <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
@@ -521,15 +477,16 @@ const PlanningPage: React.FC = () => {
             </div>
             <PoliticsForm isVisible={isVisible} />
           </div> */}
-          <ProductTable simulation={simulationData?.simulation || []} />
+          {/* <div className="flex relative w-full"> */}
+          <ProductTable
+            simulation={simulationData?.simulation || []}
+            additionalData={simulationData.additionalData}
+          />
         </div>
       </Card>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
         <AlertBoard />
-        {/* <div className="border-1 border-solid rounded-lg transform rotate-x-2 shadow-md h-2/5">
-          <p>Gráfico Produção x Recursos</p>
-        </div> */}
       </Card>
     </div>
   );

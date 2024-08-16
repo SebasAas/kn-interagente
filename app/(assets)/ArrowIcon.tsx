@@ -1,6 +1,6 @@
-import React from "react";
+import React, { SVGProps } from "react";
 
-function ArrowRightIcon() {
+function ArrowRightIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,6 +8,7 @@ function ArrowRightIcon() {
       height="13"
       viewBox="0 0 8 13"
       fill="none"
+      {...props}
     >
       <path
         fill-rule="evenodd"

@@ -1,12 +1,25 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@/app/(assets)/ArrowIcon";
 import { useAppContext } from "@/app/(context)/AppContext";
-import { formatDateToHHMM } from "@/app/(helpers)/dates";
+import { formatDateToDDMM, formatDateToHHMM } from "@/app/(helpers)/dates";
 import { isBackgroundLight } from "@/app/(helpers)/textColor";
 import { FamilyPropsResponse } from "@/app/(services)/demand";
 import React, { useState } from "react";
 
+const getFormatedNameFamily = (family: string) => {
+  switch (family) {
+    case "aero":
+      return "Aero";
+    case "hpc":
+      return "HPC";
+    case "foods":
+      return "Foods";
+    case "all":
+      return "Total";
+  }
+};
+
 const Swapper = ({ selectFamily }: { selectFamily: any }) => {
-  const data = ["hpc", "aero", "foods"];
+  const data = ["hpc", "aero", "foods", "all"];
   const [index, setIndex] = useState(0);
 
   const handleSwap = (direction: string) => {
@@ -26,12 +39,12 @@ const Swapper = ({ selectFamily }: { selectFamily: any }) => {
   };
 
   return (
-    <div className="flex gap-2 mb-[7px] ml-20">
+    <div className="flex gap-2 mb-[7px]">
       <button onClick={() => handleSwap("back")}>
         <ArrowLeftIcon />
       </button>
-      <p className="min-w-[55px] text-center font-medium text-base uppercase">
-        {data[index]}
+      <p className="min-w-[55px] text-center font-medium text-base">
+        {getFormatedNameFamily(data[index])}
       </p>
       <button onClick={() => handleSwap("next")}>
         <ArrowRightIcon />
@@ -52,18 +65,25 @@ const isEndOfShift = (index: number) => {
 
 const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
   simulation,
+  additionalData,
 }) => {
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
   >("hpc");
+  const [showFamilyStatistics, setShowFamilyStatistics] = useState(true);
 
   //  renderiza os dados da família selecionada
   const getFamilyData = () => {
     if (!selectedFamily) return null;
 
-    return Object.values(simulation!)?.map((data, index) => {
-      return data[selectedFamily].map((data, index) => {
-        return (
+    return Object.values(simulation!)?.map((data, index) => (
+      <>
+        <tr className="!bg-[#07AC7E] text-center">
+          <td colSpan={8} className="text-sm text-white py-1">
+            {formatDateToDDMM(data.aero[0].hour)}
+          </td>
+        </tr>
+        {data[selectedFamily].map((data, index) => (
           <tr
             key={index}
             className={`text-center ${
@@ -72,37 +92,47 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
                 : ""
             }`}
           >
-            <td className="py-1 text-center flex justify-center">
-              <div
-                className={`${
-                  isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-                } text-white`}
-                style={{ backgroundColor: data.criticity }}
-              >
-                {data.workers}
-              </div>
-            </td>
             <td>
               <div
                 className={
-                  isNoWorkTime(index)
+                  !data.isWorkingHour
                     ? isBackgroundLight(data.criticity)
                       ? "text-black"
                       : "text-white"
                     : ""
                 }
                 style={
-                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
                 }
               >
-                {data.visits}
+                {formatDateToHHMM(data.hour)}
               </div>
             </td>
             <td>
               <div
-                className={isNoWorkTime(index) ? "text-white" : ""}
+                className={!data.isWorkingHour ? "text-white" : ""}
                 style={
-                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.backlog}
+              </div>
+            </td>
+            <td>
+              <div
+                className={!data.isWorkingHour ? "text-white" : ""}
+                style={
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.demand}
+              </div>
+            </td>
+            <td>
+              <div
+                className={!data.isWorkingHour ? "text-white" : ""}
+                style={
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.boxes}
@@ -110,18 +140,64 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </td>
             <td>
               <div
-                className={isNoWorkTime(index) ? "text-white" : ""}
+                className={!data.isWorkingHour ? "text-white" : ""}
                 style={
-                  isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
                 }
               >
-                {data.backlog}
+                {data.storage}
+              </div>
+            </td>
+            <td>
+              <div
+                className={
+                  !data.isWorkingHour
+                    ? isBackgroundLight(data.criticity)
+                      ? "text-black"
+                      : "text-white"
+                    : ""
+                }
+                style={
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.visits}
+              </div>
+            </td>
+            <td>
+              <div
+                className={
+                  !data.isWorkingHour
+                    ? isBackgroundLight(data.criticity)
+                      ? "text-black"
+                      : "text-white"
+                    : ""
+                }
+                style={
+                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.base_workers}
+              </div>
+            </td>
+            <td className="py-1 text-center flex justify-center">
+              <div
+                className={`${
+                  !data.isWorkingHour ? "w-full" : "min-w-[70px] w-min rounded"
+                } text-white`}
+                style={
+                  !data.isWorkingHour
+                    ? { backgroundColor: "#003369" }
+                    : { backgroundColor: data.criticity }
+                }
+              >
+                {data.workers}
               </div>
             </td>
           </tr>
-        );
-      });
-    });
+        ))}
+      </>
+    ));
   };
 
   const getTotalData = () => {
@@ -309,21 +385,101 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           <tr className="text-sm bg-[#F2F2F2] ">
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3 rounded-t-lg">
-                Estimados
+                Hora
               </p>
             </th>
             <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">
+                Demandas
+              </p>
             </th>
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
             </th>
             <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Stage</p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">
+                Escalado
+              </p>
+            </th>
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3 rounded-t-lg">
+                Estimados
+              </p>
             </th>
           </tr>
         </thead>
-        <tbody>{getFamilyData()}</tbody>
+        <tbody className="relative">
+          {getFamilyData()}
+          <tr
+            className={`w-full sticky -bottom-4 ${
+              showFamilyStatistics ? "h-28" : "h-5"
+            } !bg-white `}
+          >
+            <td
+              colSpan={8}
+              className="border-solid border-b-0 border-x-0  border-t-2 !border-t-[#003369] rounded-t-lg"
+            >
+              <button
+                className="absolute top-1 right-2 font-semibold text-xs"
+                onClick={() => setShowFamilyStatistics((prev) => !prev)}
+              >
+                <ArrowRightIcon
+                  className={showFamilyStatistics ? "rotate-90" : "-rotate-90"}
+                />
+              </button>
+              <div
+                className={`grid grid-cols-4 px-5 ${
+                  showFamilyStatistics ? "" : "hidden"
+                }`}
+              >
+                {Object?.entries(additionalData!)?.map(
+                  ([key, value], index) => (
+                    <div key={index}>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm font-semibold">
+                          {getFormatedNameFamily(key)}
+                        </p>
+                        <div className="flex items-center gap-5">
+                          <p className="text-xs whitespace-nowrap w-4/12">
+                            Perfil
+                          </p>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={value.profile}
+                            disabled
+                            className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                          />
+                        </div>
+                        <div className="flex items-center gap-5">
+                          <p className="text-xs whitespace-nowrap w-4/12">
+                            Média Visita
+                          </p>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={value.mean_visits_per_hour}
+                            disabled
+                            className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </td>
+          </tr>
+        </tbody>
       </table>
     );
   };
@@ -350,18 +506,18 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
   };
 
   return (
-    <div className="mt-4">
+    <div className="">
       <div className="flex">
-        <div className="">
+        {/* <div className="">
           <div className="invisible font-medium text-base mb-2">-</div>
           {datesTable()}
         </div>
         <div className="flex flex-col items-center w-full">
-          <div className="flex w-full justify-center items-center pb-2 border-b-1 border-b-gray-300">
+          <div className="flex w-full justify-center items-center pb-2 ">
             <p className="font-medium text-base ">Total</p>
           </div>
           {totalTable()}
-        </div>
+        </div> */}
         <div className="flex flex-col items-center w-full">
           <Swapper selectFamily={setSelectedFamily} />
           {familyTable()}

@@ -3,6 +3,9 @@ import { useAppContext } from "@/app/(context)/AppContext";
 import { useEffect, useState } from "react";
 import Subtitle from "../Text/Subtitle";
 
+import mockedSimulation from "@/app/planning/fakeDataSimulation.json";
+import { formatDateToDDMM } from "@/app/(helpers)/dates";
+
 interface Alert {
   id: number;
   message: string;
@@ -34,24 +37,28 @@ const AlertBoard: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-around gap-2 flex-wrap min-w-[100px] flex-col">
+    <div className="flex justify-around gap-2 flex-wrap min-w-[100px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-row ">
       <Subtitle>Alertas</Subtitle>
       <div>
-        {Object.values(simulation?.alarms).length > 0 ? (
-          Object.values(simulation?.alarms)?.map((date) => {
-            return date?.map((alert) => {
-              return (
+        {Object.values(mockedSimulation?.alarms).length > 0 ? (
+          Object.values(mockedSimulation?.alarms)?.map((date) => (
+            <>
+              <p className="flex justify-center items-center font-medium underline mt-6 mb-2">
+                {formatDateToDDMM(date[0].day)}
+              </p>
+              {date?.map((alert) => (
                 <div
                   key={alert.day}
-                  className={`min-w-[100px] p-3 my-2 bg-[${alert.criticity}] rounded-lg`}
+                  className={`min-w-[100px] p-3 my-2  rounded-lg`}
+                  style={{ background: `${alert.criticity}` }}
                 >
                   <p className="text-sm text-center text-white">
                     {alert.message}
                   </p>
                 </div>
-              );
-            });
-          })
+              ))}
+            </>
+          ))
         ) : (
           <p className="text-sm font-medium mt-2">Não há alertas</p>
         )}
