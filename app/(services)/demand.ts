@@ -29,6 +29,7 @@ export type FamilyPropsResponse = {
         visits: number;
         workers: number;
         criticity: string;
+        backlog: number;
       }[];
       foods: {
         hour: string;
@@ -36,6 +37,7 @@ export type FamilyPropsResponse = {
         visits: number;
         workers: number;
         criticity: string;
+        backlog: number;
       }[];
       hpc: {
         hour: string;
@@ -43,6 +45,7 @@ export type FamilyPropsResponse = {
         visits: number;
         workers: number;
         criticity: string;
+        backlog: number;
       }[];
       all: {
         hour: string;
@@ -51,6 +54,7 @@ export type FamilyPropsResponse = {
         workers: number;
         base_workers: number;
         criticity: string;
+        backlog: number;
       }[];
     };
   };

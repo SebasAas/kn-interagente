@@ -31,6 +31,8 @@ import mockedSimulation from "../(helpers)/mockedSimulation";
 import { formatDateToDDMM } from "../(helpers)/dates";
 import PlanningDropzone from "../(components)/Dropzone/PlanningDropzone";
 
+import simulationData from "./fakeDataSimulation.json";
+
 const PlanningPage: React.FC = () => {
   const { data: session, status } = useSession();
   const { dispatch, simulation, selectedSimulationDate } = useAppContext();
@@ -249,8 +251,8 @@ const PlanningPage: React.FC = () => {
             <div className="flex justify-between items-center mt-3">
               <p className="text-xs">Stage (n de caixas)</p>
               <input
-                type="number"
-                placeholder="3º"
+                type="text"
+                placeholder="0"
                 value={"0"}
                 onChange={(e) => console.log(e.target.value)}
                 min={0}
@@ -328,7 +330,7 @@ const PlanningPage: React.FC = () => {
                     <p className="text-xs whitespace-nowrap">Turno 2</p>
                     <div className="w-1/2">
                       <input
-                        type="number"
+                        type="text"
                         placeholder="0"
                         value={
                           data[key as "aero" | "hpc" | "food"].shift_2.user
@@ -351,7 +353,7 @@ const PlanningPage: React.FC = () => {
                     </div>
                     <div className="w-1/2">
                       <input
-                        type="number"
+                        type="text"
                         placeholder="0"
                         value={
                           data[key as "aero" | "hpc" | "food"].shift_2.synergy
@@ -377,7 +379,7 @@ const PlanningPage: React.FC = () => {
                     <p className="text-xs whitespace-nowrap">Turno 3</p>
                     <div className="w-1/2">
                       <input
-                        type="number"
+                        type="text"
                         placeholder="0"
                         value={
                           data[key as "aero" | "hpc" | "food"].shift_3.user
@@ -498,13 +500,8 @@ const PlanningPage: React.FC = () => {
 
       <Card className="p-4 h-fit flex-1">
         <div className="flex flex-col gap-4">
-          <h3 className="text-[#353535] font-medium text-lg">
-            Separação de Caixas -{" "}
-            {selectedSimulationDate
-              ? formatDateToDDMM(selectedSimulationDate)
-              : ""}
-          </h3>
-          <div className="flex flex-col">
+          <Subtitle>Separação de Caixas</Subtitle>
+          {/* <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
               <a className="tooltip-politicas">
@@ -523,8 +520,8 @@ const PlanningPage: React.FC = () => {
               />
             </div>
             <PoliticsForm isVisible={isVisible} />
-          </div>
-          <ProductTable simulation={simulation?.simulation || []} />
+          </div> */}
+          <ProductTable simulation={simulationData?.simulation || []} />
         </div>
       </Card>
 
