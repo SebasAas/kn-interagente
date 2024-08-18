@@ -17,6 +17,7 @@ const initialState = {
     HPC: [],
     AERO: [],
     FOODS: [],
+    ALL: [],
   },
   chartData: [],
   lengthSeries: {},
@@ -24,6 +25,7 @@ const initialState = {
   simulation: {
     alarms: {},
     simulation: {},
+    statistics: {},
   },
   modal: {
     open: false,
