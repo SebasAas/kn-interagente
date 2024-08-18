@@ -65,7 +65,7 @@ const isEndOfShift = (index: number) => {
 
 const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
   simulation,
-  additionalData,
+  statistics,
 }) => {
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
@@ -441,41 +441,39 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
                   showFamilyStatistics ? "" : "hidden"
                 }`}
               >
-                {Object?.entries(additionalData!)?.map(
-                  ([key, value], index) => (
-                    <div key={index}>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm font-semibold">
-                          {getFormatedNameFamily(key)}
+                {Object?.entries(statistics!)?.map(([key, value], index) => (
+                  <div key={index}>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-semibold">
+                        {getFormatedNameFamily(key)}
+                      </p>
+                      <div className="flex items-center gap-5">
+                        <p className="text-xs whitespace-nowrap w-4/12">
+                          Perfil
                         </p>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Perfil
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={value.profile}
-                            disabled
-                            className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Média Visita
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={value.mean_visits_per_hour}
-                            disabled
-                            className="w-12 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
+                        <input
+                          type="number"
+                          placeholder="0"
+                          value={value.median_profile}
+                          disabled
+                          className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                        />
+                      </div>
+                      <div className="flex items-center gap-5">
+                        <p className="text-xs whitespace-nowrap w-4/12">
+                          Média Visita
+                        </p>
+                        <input
+                          type="number"
+                          placeholder="0"
+                          value={value.median_n_visits_per_hour}
+                          disabled
+                          className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                        />
                       </div>
                     </div>
-                  )
-                )}
+                  </div>
+                ))}
               </div>
             </td>
           </tr>

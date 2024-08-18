@@ -1,4 +1,4 @@
-export const BASE_URL = "https://kn-demand-dev-emachzhqzq-uc.a.run.app/";
+export const BASE_URL = "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/";
 
 export type FamilyProps = {
   families: [
@@ -82,10 +82,11 @@ export type FamilyPropsResponse = {
       criticity: string;
     }[];
   };
-  additionalData: {
+  statistics: {
     [key: string]: {
-      profile: number;
-      mean_visits_per_hour: number;
+      family: string;
+      median_profile: number;
+      median_n_visits_per_hour: number;
     };
   };
 };
@@ -119,6 +120,20 @@ export const demandSimulation = async (data: FamilyProps) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  });
+
+  const simulationData = await promise.json();
+
+  return simulationData;
+};
+
+export const getSimulation = async () => {
+  const promise = await fetch(`${BASE_URL}demand/simulation`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
   });
 
   const simulationData = await promise.json();
