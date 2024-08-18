@@ -3,55 +3,56 @@ import { useAppContext } from "@/app/(context)/AppContext";
 import { useEffect, useState } from "react";
 import Subtitle from "../Text/Subtitle";
 
-interface Alert {
-  id: number;
-  message: string;
+import mockedSimulation from "@/app/planning/fakeDataSimulation.json";
+import { formatDateToDDMM } from "@/app/(helpers)/dates";
+import { FamilyPropsResponse } from "@/app/(services)/demand";
+
+interface Alarm {
+  [key: string]: {
+    day: string;
+    message: string;
+    criticity: string;
+  }[];
 }
 
-const AlertBoard: React.FC = () => {
-  const { simulation, selectedSimulationDate } = useAppContext();
-  const [alerts, setAlerts] = useState<Alert[]>([]);
+const AlertBoard = ({ simulation }: { simulation: Alarm }) => {
+  const [alerts, setAlerts] = useState(simulation.alarms || []);
 
-  useEffect(() => {
-    fetchAlerts()
-      .then((data) => setAlerts(data))
-      .catch((error) => console.error("Deu erro: ", error));
-  }, []);
-
-  const fetchAlerts = async (): Promise<Alert[]> => {
-    return new Promise<Alert[]>((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { id: 1, message: "Alerta 1" },
-          { id: 2, message: "Alerta 2" },
-          { id: 3, message: "Alerta 3" },
-          { id: 4, message: "Alerta 4" },
-          { id: 5, message: "Alerta 5" },
-          { id: 6, message: "Alerta 6" },
-        ]);
-      }, 1000);
-    });
-  };
+  console.log("alerts", alerts);
 
   return (
-    <div className="flex justify-around gap-2 flex-wrap min-w-[100px] flex-col">
+    <div className="flex gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-col">
       <Subtitle>Alertas</Subtitle>
-      <div>
-        {Object.values(simulation?.alarms).length > 0 ? (
-          Object.values(simulation?.alarms)?.map((date) => {
-            return date?.map((alert) => {
-              return (
-                <div
-                  key={alert.day}
-                  className={`min-w-[100px] p-3 my-2 bg-[${alert.criticity}] rounded-lg`}
-                >
-                  <p className="text-sm text-center text-white">
-                    {alert.message}
-                  </p>
-                </div>
-              );
-            });
-          })
+      <div className="text-center">
+        {Object.values(mockedSimulation?.alarms).length > 0 ? (
+          Object.values(mockedSimulation?.alarms)?.map((date) => (
+            <>
+              <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
+                {formatDateToDDMM(date[0].day)}
+              </p>
+              {!alerts?.length && (
+                <p className="text-sm font-medium mt-2">Não há alertas</p>
+              )}
+              {alerts?.map((alert) => {
+                if (!alert)
+                  return (
+                    <p className="text-sm font-medium mt-2">Não há alertas</p>
+                  );
+
+                return (
+                  <div
+                    key={alert.day}
+                    className={`min-w-[100px] p-3 my-2  rounded-lg`}
+                    style={{ background: `${alert.criticity}` }}
+                  >
+                    <p className="text-sm text-center text-white">
+                      {alert.message}
+                    </p>
+                  </div>
+                );
+              })}
+            </>
+          ))
         ) : (
           <p className="text-sm font-medium mt-2">Não há alertas</p>
         )}

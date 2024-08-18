@@ -1,4 +1,4 @@
-export const BASE_URL = "https://kn-demand-dev-emachzhqzq-uc.a.run.app/";
+export const BASE_URL = "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/";
 
 export type FamilyProps = {
   families: [
@@ -20,50 +20,105 @@ export type FamilyProps = {
   ];
 };
 
-export type FamilyPropsResponse = {
-  simulation: {
-    [key: string]: {
-      aero: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      foods: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      hpc: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-      all: {
-        hour: string;
-        boxes: number;
-        visits: number;
-        workers: number;
-        base_workers: number;
-        criticity: string;
-        backlog: number;
-      }[];
-    };
+export interface FamilyDemandSimulationType {
+  shift_1: {
+    user: number;
+    synergy: number;
   };
+  shift_2: {
+    user: number;
+    synergy: number;
+  };
+  shift_3: {
+    user: number;
+    synergy: number;
+  };
+}
+export interface Families {
+  aero: FamilyDemandSimulationType;
+  hpc: FamilyDemandSimulationType;
+  foods: FamilyDemandSimulationType;
+}
+
+export interface DemandSimulationType {
+  families: Families[];
+  backlog_priority: boolean;
+  max_storage: number;
+}
+
+export type SimulationType = {
+  [key: string]: {
+    aero: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      is_working_hour: boolean;
+    }[];
+    foods: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      is_working_hour: boolean;
+    }[];
+    hpc: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      is_working_hour: boolean;
+    }[];
+    all: {
+      hour: string;
+      boxes: number;
+      visits: number;
+      base_workers: number;
+      workers: number;
+      criticity: string;
+      backlog: number;
+      demand: number;
+      storage: number;
+      is_working_hour: boolean;
+    }[];
+  };
+};
+
+export interface UploadStatusType {
+  upload_status: { date: string }[];
+  planning_status: { date: string };
+}
+
+export type FamilyPropsResponse = {
+  simulation: SimulationType;
   alarms: {
     [key: string]: {
       day: string;
       message: string;
       criticity: string;
     }[];
+  };
+  statistics: {
+    [key: string]: {
+      family: string;
+      median_profile: number;
+      median_n_visits_per_hour: number;
+    };
   };
 };
 
@@ -88,7 +143,7 @@ export const fetchUploadStatus = async () => {
   return data;
 };
 
-export const demandSimulation = async (data: FamilyProps) => {
+export const demandSimulation = async (data: DemandSimulationType) => {
   const promise = await fetch(`${BASE_URL}demand/simulation`, {
     method: "POST",
     headers: {
@@ -96,6 +151,21 @@ export const demandSimulation = async (data: FamilyProps) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  });
+
+  const simulationData = await promise.json();
+
+  return simulationData;
+};
+
+export const getSimulation = async () => {
+  const promise = await fetch(`${BASE_URL}demand/simulation`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
   });
 
   const simulationData = await promise.json();
