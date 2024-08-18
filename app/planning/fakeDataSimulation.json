@@ -14,7 +14,7 @@
             "storage": 308,
             "backlog": 1000,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T21:00:00",
@@ -28,7 +28,7 @@
             "storage": 500,
             "backlog": 867,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T22:00:00",
@@ -42,7 +42,7 @@
             "storage": 251,
             "backlog": 497,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T23:00:00",
@@ -56,7 +56,7 @@
             "storage": 500,
             "backlog": 352,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T00:00:00",
@@ -70,7 +70,7 @@
             "storage": 129,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T01:00:00",
@@ -84,7 +84,7 @@
             "storage": 116,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T02:00:00",
@@ -98,7 +98,7 @@
             "storage": 135,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T03:00:00",
@@ -112,7 +112,7 @@
             "storage": 148,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T04:00:00",
@@ -126,7 +126,7 @@
             "storage": 173,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T05:00:00",
@@ -140,7 +140,7 @@
             "storage": 191,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "hpc": [
@@ -156,7 +156,7 @@
             "storage": 0,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T21:00:00",
@@ -170,7 +170,7 @@
             "storage": 157,
             "backlog": 214,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T22:00:00",
@@ -184,7 +184,7 @@
             "storage": 389,
             "backlog": 351,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T23:00:00",
@@ -198,7 +198,7 @@
             "storage": 244,
             "backlog": 281,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T00:00:00",
@@ -212,7 +212,7 @@
             "storage": 789,
             "backlog": 439,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T01:00:00",
@@ -226,7 +226,7 @@
             "storage": 372,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T02:00:00",
@@ -240,7 +240,7 @@
             "storage": 240,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T03:00:00",
@@ -254,7 +254,7 @@
             "storage": 200,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T04:00:00",
@@ -268,7 +268,7 @@
             "storage": 307,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T05:00:00",
@@ -282,7 +282,7 @@
             "storage": 411,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "foods": [
@@ -298,7 +298,7 @@
             "storage": 692,
             "backlog": 500,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T21:00:00",
@@ -312,7 +312,7 @@
             "storage": 343,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T22:00:00",
@@ -326,7 +326,7 @@
             "storage": 360,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T23:00:00",
@@ -340,7 +340,7 @@
             "storage": 256,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T00:00:00",
@@ -354,7 +354,7 @@
             "storage": 82,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T01:00:00",
@@ -368,7 +368,7 @@
             "storage": 398,
             "backlog": 72,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T02:00:00",
@@ -382,7 +382,7 @@
             "storage": 258,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T03:00:00",
@@ -396,7 +396,7 @@
             "storage": 348,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T04:00:00",
@@ -410,7 +410,7 @@
             "storage": 286,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T05:00:00",
@@ -424,7 +424,7 @@
             "storage": 279,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "all": [
@@ -440,7 +440,7 @@
             "storage": 1000,
             "backlog": 1500,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T21:00:00",
@@ -454,7 +454,7 @@
             "storage": 1000,
             "backlog": 1081,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T22:00:00",
@@ -468,7 +468,7 @@
             "storage": 1000,
             "backlog": 848,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-15T23:00:00",
@@ -482,7 +482,7 @@
             "storage": 1000,
             "backlog": 633,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T00:00:00",
@@ -496,7 +496,7 @@
             "storage": 1000,
             "backlog": 439,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T01:00:00",
@@ -510,7 +510,7 @@
             "storage": 886,
             "backlog": 72,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T02:00:00",
@@ -524,7 +524,7 @@
             "storage": 633,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T03:00:00",
@@ -538,7 +538,7 @@
             "storage": 696,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T04:00:00",
@@ -552,7 +552,7 @@
             "storage": 766,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T05:00:00",
@@ -566,7 +566,7 @@
             "storage": 881,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ]
       },
@@ -584,7 +584,7 @@
             "storage": 144,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T07:00:00",
@@ -598,7 +598,7 @@
             "storage": 175,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T08:00:00",
@@ -612,7 +612,7 @@
             "storage": 173,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T09:00:00",
@@ -626,7 +626,7 @@
             "storage": 130,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T10:00:00",
@@ -640,7 +640,7 @@
             "storage": 105,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T11:00:00",
@@ -654,7 +654,7 @@
             "storage": 133,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T12:00:00",
@@ -668,7 +668,7 @@
             "storage": 144,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T13:00:00",
@@ -682,7 +682,7 @@
             "storage": 132,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T14:00:00",
@@ -696,7 +696,7 @@
             "storage": 176,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T15:00:00",
@@ -710,7 +710,7 @@
             "storage": 147,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T16:00:00",
@@ -724,7 +724,7 @@
             "storage": 188,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T17:00:00",
@@ -738,7 +738,7 @@
             "storage": 135,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T18:00:00",
@@ -752,7 +752,7 @@
             "storage": 145,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T19:00:00",
@@ -766,7 +766,7 @@
             "storage": 195,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T20:00:00",
@@ -780,7 +780,7 @@
             "storage": 0,
             "backlog": 0,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "hpc": [
@@ -796,7 +796,7 @@
             "storage": 396,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T07:00:00",
@@ -810,7 +810,7 @@
             "storage": 247,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T08:00:00",
@@ -824,7 +824,7 @@
             "storage": 160,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T09:00:00",
@@ -838,7 +838,7 @@
             "storage": 349,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T10:00:00",
@@ -852,7 +852,7 @@
             "storage": 360,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T11:00:00",
@@ -866,7 +866,7 @@
             "storage": 217,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T12:00:00",
@@ -880,7 +880,7 @@
             "storage": 410,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T13:00:00",
@@ -894,7 +894,7 @@
             "storage": 212,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T14:00:00",
@@ -908,7 +908,7 @@
             "storage": 285,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T15:00:00",
@@ -922,7 +922,7 @@
             "storage": 153,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T16:00:00",
@@ -936,7 +936,7 @@
             "storage": 340,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T17:00:00",
@@ -950,7 +950,7 @@
             "storage": 167,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T18:00:00",
@@ -964,7 +964,7 @@
             "storage": 127,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T19:00:00",
@@ -978,7 +978,7 @@
             "storage": 332,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T20:00:00",
@@ -992,7 +992,7 @@
             "storage": 0,
             "backlog": 0,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "foods": [
@@ -1008,7 +1008,7 @@
             "storage": 347,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T07:00:00",
@@ -1022,7 +1022,7 @@
             "storage": 213,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T08:00:00",
@@ -1036,7 +1036,7 @@
             "storage": 296,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T09:00:00",
@@ -1050,7 +1050,7 @@
             "storage": 252,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T10:00:00",
@@ -1064,7 +1064,7 @@
             "storage": 305,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T11:00:00",
@@ -1078,7 +1078,7 @@
             "storage": 364,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T12:00:00",
@@ -1092,7 +1092,7 @@
             "storage": 255,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T13:00:00",
@@ -1106,7 +1106,7 @@
             "storage": 331,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T14:00:00",
@@ -1120,7 +1120,7 @@
             "storage": 252,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T15:00:00",
@@ -1134,7 +1134,7 @@
             "storage": 271,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T16:00:00",
@@ -1148,7 +1148,7 @@
             "storage": 196,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T17:00:00",
@@ -1162,7 +1162,7 @@
             "storage": 325,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T18:00:00",
@@ -1176,7 +1176,7 @@
             "storage": 397,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T19:00:00",
@@ -1190,7 +1190,7 @@
             "storage": 168,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T20:00:00",
@@ -1204,7 +1204,7 @@
             "storage": 0,
             "backlog": 0,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ],
         "all": [
@@ -1220,7 +1220,7 @@
             "storage": 887,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T07:00:00",
@@ -1234,7 +1234,7 @@
             "storage": 635,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T08:00:00",
@@ -1248,7 +1248,7 @@
             "storage": 629,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T09:00:00",
@@ -1262,7 +1262,7 @@
             "storage": 731,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T10:00:00",
@@ -1276,7 +1276,7 @@
             "storage": 770,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T11:00:00",
@@ -1290,7 +1290,7 @@
             "storage": 714,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T12:00:00",
@@ -1304,7 +1304,7 @@
             "storage": 809,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T13:00:00",
@@ -1318,7 +1318,7 @@
             "storage": 675,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T14:00:00",
@@ -1332,7 +1332,7 @@
             "storage": 713,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T15:00:00",
@@ -1346,7 +1346,7 @@
             "storage": 571,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T16:00:00",
@@ -1360,7 +1360,7 @@
             "storage": 724,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T17:00:00",
@@ -1374,7 +1374,7 @@
             "storage": 627,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": false
+            "is_working_hour": false
           },
           {
             "hour": "2024-08-16T18:00:00",
@@ -1388,7 +1388,7 @@
             "storage": 669,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T19:00:00",
@@ -1402,7 +1402,7 @@
             "storage": 695,
             "backlog": 0,
             "criticity": "#8ab187",
-            "isWorkingHour": true
+            "is_working_hour": true
           },
           {
             "hour": "2024-08-16T20:00:00",
@@ -1416,7 +1416,7 @@
             "storage": 0,
             "backlog": 0,
             "criticity": "#dbae58",
-            "isWorkingHour": true
+            "is_working_hour": true
           }
         ]
       }

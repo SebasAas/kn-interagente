@@ -20,6 +20,32 @@ export type FamilyProps = {
   ];
 };
 
+export interface FamilyDemandSimulationType {
+  shift_1: {
+    user: number;
+    synergy: number;
+  };
+  shift_2: {
+    user: number;
+    synergy: number;
+  };
+  shift_3: {
+    user: number;
+    synergy: number;
+  };
+}
+export interface Families {
+  aero: FamilyDemandSimulationType;
+  hpc: FamilyDemandSimulationType;
+  foods: FamilyDemandSimulationType;
+}
+
+export interface DemandSimulationType {
+  families: Families[];
+  backlog_priority: boolean;
+  max_storage: number;
+}
+
 export type SimulationType = {
   [key: string]: {
     aero: {
@@ -32,7 +58,7 @@ export type SimulationType = {
       backlog: number;
       demand: number;
       storage: number;
-      isWorkingHour: boolean;
+      is_working_hour: boolean;
     }[];
     foods: {
       hour: string;
@@ -44,7 +70,7 @@ export type SimulationType = {
       backlog: number;
       demand: number;
       storage: number;
-      isWorkingHour: boolean;
+      is_working_hour: boolean;
     }[];
     hpc: {
       hour: string;
@@ -56,7 +82,7 @@ export type SimulationType = {
       backlog: number;
       demand: number;
       storage: number;
-      isWorkingHour: boolean;
+      is_working_hour: boolean;
     }[];
     all: {
       hour: string;
@@ -68,10 +94,15 @@ export type SimulationType = {
       backlog: number;
       demand: number;
       storage: number;
-      isWorkingHour: boolean;
+      is_working_hour: boolean;
     }[];
   };
 };
+
+export interface UploadStatusType {
+  upload_status: { date: string }[];
+  planning_status: { date: string };
+}
 
 export type FamilyPropsResponse = {
   simulation: SimulationType;
@@ -112,7 +143,7 @@ export const fetchUploadStatus = async () => {
   return data;
 };
 
-export const demandSimulation = async (data: FamilyProps) => {
+export const demandSimulation = async (data: DemandSimulationType) => {
   const promise = await fetch(`${BASE_URL}demand/simulation`, {
     method: "POST",
     headers: {
@@ -134,6 +165,7 @@ export const getSimulation = async () => {
       accept: "application/json",
       "Content-Type": "application/json",
     },
+    cache: "no-cache",
   });
 
   const simulationData = await promise.json();

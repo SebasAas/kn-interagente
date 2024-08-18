@@ -14,10 +14,12 @@ import Subtitle from "../../(components)/Text/Subtitle";
 import { toast } from "react-toastify";
 import {
   demandFiles,
-  FamilyProps,
+  DemandSimulationType,
   FamilyPropsResponse,
   fetchUploadStatus,
+  getSimulation,
   SimulationType,
+  UploadStatusType,
 } from "../../(services)/demand";
 import { useAppContext } from "../../(context)/AppContext";
 import { useSession } from "next-auth/react";
@@ -26,18 +28,45 @@ import { redirect } from "next/navigation";
 import PlanningDropzone from "../../(components)/Dropzone/PlanningDropzone";
 
 // import simulationData from "./fakeDataSimulation.json";
-import { formatDateToDDMM, formatDateToHHMM } from "../../(helpers)/dates";
+import {
+  formatDateToDDMM,
+  formatDateToHHMM,
+  handleGetDataFormat,
+} from "../../(helpers)/dates";
+import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
 
 const Planning = ({
   simulationFetch,
+  uploadStatusFetch,
 }: {
   simulationFetch: FamilyPropsResponse;
+  uploadStatusFetch: UploadStatusType;
 }) => {
   const { data: session, status } = useSession();
-  const { dispatch, simulation, selectedSimulationDate } = useAppContext();
+  const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [backlogPrimary, setBacklogPrimary] = useState(false);
+  const [additionalData, setAdditionalData] = useState({
+    backlog_priority: false,
+    max_storage: 0,
+  });
+
+  const [simulation, setSimulation] = useState(
+    simulationFetch || {
+      simulation: [],
+      alarms: {},
+      statistics: {},
+    }
+  );
+
+  const [uploadStatus, setUploadStatus] = useState(
+    uploadStatusFetch || {
+      upload_status: [{ date: "" }],
+      planning_status: { date: "" },
+    }
+  );
+
+  const { handleSendSimulation, isLoading, error } = useDemandSimulation();
 
   const [data, setData] = useState({
     aero: {
@@ -53,8 +82,6 @@ const Planning = ({
         user: 0,
         synergy: 0,
       },
-      profile: 0,
-      mean_visits_per_hour: 0,
     },
     hpc: {
       shift_1: {
@@ -69,10 +96,8 @@ const Planning = ({
         user: 0,
         synergy: 0,
       },
-      profile: 0,
-      mean_visits_per_hour: 0,
     },
-    food: {
+    foods: {
       shift_1: {
         user: 0,
         synergy: 0,
@@ -85,8 +110,6 @@ const Planning = ({
         user: 0,
         synergy: 0,
       },
-      profile: 0,
-      mean_visits_per_hour: 0,
     },
   });
 
@@ -98,14 +121,6 @@ const Planning = ({
       redirect(url.toString());
     }
   }, [session, status]);
-
-  function handleDateSelect(date: Date) {
-    //Lógica pra carregar dados do back
-    console.log("Carregar dados para:", date);
-  }
-  const handleUploadComplete = () => {
-    console.log("Upload completo!");
-  };
 
   // Handler for file upload
   const handleFileUpload = async (file: File[] | File) => {
@@ -167,25 +182,53 @@ const Planning = ({
     console.log("handleGetInformation");
   };
 
-  const handleGetDataFormat = () => {
-    // Find the obj inside lastUploadFileSummary with name "upload" the type of the data is 2024-07-18T18:00:00, and I want to show like "18:00 - 18/07"
-    // const uploadData = lastUploadFileSummary?.find(
-    //   (data) => data?.name === "upload"
-    // );
+  const handleSimulate = async () => {
+    const dataToSend: DemandSimulationType = {
+      families: [
+        {
+          ...data,
+        },
+      ],
+      ...additionalData,
+    };
 
-    // if (uploadData) {
-    //   const date = new Date(uploadData.day);
-    //   const hours = date.getHours();
-    //   const minutes = date.getMinutes();
-    //   const day = date.getDate();
-    //   const month = date.getMonth() + 1;
-    //   return `${hours}:${minutes} - ${day}/${month}`;
-    // }
+    setButtonDisabled(true);
 
-    return "-";
+    toast
+      .promise(handleSendSimulation(dataToSend), {
+        pending: "Simulando...",
+        success: "Simulação realizada com sucesso",
+        error: "Erro ao realizar simulação",
+      })
+      .then(async (res) => {
+        if (res?.detail) {
+          toast.error(
+            <div>
+              <h2>Algo deu errado enviando o arquivo, {res.detail}</h2>
+            </div>
+          );
+          return;
+        }
+
+        const response = await getSimulation();
+
+        const data = response?.simulation;
+
+        setSimulation({
+          simulation: data,
+          alarms: response?.alarms,
+          statistics: response?.statistics,
+        });
+      })
+      .catch((err) => {
+        toast.error(
+          `Algo deu errado enviando o arquivo, tente novamente! ${err.detail}`
+        );
+      })
+      .finally(() => {
+        setButtonDisabled(false);
+      });
   };
-
-  const handleSimulate = () => {};
 
   const getRange = (data: SimulationType) => {
     // Get first data of the first element and the last that will be the range in simulationData?.simulation
@@ -239,7 +282,10 @@ const Planning = ({
           </button>
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
-            <span className="text-xs text-black">{handleGetDataFormat()}</span>
+            <span className="text-xs text-black">
+              {/* {handleGetDataFormat(uploadStatus.upload_status[0].date || "")} */}
+              -
+            </span>
           </span>
         </Card>
         <Card className="p-4 h-fit ">
@@ -247,8 +293,13 @@ const Planning = ({
             <div className="flex justify-between items-center">
               <p className="text-xs">Backlog Primario</p>
               <Switch
-                isSelected={backlogPrimary}
-                onValueChange={setBacklogPrimary}
+                isSelected={additionalData.backlog_priority}
+                onValueChange={(value) =>
+                  setAdditionalData({
+                    ...additionalData,
+                    backlog_priority: value,
+                  })
+                }
                 size="sm"
                 defaultSelected
                 aria-label="Backlog Primario"
@@ -262,8 +313,15 @@ const Planning = ({
               <input
                 type="text"
                 placeholder="0"
-                value={"0"}
-                onChange={(e) => console.log(e.target.value)}
+                value={additionalData.max_storage}
+                onChange={(e) => {
+                  if (isNaN(Number(e.target.value))) return;
+
+                  setAdditionalData({
+                    ...additionalData,
+                    max_storage: Number(e.target.value),
+                  });
+                }}
                 min={0}
                 className="w-12 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
@@ -291,7 +349,7 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_1.user
+                          data[key as "aero" | "hpc" | "foods"].shift_1.user
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
@@ -299,9 +357,10 @@ const Planning = ({
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_1: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_1,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_1,
                                 user: Number(e.target.value),
                               },
                             },
@@ -315,7 +374,7 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_1.synergy
+                          data[key as "aero" | "hpc" | "foods"].shift_1.synergy
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
@@ -323,9 +382,10 @@ const Planning = ({
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_1: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_1,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_1,
                                 synergy: Number(e.target.value),
                               },
                             },
@@ -342,16 +402,17 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_2.user
+                          data[key as "aero" | "hpc" | "foods"].shift_2.user
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_2: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_2,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_2,
                                 user: Number(e.target.value),
                               },
                             },
@@ -365,16 +426,17 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_2.synergy
+                          data[key as "aero" | "hpc" | "foods"].shift_2.synergy
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_2: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_2,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_2,
                                 synergy: Number(e.target.value),
                               },
                             },
@@ -391,7 +453,7 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_3.user
+                          data[key as "aero" | "hpc" | "foods"].shift_3.user
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
@@ -399,9 +461,10 @@ const Planning = ({
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_3: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_3,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_3,
                                 user: Number(e.target.value),
                               },
                             },
@@ -415,7 +478,7 @@ const Planning = ({
                         type="text"
                         placeholder="0"
                         value={
-                          data[key as "aero" | "hpc" | "food"].shift_3.synergy
+                          data[key as "aero" | "hpc" | "foods"].shift_3.synergy
                         }
                         onChange={(e) => {
                           if (isNaN(Number(e.target.value))) return;
@@ -423,9 +486,10 @@ const Planning = ({
                           setData({
                             ...data,
                             [key]: {
-                              ...data[key as "aero" | "hpc" | "food"],
+                              ...data[key as "aero" | "hpc" | "foods"],
                               shift_3: {
-                                ...data[key as "aero" | "hpc" | "food"].shift_3,
+                                ...data[key as "aero" | "hpc" | "foods"]
+                                  .shift_3,
                                 synergy: Number(e.target.value),
                               },
                             },
@@ -486,6 +550,7 @@ const Planning = ({
           <ProductTable
             simulation={simulationFetch?.simulation || []}
             statistics={simulationFetch.statistics}
+            uploadStatus={uploadStatus}
           />
         </div>
       </Card>

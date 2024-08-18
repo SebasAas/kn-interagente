@@ -1,8 +1,12 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@/app/(assets)/ArrowIcon";
 import { useAppContext } from "@/app/(context)/AppContext";
-import { formatDateToDDMM, formatDateToHHMM } from "@/app/(helpers)/dates";
+import {
+  formatDateToDDMM,
+  formatDateToHHMM,
+  handleGetDataFormat,
+} from "@/app/(helpers)/dates";
 import { isBackgroundLight } from "@/app/(helpers)/textColor";
-import { FamilyPropsResponse } from "@/app/(services)/demand";
+import { FamilyPropsResponse, UploadStatusType } from "@/app/(services)/demand";
 import React, { useState } from "react";
 
 const getFormatedNameFamily = (family: string) => {
@@ -63,10 +67,9 @@ const isEndOfShift = (index: number) => {
   return false;
 };
 
-const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
-  simulation,
-  statistics,
-}) => {
+const ProductTable: React.FC<
+  Partial<FamilyPropsResponse & { uploadStatus: UploadStatusType }>
+> = ({ simulation, statistics, uploadStatus }) => {
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
   >("hpc");
@@ -95,14 +98,14 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             <td>
               <div
                 className={
-                  !data.isWorkingHour
+                  !data.is_working_hour
                     ? isBackgroundLight(data.criticity)
                       ? "text-black"
                       : "text-white"
                     : ""
                 }
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {formatDateToHHMM(data.hour)}
@@ -110,9 +113,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </td>
             <td>
               <div
-                className={!data.isWorkingHour ? "text-white" : ""}
+                className={!data.is_working_hour ? "text-white" : ""}
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.backlog}
@@ -120,9 +123,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </td>
             <td>
               <div
-                className={!data.isWorkingHour ? "text-white" : ""}
+                className={!data.is_working_hour ? "text-white" : ""}
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.demand}
@@ -130,9 +133,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </td>
             <td>
               <div
-                className={!data.isWorkingHour ? "text-white" : ""}
+                className={!data.is_working_hour ? "text-white" : ""}
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.boxes}
@@ -140,9 +143,9 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             </td>
             <td>
               <div
-                className={!data.isWorkingHour ? "text-white" : ""}
+                className={!data.is_working_hour ? "text-white" : ""}
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.storage}
@@ -151,14 +154,14 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             <td>
               <div
                 className={
-                  !data.isWorkingHour
+                  !data.is_working_hour
                     ? isBackgroundLight(data.criticity)
                       ? "text-black"
                       : "text-white"
                     : ""
                 }
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.visits}
@@ -167,14 +170,14 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             <td>
               <div
                 className={
-                  !data.isWorkingHour
+                  !data.is_working_hour
                     ? isBackgroundLight(data.criticity)
                       ? "text-black"
                       : "text-white"
                     : ""
                 }
                 style={
-                  !data.isWorkingHour ? { backgroundColor: "#003369" } : {}
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
                 }
               >
                 {data.base_workers}
@@ -183,10 +186,12 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
             <td className="py-1 text-center flex justify-center">
               <div
                 className={`${
-                  !data.isWorkingHour ? "w-full" : "min-w-[70px] w-min rounded"
+                  !data.is_working_hour
+                    ? "w-full"
+                    : "min-w-[70px] w-min rounded"
                 } text-white`}
                 style={
-                  !data.isWorkingHour
+                  !data.is_working_hour
                     ? { backgroundColor: "#003369" }
                     : { backgroundColor: data.criticity }
                 }
@@ -421,7 +426,7 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
           {getFamilyData()}
           <tr
             className={`w-full sticky -bottom-4 ${
-              showFamilyStatistics ? "h-28" : "h-5"
+              showFamilyStatistics ? "h-24" : "h-5"
             } !bg-white `}
           >
             <td
@@ -474,6 +479,16 @@ const ProductTable: React.FC<Partial<FamilyPropsResponse>> = ({
                     </div>
                   </div>
                 ))}
+                <div className="mt-2">
+                  <span className="text-xs mt-3 text-gray-400">
+                    Produtividade atualizada:{" "}
+                    <span className="text-xs text-black">
+                      {handleGetDataFormat(
+                        uploadStatus?.planning_status.date || ""
+                      )}
+                    </span>
+                  </span>
+                </div>
               </div>
             </td>
           </tr>
