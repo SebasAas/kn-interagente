@@ -210,14 +210,12 @@ const Planning = ({
           return;
         }
 
-        const response = await getSimulation();
-
-        const data = response?.simulation;
+        console.log("res", res);
 
         setSimulation({
-          simulation: data,
-          alarms: response?.alarms,
-          statistics: response?.statistics,
+          simulation: res.simulation,
+          alarms: res?.alarms,
+          statistics: res?.statistics,
         });
       })
       .catch((err) => {
@@ -522,7 +520,7 @@ const Planning = ({
           <div className="flex flex-col">
             <Subtitle>Separação de Caixas</Subtitle>
             <span className="text-xs mt-2 text-gray-400">
-              Range: {getRange(simulationFetch.simulation)}
+              Range: {getRange(simulation.simulation)}
             </span>
           </div>
 
@@ -548,8 +546,8 @@ const Planning = ({
           </div> */}
           {/* <div className="flex relative w-full"> */}
           <ProductTable
-            simulation={simulationFetch?.simulation || []}
-            statistics={simulationFetch.statistics}
+            simulation={simulation?.simulation || []}
+            statistics={simulation.statistics}
             uploadStatus={uploadStatus}
           />
         </div>
