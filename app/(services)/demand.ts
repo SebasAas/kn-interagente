@@ -151,6 +151,7 @@ export const demandSimulation = async (data: DemandSimulationType) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    cache: "no-cache",
   });
 
   const simulationData = await promise.json();
