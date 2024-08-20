@@ -18,8 +18,6 @@ export default async function PlanningPage() {
     }
   }
 
-  console.log("simulationFetch", simulationFetch);
-
   return (
     <main className="h-[100vh]">
       <Planning

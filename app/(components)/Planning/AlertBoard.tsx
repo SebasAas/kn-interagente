@@ -18,8 +18,6 @@ interface Alarm {
 const AlertBoard = ({ simulation }: { simulation: Alarm }) => {
   const [alerts, setAlerts] = useState(simulation.alarms || []);
 
-  console.log("alerts", alerts);
-
   return (
     <div className="flex gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-col">
       <Subtitle>Alertas</Subtitle>

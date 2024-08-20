@@ -68,8 +68,6 @@ const Planning = ({
 
   const { handleSendSimulation, isLoading, error } = useDemandSimulation();
 
-  console.log("simulation state", simulation);
-
   const [data, setData] = useState({
     aero: {
       shift_1: {
