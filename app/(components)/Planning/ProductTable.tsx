@@ -23,7 +23,7 @@ const getFormatedNameFamily = (family: string) => {
 };
 
 const Swapper = ({ selectFamily }: { selectFamily: any }) => {
-  const data = ["hpc", "aero", "foods", "all"];
+  const data = ["all", "hpc", "aero", "foods"];
   const [index, setIndex] = useState(0);
 
   const handleSwap = (direction: string) => {
@@ -72,7 +72,7 @@ const ProductTable: React.FC<
 > = ({ simulation, statistics, uploadStatus }) => {
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
-  >("hpc");
+  >("all");
   const [showFamilyStatistics, setShowFamilyStatistics] = useState(true);
 
   //  renderiza os dados da família selecionada
