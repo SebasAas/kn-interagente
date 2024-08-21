@@ -169,7 +169,24 @@ export const getSimulation = async () => {
     cache: "no-cache",
   });
 
-  const simulationData = await promise.json();
+  if (!promise.ok) {
+    const errorText = await promise.text();
+    console.log("Error fetching simulation data", errorText);
 
-  return simulationData;
+    return {
+      detail: "Não encontramos dados de grafico para essa data, ",
+      error: errorText,
+    };
+  }
+
+  // Try parsing the promise as JSON
+  try {
+    const simulationData = await promise.json();
+    return simulationData;
+  } catch (error) {
+    return {
+      detail: "Algo deu errado obtendo graficos, tente novamente! ",
+      error: error,
+    };
+  }
 };
