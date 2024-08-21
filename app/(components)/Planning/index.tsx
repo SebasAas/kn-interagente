@@ -124,7 +124,6 @@ const Planning = ({
 
   // Handler for file upload
   const handleFileUpload = async (file: File[] | File) => {
-    console.log("filefile", file);
     let fileToSent = file as File[];
 
     if (file) {
@@ -210,12 +209,14 @@ const Planning = ({
           return;
         }
 
-        console.log("res", res);
+        const response = await getSimulation();
+
+        const data = response?.simulation;
 
         setSimulation({
-          simulation: res.simulation,
-          alarms: res?.alarms,
-          statistics: res?.statistics,
+          simulation: data,
+          alarms: response?.alarms,
+          statistics: response?.statistics,
         });
       })
       .catch((err) => {
