@@ -143,6 +143,7 @@ const Planning = ({
     if (file) {
       const toastPromise = toast.promise(demandFiles(fileToSent), {
         pending: "Enviando arquivo...",
+        success: "Arquivos enviados com sucesso",
       });
 
       await toastPromise
