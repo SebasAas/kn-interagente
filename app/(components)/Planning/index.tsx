@@ -404,6 +404,7 @@ const Planning = ({
                           });
                         }}
                         className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                        disabled
                       />
                     </div>
                   </div>
@@ -455,6 +456,7 @@ const Planning = ({
                           });
                         }}
                         className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                        disabled
                       />
                     </div>
                   </div>
@@ -509,6 +511,7 @@ const Planning = ({
                         }}
                         min={0}
                         className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                        disabled
                       />
                     </div>
                   </div>
