@@ -53,10 +53,13 @@ const Planning = ({
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
-      simulation: [],
-      alarms: {},
-      statistics: {},
-    }
+        simulation: [],
+        alarms: {},
+        statistics: {},
+      } || {
+        detail: "",
+        error: "",
+      }
   );
 
   const [uploadStatus, setUploadStatus] = useState(
@@ -114,6 +117,16 @@ const Planning = ({
   });
 
   useEffect(() => {
+    // @ts-ignore
+    if (simulation.detail as unknown as any) {
+      toast.error(
+        // @ts-ignore
+        `${simulation.detail} ${simulation.error}`
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     if (!session && status === "unauthenticated") {
       console.log("session", session, "status", status);
       const url = new URL("/login", getBaseUrl());
@@ -124,6 +137,7 @@ const Planning = ({
 
   // Handler for file upload
   const handleFileUpload = async (file: File[] | File) => {
+    console.log("filefile", file);
     let fileToSent = file as File[];
 
     if (file) {
@@ -209,14 +223,12 @@ const Planning = ({
           return;
         }
 
-        const response = await getSimulation();
-
-        const data = response?.simulation;
+        console.log("res", res);
 
         setSimulation({
-          simulation: data,
-          alarms: response?.alarms,
-          statistics: response?.statistics,
+          simulation: res.simulation,
+          alarms: res?.alarms,
+          statistics: res?.statistics,
         });
       })
       .catch((err) => {
@@ -521,7 +533,7 @@ const Planning = ({
           <div className="flex flex-col">
             <Subtitle>Separação de Caixas</Subtitle>
             <span className="text-xs mt-2 text-gray-400">
-              Range: {getRange(simulation.simulation)}
+              Range: {getRange(simulation?.simulation || [])}
             </span>
           </div>
 

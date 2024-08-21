@@ -446,39 +446,41 @@ const ProductTable: React.FC<
                   showFamilyStatistics ? "" : "hidden"
                 }`}
               >
-                {Object?.values(statistics!)?.map((values, index) => (
-                  <div key={index}>
-                    <div className="flex flex-col gap-1">
-                      <p className="text-sm font-semibold">
-                        {getFormatedNameFamily(values.family)}
-                      </p>
-                      <div className="flex items-center gap-5">
-                        <p className="text-xs whitespace-nowrap w-4/12">
-                          Perfil
+                {statistics &&
+                  Object?.values(statistics).length > 0 &&
+                  Object?.values(statistics)?.map((values, index) => (
+                    <div key={index}>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm font-semibold">
+                          {getFormatedNameFamily(values.family)}
                         </p>
-                        <input
-                          type="number"
-                          placeholder="0"
-                          value={values.median_profile}
-                          disabled
-                          className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                        />
-                      </div>
-                      <div className="flex items-center gap-5">
-                        <p className="text-xs whitespace-nowrap w-4/12">
-                          Média Visita
-                        </p>
-                        <input
-                          type="number"
-                          placeholder="0"
-                          value={values.median_n_visits_per_hour}
-                          disabled
-                          className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                        />
+                        <div className="flex items-center gap-5">
+                          <p className="text-xs whitespace-nowrap w-4/12">
+                            Perfil
+                          </p>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={values.median_profile}
+                            disabled
+                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                          />
+                        </div>
+                        <div className="flex items-center gap-5">
+                          <p className="text-xs whitespace-nowrap w-4/12">
+                            Média Visita
+                          </p>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={values.median_n_visits_per_hour}
+                            disabled
+                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
               <div className="mt-1 px-5">
                 <span className="text-xs mt-3 text-gray-400">

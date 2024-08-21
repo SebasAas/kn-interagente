@@ -10,14 +10,6 @@ export default async function PlanningPage() {
   const simulationFetch = await getSimulation();
   const uploadStatusFetch = await fetchUploadStatus();
 
-  if (simulationFetch?.detail) {
-    if (simulationFetch?.detail.includes("Não tem dados")) {
-      console.log("Não encontramos dados de grafico para essa data");
-    } else {
-      console.log("Algo deu errado obtendo graficos, tente novamente!");
-    }
-  }
-
   return (
     <main className="h-[100vh]">
       <Planning
