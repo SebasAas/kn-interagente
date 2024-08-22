@@ -44,6 +44,7 @@ export interface DemandSimulationType {
   families: Families[];
   backlog_priority: boolean;
   max_storage: number;
+  simulation_date?: string | undefined;
 }
 
 export type SimulationType = {

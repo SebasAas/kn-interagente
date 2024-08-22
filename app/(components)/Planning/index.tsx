@@ -34,6 +34,7 @@ import {
   handleGetDataFormat,
 } from "../../(helpers)/dates";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
+import { generateDates } from "@/app/(helpers)/generateDates";
 
 const Planning = ({
   simulationFetch,
@@ -46,6 +47,9 @@ const Planning = ({
   const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [simulationDate, setSimulationDate] = useState<Date | undefined>(
+    undefined
+  );
   const [additionalData, setAdditionalData] = useState({
     backlog_priority: false,
     max_storage: 0,
@@ -197,6 +201,13 @@ const Planning = ({
   };
 
   const handleSimulate = async () => {
+    let formatedData = "";
+    if (simulationDate) {
+      simulationDate.setHours(simulationDate.getHours() - 3);
+
+      formatedData = simulationDate.toISOString();
+    }
+
     const dataToSend: DemandSimulationType = {
       families: [
         {
@@ -204,6 +215,7 @@ const Planning = ({
         },
       ],
       ...additionalData,
+      simulation_date: simulationDate?.toISOString() || "",
     };
 
     setButtonDisabled(true);
@@ -231,6 +243,10 @@ const Planning = ({
           alarms: res?.alarms,
           statistics: res?.statistics,
         });
+
+        const uploadDates = await generateDates();
+
+        setUploadStatus(uploadDates);
       })
       .catch((err) => {
         toast.error(
@@ -261,6 +277,17 @@ const Planning = ({
     );
 
     return `${firstDateDDMM} as ${firstDateHHMM} até ${lastDateDDMM} as ${lastDateHHMM}`;
+  };
+
+  const formatDateForInput = (date: Date) => {
+    if (!date) return "";
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // Months are 0-based
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   return (
@@ -295,8 +322,11 @@ const Planning = ({
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
             <span className="text-xs text-black">
-              {/* {handleGetDataFormat(uploadStatus.upload_status[0].date || "")} */}
-              -
+              {uploadStatus &&
+              uploadStatus.upload_status &&
+              uploadStatus.upload_status.length > 0
+                ? handleGetDataFormat(uploadStatus.upload_status[0]?.date || "")
+                : "-"}
             </span>
           </span>
         </Card>
@@ -336,6 +366,17 @@ const Planning = ({
                 }}
                 min={0}
                 className="w-12 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+              />
+            </div>
+            <div className="flex flex-col justify-between items-start mt-3">
+              <p className="text-xs">Data de Simulação</p>
+              <input
+                type="datetime-local"
+                value={simulationDate ? formatDateForInput(simulationDate) : ""}
+                onChange={(e) => {
+                  setSimulationDate(new Date(e.target.value));
+                }}
+                className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
             <div className="mt-4 flex flex-col gap-3">
