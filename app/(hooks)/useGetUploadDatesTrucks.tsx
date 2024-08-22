@@ -12,10 +12,10 @@ const useGetUploadDatesTrucks = () => {
     const getUploadFilesDate = async () => {
       try {
         const uploadDates = await generateDates();
-        dispatch({
-          type: "SET_UPLOAD_STATUS",
-          payload: uploadDates,
-        });
+        // dispatch({
+        //   type: "SET_UPLOAD_STATUS",
+        //   payload: uploadDates,
+        // });
         setIsLoading(false);
       } catch (error: unknown) {
         console.error("Failed to fetch upload dates:", error);
