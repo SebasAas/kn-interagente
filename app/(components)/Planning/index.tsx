@@ -48,7 +48,7 @@ const Planning = ({
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [simulationDate, setSimulationDate] = useState<Date | undefined>(
-    undefined
+    new Date()
   );
   const [additionalData, setAdditionalData] = useState({
     backlog_priority: false,
