@@ -3,11 +3,10 @@ export async function generateDates() {
     await fetch(
       "https://kn-demand-dev-emachzhqzq-uc.a.run.app/demand/uploadstatus"
     )
-  ).json()) as { date: string; uploaded: boolean }[];
+  ).json()) as {
+    upload_status: { date: string }[];
+    planning_status: { date: string };
+  };
 
-  const datesArray = data.map((status) => {
-    return { date: status.date, uploaded: status.uploaded };
-  });
-
-  return datesArray;
+  return data;
 }
