@@ -1,49 +1,45 @@
 "use client";
 import { useAppContext } from "@/app/(context)/AppContext";
 import { useEffect, useState } from "react";
+import Subtitle from "../Text/Subtitle";
 
-interface Alert {
-  id: number;
-  message: string;
+import mockedSimulation from "@/app/planning/fakeDataSimulation.json";
+import { formatDateToDDMM } from "@/app/(helpers)/dates";
+import { FamilyPropsResponse } from "@/app/(services)/demand";
+
+interface Alarm {
+  [key: string]: {
+    day: string;
+    message: string;
+    criticity: string;
+  }[];
 }
 
-const AlertBoard: React.FC = () => {
-  const { simulation, selectedSimulationDate } = useAppContext();
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-
-  useEffect(() => {
-    fetchAlerts()
-      .then((data) => setAlerts(data))
-      .catch((error) => console.error("Deu erro: ", error));
-  }, []);
-
-  const fetchAlerts = async (): Promise<Alert[]> => {
-    return new Promise<Alert[]>((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { id: 1, message: "Alerta 1" },
-          { id: 2, message: "Alerta 2" },
-          { id: 3, message: "Alerta 3" },
-          { id: 4, message: "Alerta 4" },
-          { id: 5, message: "Alerta 5" },
-          { id: 6, message: "Alerta 6" },
-        ]);
-      }, 1000);
-    });
-  };
+const AlertBoard = ({ simulation }: { simulation: Alarm }) => {
+  const [alerts, setAlerts] = useState(simulation?.alarms || []);
 
   return (
-    <div className="flex justify-around gap-2 flex-wrap min-w-[100px]">
-      {simulation?.alarms?.[selectedSimulationDate]?.map(
-        ({ day, message, criticity }) => (
-          <div
-            key={day}
-            className={`min-w-[100px] p-3 my-2 bg-[${criticity}] rounded-lg`}
-          >
-            <p className="text-sm text-center text-white">{message}</p>
-          </div>
-        )
-      )}
+    <div className="flex gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-col">
+      <Subtitle>Alertas</Subtitle>
+      <div className="text-center">
+        {alerts.length > 0 ? (
+          alerts?.map((alert) => {
+            return (
+              <div
+                key={alert.day}
+                className={`min-w-[100px] p-3 my-2  rounded-lg`}
+                style={{ background: `${alert.criticity}` }}
+              >
+                <p className="text-sm text-center text-white">
+                  {alert.message}
+                </p>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-sm font-medium mt-2">Não há alertas</p>
+        )}
+      </div>
     </div>
   );
 };

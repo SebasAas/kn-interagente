@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { FamilyProps, demandSimulation } from "../(services)/demand";
+import {
+  DemandSimulationType,
+  FamilyProps,
+  demandSimulation,
+} from "../(services)/demand";
 import { toast } from "react-toastify";
 
 const useDemandSimulation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSendSimulation = async (politics: FamilyProps) => {
+  const handleSendSimulation = async (politics: DemandSimulationType) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const res = await demandSimulation(politics);
       setIsLoading(false);
-      toast.success(
-        "Processo completo, escolha uma data para visualizar simulação"
-      );
+      toast.success("Simulação atualizada com sucesso");
       return res;
     } catch (error) {
       console.error(error);
