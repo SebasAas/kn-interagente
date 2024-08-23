@@ -15,27 +15,43 @@ interface Alarm {
   }[];
 }
 
-const AlertBoard = ({ simulation }: { simulation: Alarm }) => {
-  const [alerts, setAlerts] = useState(simulation?.alarms || []);
+const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
+  const [alerts, setAlerts] = useState(alarms || []);
+
+  console.log("simulation?.alarms", alarms);
 
   return (
-    <div className="flex gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-col">
+    <div className="flex flex-row gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>
       <div className="text-center">
-        {alerts.length > 0 ? (
-          alerts?.map((alert) => {
-            return (
-              <div
-                key={alert.day}
-                className={`min-w-[100px] p-3 my-2  rounded-lg`}
-                style={{ background: `${alert.criticity}` }}
-              >
-                <p className="text-sm text-center text-white">
-                  {alert.message}
-                </p>
-              </div>
-            );
-          })
+        {Object.values(alerts).length > 0 ? (
+          Object.values(alerts)?.map((date) => (
+            <>
+              <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
+                {formatDateToDDMM(date[0].day)}
+              </p>
+              {Object.values(alerts)?.map((alert) => {
+                if (!alert)
+                  return (
+                    <p className="text-sm font-medium mt-2">Não há alertas</p>
+                  );
+
+                return alert.map((a) => {
+                  return (
+                    <div
+                      key={a.day}
+                      className={`min-w-[100px] p-3 my-2  rounded-lg`}
+                      style={{ background: `${a.criticity}` }}
+                    >
+                      <p className="text-sm text-center text-white">
+                        {a.message}
+                      </p>
+                    </div>
+                  );
+                });
+              })}
+            </>
+          ))
         ) : (
           <p className="text-sm font-medium mt-2">Não há alertas</p>
         )}

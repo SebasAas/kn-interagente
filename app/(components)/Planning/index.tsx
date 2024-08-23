@@ -1,13 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Input,
-  Switch,
-} from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
 import AlertBoard from "../../(components)/Planning/AlertBoard";
 import ProductTable from "../../(components)/Planning/ProductTable";
 import Subtitle from "../../(components)/Text/Subtitle";
@@ -17,7 +10,6 @@ import {
   DemandSimulationType,
   FamilyPropsResponse,
   fetchUploadStatus,
-  getSimulation,
   SimulationType,
   UploadStatusType,
 } from "../../(services)/demand";
@@ -27,7 +19,6 @@ import { getBaseUrl } from "../../(helpers)/env";
 import { redirect } from "next/navigation";
 import PlanningDropzone from "../../(components)/Dropzone/PlanningDropzone";
 
-// import simulationData from "./fakeDataSimulation.json";
 import {
   formatDateToDDMM,
   formatDateToHHMM,
@@ -342,7 +333,7 @@ const Planning = ({
         <Card className="p-4 h-fit ">
           <CardBody className="overflow-visible !p-0 !pt-2">
             <div className="flex justify-between items-center">
-              <p className="text-xs">Backlog Primario</p>
+              <p className="text-xs">Backlog Prioritario</p>
               <Switch
                 isSelected={additionalData.backlog_priority}
                 onValueChange={(value) =>
@@ -353,7 +344,7 @@ const Planning = ({
                 }
                 size="sm"
                 defaultSelected
-                aria-label="Backlog Primario"
+                aria-label="Backlog Prioritario"
                 classNames={{
                   wrapper: ["group-data-[selected=true]:bg-blue-900"],
                 }}
@@ -374,7 +365,7 @@ const Planning = ({
                   });
                 }}
                 min={0}
-                className="w-12 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                className="w-20 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
             <div className="flex flex-col justify-between items-start mt-3">
@@ -619,7 +610,7 @@ const Planning = ({
       </Card>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
-        <AlertBoard simulation={simulation.alarms} />
+        <AlertBoard alarms={simulation.alarms} />
       </Card>
     </div>
   );
