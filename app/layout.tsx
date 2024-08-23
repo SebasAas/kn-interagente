@@ -11,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./(components)/Header";
 import { Flip, ToastContainer } from "react-toastify";
 
+import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
+
 const notShowBtnLoginRegisterInPaths = ["/login", "/register"];
 
 export default function RootLayout({
@@ -23,6 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ProgressBar
+          height="4px"
+          color="#0051a2"
+          options={{ showSpinner: false }}
+          shallowRouting
+        />
         <Providers>
           <ToastContainer
             position="top-right"
