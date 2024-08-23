@@ -28,23 +28,19 @@ const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
           Object.values(alerts)?.map((date) => (
             <>
               <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
-                {formatDateToDDMM(date[0].day)}
+                {formatDateToDDMM(date && date.length > 0 ? date[0]?.day : "")}
               </p>
-              {Object.values(alerts)?.map((alert) => {
-                if (!alert)
-                  return (
-                    <p className="text-sm font-medium mt-2">Não há alertas</p>
-                  );
 
+              {Object.values(alerts)?.map((alert) => {
                 return alert.map((a) => {
                   return (
                     <div
-                      key={a.day}
+                      key={a?.day}
                       className={`min-w-[100px] p-3 my-2  rounded-lg`}
-                      style={{ background: `${a.criticity}` }}
+                      style={{ background: `${a?.criticity}` }}
                     >
                       <p className="text-sm text-center text-white">
-                        {a.message}
+                        {a?.message}
                       </p>
                     </div>
                   );
