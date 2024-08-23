@@ -60,7 +60,8 @@ const Planning = ({
   const [uploadStatus, setUploadStatus] = useState(
     uploadStatusFetch || {
       upload_status: [{ date: "" }],
-      planning_status: { date: "" },
+      planning_status: "",
+      production_status: "",
     }
   );
 
@@ -325,7 +326,7 @@ const Planning = ({
               {uploadStatus &&
               uploadStatus.upload_status &&
               uploadStatus.upload_status.length > 0
-                ? handleGetDataFormat(uploadStatus.upload_status[0]?.date || "")
+                ? handleGetDataFormat("")
                 : "-"}
             </span>
           </span>

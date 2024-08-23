@@ -4,8 +4,9 @@ export async function generateDates() {
       "https://kn-demand-dev-emachzhqzq-uc.a.run.app/demand/uploadstatus"
     )
   ).json()) as {
-    upload_status: { date: string }[];
-    planning_status: { date: string };
+    upload_status: string[];
+    planning_status: string;
+    production_status: string;
   };
 
   return data;

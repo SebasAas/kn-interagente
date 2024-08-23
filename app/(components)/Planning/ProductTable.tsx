@@ -486,9 +486,7 @@ const ProductTable: React.FC<
                 <span className="text-xs mt-3 text-gray-400">
                   Produtividade atualizada:{" "}
                   <span className="text-xs text-black">
-                    {handleGetDataFormat(
-                      uploadStatus?.planning_status?.date || ""
-                    )}
+                    {handleGetDataFormat(uploadStatus?.production_status || "")}
                   </span>
                 </span>
               </div>
