@@ -15,30 +15,35 @@ interface Alarm {
   }[];
 }
 
-const AlertBoard = ({ simulation }: { simulation: Alarm }) => {
-  const [alerts, setAlerts] = useState(simulation?.alarms || []);
-
+const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
   return (
-    <div className="flex gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto flex-col">
+    <div className="flex flex-col gap-2 min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>
       <div className="text-center">
-        {alerts.length > 0 ? (
-          alerts?.map((alert) => {
-            return (
-              <div
-                key={alert.day}
-                className={`min-w-[100px] p-3 my-2  rounded-lg`}
-                style={{ background: `${alert.criticity}` }}
-              >
-                <p className="text-sm text-center text-white">
-                  {alert.message}
-                </p>
+        {Object.values(alarms)?.length > 0 &&
+          Object.values(alarms)?.map((date) => (
+            <>
+              <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
+                {formatDateToDDMM(date && date?.length > 0 ? date[0]?.day : "")}
+              </p>
+
+              <div>
+                {date?.map((alert) => {
+                  return (
+                    <div
+                      key={alert?.day}
+                      className={`min-w-[100px] p-3 my-2  rounded-lg`}
+                      style={{ background: `${alert?.criticity}` }}
+                    >
+                      <p className="text-sm text-center text-white">
+                        {alert?.message}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })
-        ) : (
-          <p className="text-sm font-medium mt-2">Não há alertas</p>
-        )}
+            </>
+          ))}
       </div>
     </div>
   );

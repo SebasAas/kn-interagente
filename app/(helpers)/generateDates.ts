@@ -1,11 +1,15 @@
 export async function generateDates() {
   const data = (await (
-    await fetch("https://kn-demand-emachzhqzq-uc.a.run.app/demand/uploadstatus")
-  ).json()) as { date: string; uploaded: boolean }[];
+  await fetch(
+      "https://kn-back-planning-emachzhqzq-rj.a.run.app/demand/uploadstatus"
+    )
+  ).json()) as {
+    upload_status: string[];
+    planning_status: string;
+    production_status: string;
+  };
 
-  const datesArray = data.map((status) => {
-    return { date: status.date, uploaded: status.uploaded };
-  });
+  console.log("data", data);
 
-  return datesArray;
+  return data;
 }

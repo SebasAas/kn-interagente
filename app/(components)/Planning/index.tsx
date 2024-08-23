@@ -1,13 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Input,
-  Switch,
-} from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
 import AlertBoard from "../../(components)/Planning/AlertBoard";
 import ProductTable from "../../(components)/Planning/ProductTable";
 import Subtitle from "../../(components)/Text/Subtitle";
@@ -17,7 +10,6 @@ import {
   DemandSimulationType,
   FamilyPropsResponse,
   fetchUploadStatus,
-  getSimulation,
   SimulationType,
   UploadStatusType,
 } from "../../(services)/demand";
@@ -27,13 +19,13 @@ import { getBaseUrl } from "../../(helpers)/env";
 import { redirect } from "next/navigation";
 import PlanningDropzone from "../../(components)/Dropzone/PlanningDropzone";
 
-// import simulationData from "./fakeDataSimulation.json";
 import {
   formatDateToDDMM,
   formatDateToHHMM,
   handleGetDataFormat,
 } from "../../(helpers)/dates";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
+import { generateDates } from "@/app/(helpers)/generateDates";
 
 const Planning = ({
   simulationFetch,
@@ -46,6 +38,9 @@ const Planning = ({
   const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [simulationDate, setSimulationDate] = useState<Date | undefined>(
+    new Date()
+  );
   const [additionalData, setAdditionalData] = useState({
     backlog_priority: false,
     max_storage: 0,
@@ -65,7 +60,8 @@ const Planning = ({
   const [uploadStatus, setUploadStatus] = useState(
     uploadStatusFetch || {
       upload_status: [{ date: "" }],
-      planning_status: { date: "" },
+      planning_status: "",
+      production_status: "",
     }
   );
 
@@ -197,6 +193,17 @@ const Planning = ({
   };
 
   const handleSimulate = async () => {
+    let formatedData = "";
+    if (simulationDate) {
+      const simulationCopy = new Date(simulationDate.getTime());
+
+      // Subtract 3 hours from the copy
+      simulationCopy.setHours(simulationCopy.getHours() - 3);
+
+      // Convert the modified copy to an ISO string
+      formatedData = simulationCopy.toISOString();
+    }
+
     const dataToSend: DemandSimulationType = {
       families: [
         {
@@ -204,6 +211,7 @@ const Planning = ({
         },
       ],
       ...additionalData,
+      simulation_date: formatedData || "",
     };
 
     setButtonDisabled(true);
@@ -218,23 +226,25 @@ const Planning = ({
         if (res?.detail) {
           toast.error(
             <div>
-              <h2>Algo deu errado enviando o arquivo, {res.detail}</h2>
+              <h2>Algo deu errado simulando, {res.detail}</h2>
             </div>
           );
           return;
         }
-
-        console.log("res", res);
 
         setSimulation({
           simulation: res.simulation,
           alarms: res?.alarms,
           statistics: res?.statistics,
         });
+
+        const uploadDates = await generateDates();
+
+        setUploadStatus(uploadDates);
       })
       .catch((err) => {
         toast.error(
-          `Algo deu errado enviando o arquivo, tente novamente! ${err.detail}`
+          `Algo deu errado simulando, tente novamente! ${err.detail}`
         );
       })
       .finally(() => {
@@ -261,6 +271,22 @@ const Planning = ({
     );
 
     return `${firstDateDDMM} as ${firstDateHHMM} até ${lastDateDDMM} as ${lastDateHHMM}`;
+  };
+
+  const formatDateForInput = (date: Date) => {
+    if (!date) return "";
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // Months are 0-based
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Aqui");
+    setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
   };
 
   return (
@@ -295,15 +321,18 @@ const Planning = ({
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
             <span className="text-xs text-black">
-              {/* {handleGetDataFormat(uploadStatus.upload_status[0].date || "")} */}
-              -
+              {uploadStatus &&
+              uploadStatus.upload_status &&
+              uploadStatus.upload_status.length > 0
+                ? handleGetDataFormat("")
+                : "-"}
             </span>
           </span>
         </Card>
         <Card className="p-4 h-fit ">
           <CardBody className="overflow-visible !p-0 !pt-2">
             <div className="flex justify-between items-center">
-              <p className="text-xs">Backlog Primario</p>
+              <p className="text-xs">Backlog Prioritario</p>
               <Switch
                 isSelected={additionalData.backlog_priority}
                 onValueChange={(value) =>
@@ -314,7 +343,7 @@ const Planning = ({
                 }
                 size="sm"
                 defaultSelected
-                aria-label="Backlog Primario"
+                aria-label="Backlog Prioritario"
                 classNames={{
                   wrapper: ["group-data-[selected=true]:bg-blue-900"],
                 }}
@@ -335,7 +364,16 @@ const Planning = ({
                   });
                 }}
                 min={0}
-                className="w-12 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                className="w-20 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+              />
+            </div>
+            <div className="flex flex-col justify-between items-start mt-3">
+              <p className="text-xs">Data de Simulação</p>
+              <input
+                type="datetime-local"
+                value={simulationDate ? formatDateForInput(simulationDate) : ""}
+                onChange={handleDateChange}
+                className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
             <div className="mt-4 flex flex-col gap-3">
@@ -571,7 +609,7 @@ const Planning = ({
       </Card>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
-        <AlertBoard simulation={simulation.alarms} />
+        <AlertBoard alarms={simulation?.alarms} />
       </Card>
     </div>
   );
