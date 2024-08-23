@@ -1,6 +1,6 @@
 export async function generateDates() {
   const data = (await (
-    await fetch(
+  await fetch(
       "https://kn-back-planning-emachzhqzq-rj.a.run.app/demand/uploadstatus"
     )
   ).json()) as {
