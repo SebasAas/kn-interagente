@@ -1,4 +1,4 @@
-export const BASE_URL = "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/";
+export const BASE_URL = "https://kn-back-planning-emachzhqzq-rj.a.run.app/";
 
 export type FamilyProps = {
   families: [
