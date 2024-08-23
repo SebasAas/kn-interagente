@@ -9,7 +9,7 @@ export function formatDateToHHMM(dateString: string) {
 }
 
 export function formatDateToDDMM(dateString: string) {
-  if (!dateString) return "-";
+  if (!dateString) return "";
   const date = new Date(dateString);
   // Options to get day and month
   const options: Intl.DateTimeFormatOptions = {

@@ -21,7 +21,7 @@ const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
   console.log("simulation?.alarms", alarms);
 
   return (
-    <div className="flex flex-row gap-2 flex-wrap min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
+    <div className="flex flex-col gap-2 min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>
       <div className="text-center">
         {Object.values(alerts).length > 0 ? (
@@ -31,21 +31,27 @@ const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
                 {formatDateToDDMM(date && date.length > 0 ? date[0]?.day : "")}
               </p>
 
-              {Object.values(alerts)?.map((alert) => {
-                return alert.map((a) => {
+              <div className="flex">
+                {date?.length === 0 && (
+                  <p className="text-sm font-medium mt-2">Não há alertas</p>
+                )}
+              </div>
+
+              <div>
+                {date?.map((alert) => {
                   return (
                     <div
-                      key={a?.day}
+                      key={alert?.day}
                       className={`min-w-[100px] p-3 my-2  rounded-lg`}
-                      style={{ background: `${a?.criticity}` }}
+                      style={{ background: `${alert?.criticity}` }}
                     >
                       <p className="text-sm text-center text-white">
-                        {a?.message}
+                        {alert?.message}
                       </p>
                     </div>
                   );
-                });
-              })}
+                })}
+              </div>
             </>
           ))
         ) : (
