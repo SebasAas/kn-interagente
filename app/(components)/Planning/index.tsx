@@ -203,9 +203,13 @@ const Planning = ({
   const handleSimulate = async () => {
     let formatedData = "";
     if (simulationDate) {
-      simulationDate.setHours(simulationDate.getHours() - 3);
+      const simulationCopy = new Date(simulationDate.getTime());
 
-      formatedData = simulationDate.toISOString();
+      // Subtract 3 hours from the copy
+      simulationCopy.setHours(simulationCopy.getHours() - 3);
+
+      // Convert the modified copy to an ISO string
+      formatedData = simulationCopy.toISOString();
     }
 
     const dataToSend: DemandSimulationType = {
@@ -215,7 +219,7 @@ const Planning = ({
         },
       ],
       ...additionalData,
-      simulation_date: simulationDate?.toISOString() || "",
+      simulation_date: formatedData || "",
     };
 
     setButtonDisabled(true);
@@ -230,7 +234,7 @@ const Planning = ({
         if (res?.detail) {
           toast.error(
             <div>
-              <h2>Algo deu errado enviando o arquivo, {res.detail}</h2>
+              <h2>Algo deu errado simulando, {res.detail}</h2>
             </div>
           );
           return;
@@ -250,7 +254,7 @@ const Planning = ({
       })
       .catch((err) => {
         toast.error(
-          `Algo deu errado enviando o arquivo, tente novamente! ${err.detail}`
+          `Algo deu errado simulando, tente novamente! ${err.detail}`
         );
       })
       .finally(() => {
@@ -288,6 +292,11 @@ const Planning = ({
     const hours = pad(date.getHours());
     const minutes = pad(date.getMinutes());
     return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Aqui");
+    setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
   };
 
   return (
@@ -373,9 +382,7 @@ const Planning = ({
               <input
                 type="datetime-local"
                 value={simulationDate ? formatDateForInput(simulationDate) : ""}
-                onChange={(e) => {
-                  setSimulationDate(new Date(e.target.value));
-                }}
+                onChange={handleDateChange}
                 className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>

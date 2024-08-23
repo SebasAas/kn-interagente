@@ -537,44 +537,44 @@ const ProductTable: React.FC<
           <Swapper selectFamily={setSelectedFamily} />
           {familyTable()}
         </div>
-        <div className="pt-[70px]">
+        {/* <div className="pt-[70px]">
           <div className="flex flex-col h-1/3 items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">1</p>
             </div>
-            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(1)}</p>
               </div>
-            ) : null} */}
+            ) : null}
           </div>
           <div className="flex flex-col h-[calc(33.3%-7px)] my-[6px] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">2</p>
             </div>
-            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(2)}</p>
               </div>
-            ) : null} */}
+            ) : null}
           </div>
           <div className="flex flex-col h-[calc(33.3%-7px)] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
             <div className="flex flex-col items-center">
               <p>Turno</p>
               <p className="text-xl font-medium">3</p>
             </div>
-            {/* {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
+            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
               <div className="flex flex-col items-center">
                 <p>Caixas</p>
                 <p className="text-xl font-medium">{getTotalBox(3)}</p>
               </div>
-            ) : null} */}
+            ) : null}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
