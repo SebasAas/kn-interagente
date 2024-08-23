@@ -16,19 +16,15 @@ interface Alarm {
 }
 
 const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
-  const [alerts, setAlerts] = useState(alarms || []);
-
-  console.log("simulation?.alarms", alarms);
-
   return (
     <div className="flex flex-col gap-2 min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>
       <div className="text-center">
-        {Object.values(alerts).length > 0 &&
-          Object.values(alerts)?.map((date) => (
+        {Object.values(alarms)?.length > 0 &&
+          Object.values(alarms)?.map((date) => (
             <>
               <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
-                {formatDateToDDMM(date && date.length > 0 ? date[0]?.day : "")}
+                {formatDateToDDMM(date && date?.length > 0 ? date[0]?.day : "")}
               </p>
 
               <div>

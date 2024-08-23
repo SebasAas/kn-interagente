@@ -232,8 +232,6 @@ const Planning = ({
           return;
         }
 
-        console.log("res", res);
-
         setSimulation({
           simulation: res.simulation,
           alarms: res?.alarms,
@@ -611,7 +609,7 @@ const Planning = ({
       </Card>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
-        <AlertBoard alarms={simulation.alarms} />
+        <AlertBoard alarms={simulation?.alarms} />
       </Card>
     </div>
   );
