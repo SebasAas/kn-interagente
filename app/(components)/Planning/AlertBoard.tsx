@@ -24,18 +24,12 @@ const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
     <div className="flex flex-col gap-2 min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>
       <div className="text-center">
-        {Object.values(alerts).length > 0 ? (
+        {Object.values(alerts).length > 0 &&
           Object.values(alerts)?.map((date) => (
             <>
               <p className="flex justify-center items-center font-medium underline mt-6 mb-2 text-center">
                 {formatDateToDDMM(date && date.length > 0 ? date[0]?.day : "")}
               </p>
-
-              <div className="flex">
-                {date?.length === 0 && (
-                  <p className="text-sm font-medium mt-2">Não há alertas</p>
-                )}
-              </div>
 
               <div>
                 {date?.map((alert) => {
@@ -53,10 +47,7 @@ const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
                 })}
               </div>
             </>
-          ))
-        ) : (
-          <p className="text-sm font-medium mt-2">Não há alertas</p>
-        )}
+          ))}
       </div>
     </div>
   );
