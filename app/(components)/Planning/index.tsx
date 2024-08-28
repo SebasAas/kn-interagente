@@ -308,7 +308,7 @@ const Planning = ({
               isDisable={false}
             />
           </CardBody>
-          <button
+          {/* <button
             className={`px-2 py-1 mt-3 rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
@@ -317,7 +317,7 @@ const Planning = ({
             onClick={() => (buttonDisabled ? () => {} : handleGetInformation())}
           >
             Enviar
-          </button>
+          </button> */}
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
             <span className="text-xs text-black">
