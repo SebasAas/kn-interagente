@@ -17,7 +17,12 @@ const useDemandSimulation = () => {
     try {
       const res = await demandSimulation(politics);
       setIsLoading(false);
-      toast.success("Simulação atualizada com sucesso");
+
+      if (res && "detail" in res) {
+      } else {
+        toast.success("Simulação atualizada com sucesso");
+      }
+
       return res;
     } catch (error) {
       console.error(error);
