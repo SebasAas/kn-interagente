@@ -44,6 +44,7 @@ const Planning = ({
   const [additionalData, setAdditionalData] = useState({
     backlog_priority: false,
     max_storage: 0,
+    ahead_of_time: false,
   });
 
   const [simulation, setSimulation] = useState(
@@ -308,7 +309,7 @@ const Planning = ({
               isDisable={false}
             />
           </CardBody>
-          <button
+          {/* <button
             className={`px-2 py-1 mt-3 rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
@@ -317,7 +318,7 @@ const Planning = ({
             onClick={() => (buttonDisabled ? () => {} : handleGetInformation())}
           >
             Enviar
-          </button>
+          </button> */}
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
             <span className="text-xs text-black">
@@ -331,7 +332,7 @@ const Planning = ({
         </Card>
         <Card className="p-4 h-fit ">
           <CardBody className="overflow-visible !p-0 !pt-2">
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <p className="text-xs">Backlog Prioritario</p>
               <Switch
                 isSelected={additionalData.backlog_priority}
@@ -348,7 +349,8 @@ const Planning = ({
                   wrapper: ["group-data-[selected=true]:bg-blue-900"],
                 }}
               />
-            </div>
+            </div> */}
+
             <div className="flex justify-between items-center mt-3">
               <p className="text-xs">Stage (n de caixas)</p>
               <input
@@ -556,6 +558,28 @@ const Planning = ({
                 </>
               ))}
             </div>
+            <div className="flex items-center my-5 gap-2">
+              <div>
+                <p className="text-xs w-[45px] text-center">Just</p>
+                <p className="text-xs w-[45px] text-center"> in time</p>
+              </div>
+              <Switch
+                isSelected={additionalData.ahead_of_time}
+                onValueChange={(value) =>
+                  setAdditionalData({
+                    ...additionalData,
+                    ahead_of_time: value,
+                  })
+                }
+                size="sm"
+                defaultSelected
+                aria-label="ahead_of_time"
+                classNames={{
+                  wrapper: ["group-data-[selected=true]:bg-blue-900"],
+                }}
+              />
+              <p className="text-xs w-[50px] text-center">Ahead of time</p>
+            </div>
           </CardBody>
           <button
             className={`px-2 py-1 mt-4 rounded-md ${
@@ -572,11 +596,13 @@ const Planning = ({
 
       <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col">
-            <Subtitle>Separação de Caixas</Subtitle>
-            <span className="text-xs mt-2 text-gray-400">
-              Range: {getRange(simulation?.simulation || [])}
-            </span>
+          <div className="flex justify-between">
+            <div className="flex flex-col">
+              <Subtitle>Separação de Caixas</Subtitle>
+              <span className="text-xs mt-2 text-gray-400">
+                Range: {getRange(simulation?.simulation || [])}
+              </span>
+            </div>
           </div>
 
           {/* <div className="flex flex-col">
