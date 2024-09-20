@@ -457,8 +457,6 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
-  console.log("data", data);
-
   if (data?.detail?.includes("Não tem dados")) {
     return [];
   }
@@ -575,7 +573,9 @@ function Productivity({
   };
 
   useEffect(() => {
-    getProductivityChart();
+    toast.promise(getProductivityChart(), {
+      pending: "Obtendo dados dos graficos...",
+    });
   }, []);
 
   useEffect(() => {
