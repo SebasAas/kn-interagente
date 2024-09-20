@@ -11,7 +11,7 @@ export default async function PlanningPage() {
   const uploadStatusFetch = await fetchUploadStatus();
 
   return (
-    <main className="h-[100vh]">
+    <main className="min-h-[100vh]">
       <Planning
         simulationFetch={simulationFetch}
         uploadStatusFetch={uploadStatusFetch}

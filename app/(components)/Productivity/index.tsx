@@ -457,8 +457,6 @@ const reorderJsonData = (data: any, order: any) => {
     order.map((indicator: any, index: any) => [indicator, index])
   );
 
-  console.log("data", data);
-
   if (data?.detail?.includes("Não tem dados")) {
     return [];
   }
@@ -472,14 +470,12 @@ const reorderJsonData = (data: any, order: any) => {
 };
 
 function Productivity({
-  charts,
   date,
   ranking,
   lastUpdate,
   dataConfig,
   dataSummary,
 }: {
-  charts: any;
   date: {
     month: string;
     year: string;
@@ -497,8 +493,7 @@ function Productivity({
     name: string;
   }[];
 }) {
-  const { dispatch, chartData, lengthSeries } = useAppContext();
-  const { data: session, status } = useSession();
+  const { dispatch } = useAppContext();
 
   const [chartDataProdByResource, setChartDataProdByResource] = useState<any>({
     options: {},
@@ -557,7 +552,13 @@ function Productivity({
 
   console.log("dataConfig", dataConfig);
 
-  useEffect(() => {
+  const getProductivityChart = async () => {
+    const charts = await fetchProductionCharts(
+      date?.month,
+      date?.year,
+      date?.shift
+    );
+
     dispatch({ type: "SET_CHART_DATA", payload: charts });
 
     const reorderedData = reorderJsonData(charts, indicatorOrder);
@@ -569,7 +570,13 @@ function Productivity({
       setChartDataProdByResource,
       setChartDataProductivityByHour
     );
-  }, [charts, indicatorOrder]);
+  };
+
+  useEffect(() => {
+    toast.promise(getProductivityChart(), {
+      pending: "Obtendo dados dos graficos...",
+    });
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {

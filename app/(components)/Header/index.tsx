@@ -35,7 +35,7 @@ const Header = ({ activePath }: { activePath: string }) => {
             />
           </Link>
         </div>
-        <div className=" justify-between items-center w-full lg:flex lg:w-auto">
+        <div className=" justify-between items-center flex w-auto">
           {!notShowBtnLoginRegisterInPaths.includes(activePath) && user && (
             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
               {/* <li>
@@ -51,14 +51,14 @@ const Header = ({ activePath }: { activePath: string }) => {
                 <Link
                   href="/"
                   aria-current="page"
-                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                  className="text-sm block py-2 pr-4 pl-3 rounded bg-primary-700 bg-transparent text-primary-700 p-0 dark:text-white"
                 >
                   Produtividade
                 </Link>
                 <Link
                   href="/planning"
                   aria-current="page"
-                  className="text-sm block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                  className="text-sm block py-2 pr-4 pl-3 rounded bg-primary-700 bg-transparent text-primary-700 p-0 dark:text-white"
                 >
                   Planejamento
                 </Link>
