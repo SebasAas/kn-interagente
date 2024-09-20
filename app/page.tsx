@@ -29,7 +29,7 @@ export default async function Home() {
   const dataSummary = await getProducitivitySummary();
 
   return (
-    <main className="h-[100vh]">
+    <main className="min-h-[100vh]">
       <Productivity
         date={{
           month: month,
