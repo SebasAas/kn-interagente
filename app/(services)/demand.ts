@@ -20,82 +20,80 @@ export type FamilyProps = {
   ];
 };
 
-export interface FamilyDemandSimulationType {
-  shift_1: {
-    user: number;
-    synergy: number;
-  };
-  shift_2: {
-    user: number;
-    synergy: number;
-  };
-  shift_3: {
-    user: number;
-    synergy: number;
-  };
-}
 export interface Families {
-  aero: FamilyDemandSimulationType;
-  hpc: FamilyDemandSimulationType;
-  foods: FamilyDemandSimulationType;
+  aero: {
+    user: number;
+  };
+  hpc: {
+    user: number;
+  };
+  foods: {
+    user: number;
+  };
 }
 
 export interface DemandSimulationType {
-  families: Families[];
-  backlog_priority: boolean;
-  max_storage: number;
+  families: Families;
   simulation_date?: string | undefined;
+}
+
+export interface Picking {
+  hour: string;
+  truck_hour: string;
+  delay: number;
+  boxes: number;
+  remaining: number;
 }
 
 export type SimulationType = {
   [key: string]: {
     aero: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     foods: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     hpc: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     all: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
   };
 };
@@ -107,7 +105,7 @@ export interface UploadStatusType {
 }
 
 export type FamilyPropsResponse = {
-  simulation: SimulationType;
+  hours: SimulationType;
   alarms: {
     [key: string]: {
       day: string;

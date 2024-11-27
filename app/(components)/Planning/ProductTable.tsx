@@ -69,7 +69,7 @@ const isEndOfShift = (index: number) => {
 
 const ProductTable: React.FC<
   Partial<FamilyPropsResponse & { uploadStatus: UploadStatusType }>
-> = ({ simulation, statistics, uploadStatus }) => {
+> = ({ hours, statistics, uploadStatus }) => {
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
   >("all");
@@ -79,11 +79,13 @@ const ProductTable: React.FC<
   const getFamilyData = () => {
     if (!selectedFamily) return null;
 
-    return Object.values(simulation!)?.map((data, index) => (
+    console.log("Object.values(simulation!)", Object.values(hours!));
+
+    return Object.values(hours!)?.map((data, index) => (
       <>
         <tr className="!bg-[#07AC7E] text-center">
           <td colSpan={8} className="text-sm text-white py-1">
-            {formatDateToDDMM(data.aero[0].hour)}
+            {formatDateToDDMM(data.aero[0]?.hour)}
           </td>
         </tr>
         {data[selectedFamily].map((data, index) => (
@@ -141,16 +143,7 @@ const ProductTable: React.FC<
                 {data.boxes}
               </div>
             </td>
-            <td>
-              <div
-                className={!data.is_working_hour ? "text-white" : ""}
-                style={
-                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
-                }
-              >
-                {data.storage}
-              </div>
-            </td>
+
             <td>
               <div
                 className={
@@ -167,22 +160,7 @@ const ProductTable: React.FC<
                 {data.visits}
               </div>
             </td>
-            <td>
-              <div
-                className={
-                  !data.is_working_hour
-                    ? isBackgroundLight(data.criticity)
-                      ? "text-black"
-                      : "text-white"
-                    : ""
-                }
-                style={
-                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
-                }
-              >
-                {data.base_workers}
-              </div>
-            </td>
+
             <td className="py-1 text-center flex justify-center">
               <div
                 className={`${
@@ -203,180 +181,6 @@ const ProductTable: React.FC<
         ))}
       </>
     ));
-  };
-
-  const getTotalData = () => {
-    if (!selectedFamily) return null;
-
-    return Object.values(simulation!)?.map((s, index) => {
-      return s?.all.map((data, index) => (
-        <tr
-          key={index}
-          className={`text-center ${
-            isEndOfShift(index)
-              ? "border-solid border-0 border-b-1.5 border-black"
-              : ""
-          }`}
-        >
-          <td className="py-1 text-center flex justify-center">
-            <div
-              className={`${
-                isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              } ${
-                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
-              }`}
-              style={{ backgroundColor: data.criticity }}
-            >
-              {data.workers}
-            </div>
-          </td>
-          <td className="text-center">
-            <div className="w-full flex justify-center">
-              <div
-                className={`${
-                  isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-                } ${
-                  isBackgroundLight(data.criticity)
-                    ? "text-black"
-                    : "text-white"
-                }`}
-                style={{ backgroundColor: data.criticity }}
-              >
-                {data.visits}
-              </div>
-            </div>
-          </td>
-          <td className="py-1 text-center flex justify-center">
-            <div
-              className={`${
-                isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              } ${
-                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
-              }`}
-              style={{ backgroundColor: data.criticity }}
-            >
-              {data.base_workers}
-            </div>
-          </td>
-          <td>
-            <div
-              className={
-                isNoWorkTime(index)
-                  ? isBackgroundLight(data?.criticity)
-                    ? "text-black"
-                    : "text-white"
-                  : ""
-              }
-              style={
-                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
-              }
-            >
-              {data.boxes}
-            </div>
-          </td>
-          <td className="py-1 text-center flex justify-center">
-            <div
-              className={`${
-                isNoWorkTime(index) ? "w-full" : "min-w-[70px] w-min rounded"
-              } ${
-                isBackgroundLight(data.criticity) ? "text-black" : "text-white"
-              }`}
-              style={{ backgroundColor: data.criticity }}
-            >
-              {data.backlog}
-            </div>
-          </td>
-        </tr>
-      ));
-    });
-  };
-
-  const getDatesData = () => {
-    if (!selectedFamily) return null;
-
-    return Object.values(simulation!)?.map((data, index) => {
-      return data[selectedFamily].map((data, index) => (
-        <tr
-          key={index}
-          className={`text-center ${
-            isEndOfShift(index)
-              ? "border-solid border-0 border-b-1.5 border-black"
-              : ""
-          }`}
-        >
-          <td className="py-1 text-center flex justify-center">
-            <div
-              className={`px-3 ${
-                isNoWorkTime(index)
-                  ? isBackgroundLight(data.criticity)
-                    ? "text-black"
-                    : "text-white"
-                  : ""
-              }`}
-              style={
-                isNoWorkTime(index) ? { backgroundColor: data.criticity } : {}
-              }
-            >
-              {formatDateToHHMM(data.hour)}
-            </div>
-          </td>
-        </tr>
-      ));
-    });
-  };
-
-  const datesTable = () => {
-    return (
-      <table
-        cellSpacing="0"
-        cellPadding="0"
-        className="table-auto w-min border-separate border-spacing-0 rounded"
-      >
-        <thead>
-          <tr>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Hora</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody>{getDatesData()}</tbody>
-      </table>
-    );
-  };
-
-  const totalTable = () => {
-    return (
-      <table
-        cellSpacing="0"
-        cellPadding="0"
-        className="table-auto w-full border-separate border-spacing-0 rounded"
-      >
-        <thead>
-          <tr className="text-sm">
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">
-                Escalado
-              </p>
-            </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">
-                Estimado
-              </p>
-            </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
-            </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
-            </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody>{getTotalData()}</tbody>
-      </table>
-    );
   };
 
   const familyTable = () => {
@@ -404,16 +208,9 @@ const ProductTable: React.FC<
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
             </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Stage</p>
-            </th>
+
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
-            </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">
-                Escalado
-              </p>
             </th>
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3 rounded-t-lg">
@@ -503,7 +300,7 @@ const ProductTable: React.FC<
     if (!selectedFamily) return null;
 
     // divide the ammount of elements inside the all families in 3, and depending on the shift, return the correspondent value
-    total = Object.values(simulation!)?.reduce((acc, data, index) => {
+    total = Object.values(hours!)?.reduce((acc, data, index) => {
       if (shift === 1 && index < 8) {
         return acc + data["all"][index].boxes;
       } else if (shift === 2 && index > 7 && index < 16) {
