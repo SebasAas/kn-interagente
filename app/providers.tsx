@@ -23,7 +23,7 @@ const initialState = {
   selectedSimulationDate: "",
   simulation: {
     alarms: {},
-    simulation: {},
+    hours: {},
     statistics: {},
   },
   modal: {
