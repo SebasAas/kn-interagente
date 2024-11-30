@@ -1,11 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Progress,
+  Switch,
+} from "@nextui-org/react";
 import AlertBoard from "../../(components)/Planning/AlertBoard";
 import ProductTable from "../../(components)/Planning/ProductTable";
 import Subtitle from "../../(components)/Text/Subtitle";
 import { toast } from "react-toastify";
 import {
+  DashDTTypes,
   demandFiles,
   DemandSimulationType,
   FamilyPropsResponse,
@@ -25,14 +32,44 @@ import {
   handleGetDataFormat,
 } from "../../(helpers)/dates";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
-import { generateDates } from "@/app/(helpers)/generateDates";
+import { generateDates, getDashDT } from "@/app/(helpers)/generateDates";
+
+const transformDate = (isoString: string) => {
+  const date = new Date(isoString);
+
+  // Array of month names in Portuguese (abbreviated)
+  const months = [
+    "jan",
+    "fev",
+    "mar",
+    "abr",
+    "mai",
+    "jun",
+    "jul",
+    "ago",
+    "set",
+    "out",
+    "nov",
+    "dez",
+  ];
+
+  // Get day, month (in letters), hours, and minutes
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = months[date.getMonth()]; // Get month in Portuguese
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${day} ${month} ${hours}:${minutes}`;
+};
 
 const Planning = ({
   simulationFetch,
   uploadStatusFetch,
+  dashDTFetch,
 }: {
   simulationFetch: FamilyPropsResponse;
   uploadStatusFetch: UploadStatusType;
+  dashDTFetch: DashDTTypes[];
 }) => {
   const { data: session, status } = useSession();
   const { dispatch } = useAppContext();
@@ -44,6 +81,7 @@ const Planning = ({
   const [additionalData, setAdditionalData] = useState({
     flow: 0,
   });
+  const [dashDT, setDashDT] = useState(dashDTFetch || []);
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
@@ -201,6 +239,10 @@ const Planning = ({
         const uploadDates = await generateDates();
 
         setUploadStatus(uploadDates);
+
+        const dashDT = await getDashDT();
+
+        setDashDT(dashDT || []);
       })
       .catch((err) => {
         toast.error(
@@ -409,19 +451,45 @@ const Planning = ({
           </button>
         </Card>
       </div>
-
-      <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between">
-            <div className="flex flex-col">
-              <Subtitle>Separação de Caixas</Subtitle>
-              <span className="text-xs mt-2 text-gray-400">
-                Range: {getRange(simulation?.hours || [])}
-              </span>
-            </div>
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">
+        <Card className="p-4 overflow-x-auto">
+          <Subtitle>Caminhões</Subtitle>
+          <div className="flex">
+            {dashDT?.map((dashDT) => (
+              <div
+                key={dashDT.dt}
+                className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
+              >
+                <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
+                  {dashDT.dt}
+                </div>
+                <div className="flex justify-center items-center gap-2">
+                  <Progress
+                    value={dashDT.percentual}
+                    size="md"
+                    color="primary"
+                  />
+                  {dashDT.percentual}%
+                </div>
+                <p className="text-xs whitespace-nowrap">
+                  {transformDate(dashDT.estimated_end_complexity)}
+                </p>
+              </div>
+            ))}
           </div>
+        </Card>
+        <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Separação de Caixas</Subtitle>
+                <span className="text-xs mt-2 text-gray-400">
+                  Range: {getRange(simulation?.hours || [])}
+                </span>
+              </div>
+            </div>
 
-          {/* <div className="flex flex-col">
+            {/* <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
               <a className="tooltip-politicas">
@@ -441,14 +509,15 @@ const Planning = ({
             </div>
             <PoliticsForm isVisible={isVisible} />
           </div> */}
-          {/* <div className="flex relative w-full"> */}
-          <ProductTable
-            hours={simulation?.hours || []}
-            statistics={simulation.statistics}
-            uploadStatus={uploadStatus}
-          />
-        </div>
-      </Card>
+            {/* <div className="flex relative w-full"> */}
+            <ProductTable
+              hours={simulation?.hours || []}
+              statistics={simulation.statistics}
+              uploadStatus={uploadStatus}
+            />
+          </div>
+        </Card>
+      </div>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
         <AlertBoard alarms={simulation?.alarms} />

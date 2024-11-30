@@ -104,6 +104,12 @@ export interface UploadStatusType {
   production_status: string;
 }
 
+export interface DashDTTypes {
+  dt: string;
+  estimated_end_complexity: string;
+  percentual: number;
+}
+
 export type FamilyPropsResponse = {
   hours: SimulationType;
   alarms: {
@@ -183,6 +189,38 @@ export const getSimulation = async () => {
   try {
     const simulationData = await promise.json();
     return simulationData;
+  } catch (error) {
+    return {
+      detail: "Algo deu errado obtendo graficos, tente novamente! ",
+      error: error,
+    };
+  }
+};
+
+export const getDashDT = async () => {
+  const promise = await fetch(`${BASE_URL}demand/dash_dt`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  if (!promise.ok) {
+    const errorText = await promise.text();
+    console.log("Error fetching simulation data", errorText);
+
+    return {
+      detail: "Não encontramos dados de grafico para essa data, ",
+      error: errorText,
+    };
+  }
+
+  // Try parsing the promise as JSON
+  try {
+    const dashboardDTData = await promise.json();
+    return dashboardDTData;
   } catch (error) {
     return {
       detail: "Algo deu errado obtendo graficos, tente novamente! ",
