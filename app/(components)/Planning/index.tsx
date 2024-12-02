@@ -13,6 +13,7 @@ import Subtitle from "../../(components)/Text/Subtitle";
 import { toast } from "react-toastify";
 import {
   DashDTTypes,
+  DashWorkersTypes,
   demandFiles,
   DemandSimulationType,
   FamilyPropsResponse,
@@ -32,7 +33,12 @@ import {
   handleGetDataFormat,
 } from "../../(helpers)/dates";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
-import { generateDates, getDashDT } from "@/app/(helpers)/generateDates";
+import {
+  generateDates,
+  getDashDT,
+  getDashWorkers,
+} from "@/app/(helpers)/generateDates";
+import DashboardWorkers from "./DashboardWorkers";
 
 const transformDate = (isoString: string) => {
   const date = new Date(isoString);
@@ -66,10 +72,12 @@ const Planning = ({
   simulationFetch,
   uploadStatusFetch,
   dashDTFetch,
+  dashWorkersFetch,
 }: {
   simulationFetch: FamilyPropsResponse;
   uploadStatusFetch: UploadStatusType;
   dashDTFetch: DashDTTypes[];
+  dashWorkersFetch: DashWorkersTypes;
 }) => {
   const { data: session, status } = useSession();
   const { dispatch } = useAppContext();
@@ -82,6 +90,7 @@ const Planning = ({
     flow: 0,
   });
   const [dashDT, setDashDT] = useState(dashDTFetch || []);
+  const [dashWorkers, setDashWorkers] = useState(dashWorkersFetch || {});
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
@@ -241,8 +250,10 @@ const Planning = ({
         setUploadStatus(uploadDates);
 
         const dashDT = await getDashDT();
+        const dashWorkers = await getDashWorkers();
 
         setDashDT(dashDT || []);
+        setDashWorkers(dashWorkers || {});
       })
       .catch((err) => {
         toast.error(
@@ -449,6 +460,10 @@ const Planning = ({
           >
             Reprogramar
           </button>
+        </Card>
+        <Card className="p-4 overflow-y-scroll max-h-[800px] h-full">
+          <Subtitle>Produção turno</Subtitle>
+          <DashboardWorkers workers={dashWorkers} />
         </Card>
       </div>
       <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">

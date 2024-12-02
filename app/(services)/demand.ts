@@ -109,6 +109,22 @@ export interface DashDTTypes {
   estimated_end_complexity: string;
   percentual: number;
 }
+export interface DashWorkersTypes {
+  families: Record<
+    "aero" | "hpc" | "foods" | "all",
+    {
+      workers: DashWorkersList[];
+      workers_per_shift: number;
+    }
+  >;
+}
+
+export interface DashWorkersList {
+  boxes: number;
+  directed_hours: string;
+  productivity: number;
+  worker_code: string;
+}
 
 export type FamilyPropsResponse = {
   hours: SimulationType;
@@ -209,10 +225,10 @@ export const getDashDT = async () => {
 
   if (!promise.ok) {
     const errorText = await promise.text();
-    console.log("Error fetching simulation data", errorText);
+    console.log("Error fetching dash dt data", errorText);
 
     return {
-      detail: "Não encontramos dados de grafico para essa data, ",
+      detail: "Não encontramos dados de caminhões para essa data, ",
       error: errorText,
     };
   }
@@ -223,7 +239,39 @@ export const getDashDT = async () => {
     return dashboardDTData;
   } catch (error) {
     return {
-      detail: "Algo deu errado obtendo graficos, tente novamente! ",
+      detail: "Algo deu errado obtendo dados de caminhões, tente novamente! ",
+      error: error,
+    };
+  }
+};
+
+export const getDashWorkers = async () => {
+  const promise = await fetch(`${BASE_URL}demand/dash_worker`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  if (!promise.ok) {
+    const errorText = await promise.text();
+    console.log("Error fetching simulation data", errorText);
+
+    return {
+      detail: "Não encontramos dados de workers para essa data, ",
+      error: errorText,
+    };
+  }
+
+  // Try parsing the promise as JSON
+  try {
+    const dashboardWorkersData = await promise.json();
+    return dashboardWorkersData;
+  } catch (error) {
+    return {
+      detail: "Algo deu errado obtendo dados de workers, tente novamente! ",
       error: error,
     };
   }

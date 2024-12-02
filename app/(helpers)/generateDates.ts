@@ -1,4 +1,4 @@
-import { DashDTTypes } from "../(services)/demand";
+import { DashDTTypes, DashWorkersTypes } from "../(services)/demand";
 
 export async function generateDates() {
   const data = (await (
@@ -11,8 +11,6 @@ export async function generateDates() {
     production_status: string;
   };
 
-  console.log("data", data);
-
   return data;
 }
 
@@ -22,6 +20,16 @@ export async function getDashDT() {
       "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/demand/dash_dt"
     )
   ).json()) as DashDTTypes[];
+
+  return data;
+}
+
+export async function getDashWorkers() {
+  const data = (await (
+    await fetch(
+      "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/demand/dash_worker"
+    )
+  ).json()) as DashWorkersTypes;
 
   return data;
 }
