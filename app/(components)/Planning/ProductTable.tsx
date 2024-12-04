@@ -113,16 +113,7 @@ const ProductTable: React.FC<
                 {formatDateToHHMM(data.hour)}
               </div>
             </td>
-            <td>
-              <div
-                className={!data.is_working_hour ? "text-white" : ""}
-                style={
-                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
-                }
-              >
-                {data.backlog}
-              </div>
-            </td>
+
             <td>
               <div
                 className={!data.is_working_hour ? "text-white" : ""}
@@ -143,7 +134,16 @@ const ProductTable: React.FC<
                 {data.boxes}
               </div>
             </td>
-
+            <td>
+              <div
+                className={!data.is_working_hour ? "text-white" : ""}
+                style={
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.backlog}
+              </div>
+            </td>
             <td>
               <div
                 className={
@@ -197,9 +197,7 @@ const ProductTable: React.FC<
                 Hora
               </p>
             </th>
-            <th>
-              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
-            </th>
+
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">
                 Demandas
@@ -208,7 +206,9 @@ const ProductTable: React.FC<
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Caixas</p>
             </th>
-
+            <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Backlog</p>
+            </th>
             <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
             </th>
