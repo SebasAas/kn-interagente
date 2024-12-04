@@ -1,11 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader, Switch } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Progress,
+  Switch,
+} from "@nextui-org/react";
 import AlertBoard from "../../(components)/Planning/AlertBoard";
 import ProductTable from "../../(components)/Planning/ProductTable";
 import Subtitle from "../../(components)/Text/Subtitle";
 import { toast } from "react-toastify";
 import {
+  DashDTTypes,
+  DashWorkersTypes,
   demandFiles,
   DemandSimulationType,
   FamilyPropsResponse,
@@ -25,14 +33,51 @@ import {
   handleGetDataFormat,
 } from "../../(helpers)/dates";
 import useDemandSimulation from "@/app/(hooks)/useDemandSimulation";
-import { generateDates } from "@/app/(helpers)/generateDates";
+import {
+  generateDates,
+  getDashDT,
+  getDashWorkers,
+} from "@/app/(helpers)/generateDates";
+import DashboardWorkers from "./DashboardWorkers";
+
+const transformDate = (isoString: string) => {
+  const date = new Date(isoString);
+
+  // Array of month names in Portuguese (abbreviated)
+  const months = [
+    "jan",
+    "fev",
+    "mar",
+    "abr",
+    "mai",
+    "jun",
+    "jul",
+    "ago",
+    "set",
+    "out",
+    "nov",
+    "dez",
+  ];
+
+  // Get day, month (in letters), hours, and minutes
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = months[date.getMonth()]; // Get month in Portuguese
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${day} ${month} ${hours}:${minutes}`;
+};
 
 const Planning = ({
   simulationFetch,
   uploadStatusFetch,
+  dashDTFetch,
+  dashWorkersFetch,
 }: {
   simulationFetch: FamilyPropsResponse;
   uploadStatusFetch: UploadStatusType;
+  dashDTFetch: DashDTTypes[];
+  dashWorkersFetch: DashWorkersTypes;
 }) => {
   const { data: session, status } = useSession();
   const { dispatch } = useAppContext();
@@ -42,14 +87,14 @@ const Planning = ({
     new Date()
   );
   const [additionalData, setAdditionalData] = useState({
-    backlog_priority: false,
-    max_storage: 0,
-    ahead_of_time: false,
+    flow: 0,
   });
+  const [dashDT, setDashDT] = useState(dashDTFetch || []);
+  const [dashWorkers, setDashWorkers] = useState(dashWorkersFetch || {});
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
-        simulation: [],
+        hours: [],
         alarms: {},
         statistics: {},
       } || {
@@ -70,46 +115,13 @@ const Planning = ({
 
   const [data, setData] = useState({
     aero: {
-      shift_1: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_2: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_3: {
-        user: 0,
-        synergy: 0,
-      },
+      user: 0,
     },
     hpc: {
-      shift_1: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_2: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_3: {
-        user: 0,
-        synergy: 0,
-      },
+      user: 0,
     },
     foods: {
-      shift_1: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_2: {
-        user: 0,
-        synergy: 0,
-      },
-      shift_3: {
-        user: 0,
-        synergy: 0,
-      },
+      user: 0,
     },
   });
 
@@ -206,11 +218,7 @@ const Planning = ({
     }
 
     const dataToSend: DemandSimulationType = {
-      families: [
-        {
-          ...data,
-        },
-      ],
+      families: data,
       ...additionalData,
       simulation_date: formatedData || "",
     };
@@ -220,21 +228,19 @@ const Planning = ({
     toast
       .promise(handleSendSimulation(dataToSend), {
         pending: "Simulando...",
-        success: "Simulação realizada com sucesso",
-        error: "Erro ao realizar simulação",
       })
       .then(async (res) => {
-        if (res?.detail) {
+        if (res && "detail" in res) {
           toast.error(
             <div>
-              <h2>Algo deu errado simulando, {res.detail}</h2>
+              <h2>Algo deu errado simulando, tente novamente!</h2>
             </div>
           );
           return;
         }
 
         setSimulation({
-          simulation: res.simulation,
+          hours: res.hours,
           alarms: res?.alarms,
           statistics: res?.statistics,
         });
@@ -242,6 +248,12 @@ const Planning = ({
         const uploadDates = await generateDates();
 
         setUploadStatus(uploadDates);
+
+        const dashDT = await getDashDT();
+        const dashWorkers = await getDashWorkers();
+
+        setDashDT(dashDT || []);
+        setDashWorkers(dashWorkers || {});
       })
       .catch((err) => {
         toast.error(
@@ -286,7 +298,6 @@ const Planning = ({
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Aqui");
     setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
   };
 
@@ -351,24 +362,6 @@ const Planning = ({
               />
             </div> */}
 
-            <div className="flex justify-between items-center mt-3">
-              <p className="text-xs">Stage (n de caixas)</p>
-              <input
-                type="text"
-                placeholder="0"
-                value={additionalData.max_storage}
-                onChange={(e) => {
-                  if (isNaN(Number(e.target.value))) return;
-
-                  setAdditionalData({
-                    ...additionalData,
-                    max_storage: Number(e.target.value),
-                  });
-                }}
-                min={0}
-                className="w-20 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-              />
-            </div>
             <div className="flex flex-col justify-between items-start mt-3">
               <p className="text-xs">Data de Simulação</p>
               <input
@@ -379,206 +372,82 @@ const Planning = ({
               />
             </div>
             <div className="mt-4 flex flex-col gap-3">
-              {Object.keys(data).map((key) => (
-                <>
-                  <div className="flex gap-3 items-center">
-                    <p className="font-medium capitalize">{key}</p>
-                    <div
-                      className={`p-1 ml-8 w-1/2 text-center text-xs text-gray-400`}
-                    >
-                      <p>Usuario</p>
-                    </div>
-                    <div
-                      className={`p-1 w-1/2 text-center text-xs text-gray-400`}
-                    >
-                      <p>Sinergia</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <p className="text-xs whitespace-nowrap">Turno 1</p>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_1.user
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_1: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_1,
-                                user: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_1.synergy
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_1: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_1,
-                                synergy: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                        disabled
-                      />
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <p className="text-xs whitespace-nowrap">Turno 2</p>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_2.user
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_2: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_2,
-                                user: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_2.synergy
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_2: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_2,
-                                synergy: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                        disabled
-                      />
-                    </div>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <p className="text-xs whitespace-nowrap">Turno 3</p>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_3.user
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_3: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_3,
-                                user: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        value={
-                          data[key as "aero" | "hpc" | "foods"].shift_3.synergy
-                        }
-                        onChange={(e) => {
-                          if (isNaN(Number(e.target.value))) return;
-
-                          setData({
-                            ...data,
-                            [key]: {
-                              ...data[key as "aero" | "hpc" | "foods"],
-                              shift_3: {
-                                ...data[key as "aero" | "hpc" | "foods"]
-                                  .shift_3,
-                                synergy: Number(e.target.value),
-                              },
-                            },
-                          });
-                        }}
-                        min={0}
-                        className="w-12 ml-2 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                        disabled
-                      />
-                    </div>
-                  </div>
-                </>
-              ))}
-            </div>
-            <div className="flex items-center my-5 gap-2">
-              <div>
-                <p className="text-xs w-[45px] text-center">Just</p>
-                <p className="text-xs w-[45px] text-center"> in time</p>
+              <p className="text-[#4D4D4D] text-sm font-medium">
+                Usuario do turno
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <p>HPC</p>
+                  <input
+                    type="text"
+                    placeholder="0"
+                    value={data.hpc.user}
+                    onChange={(e) => {
+                      if (isNaN(Number(e.target.value))) return;
+                      setData({
+                        ...data,
+                        hpc: { user: Number(e.target.value) },
+                      });
+                    }}
+                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <p>Foods</p>
+                  <input
+                    type="text"
+                    placeholder="0"
+                    value={data.foods.user}
+                    onChange={(e) => {
+                      if (isNaN(Number(e.target.value))) return;
+                      setData({
+                        ...data,
+                        foods: { user: Number(e.target.value) },
+                      });
+                    }}
+                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <p>Aero</p>
+                  <input
+                    type="text"
+                    placeholder="0"
+                    value={data.aero.user}
+                    onChange={(e) => {
+                      if (isNaN(Number(e.target.value))) return;
+                      setData({
+                        ...data,
+                        aero: { user: Number(e.target.value) },
+                      });
+                    }}
+                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                  />
+                </div>
               </div>
-              <Switch
-                isSelected={additionalData.ahead_of_time}
-                onValueChange={(value) =>
-                  setAdditionalData({
-                    ...additionalData,
-                    ahead_of_time: value,
-                  })
-                }
-                size="sm"
-                defaultSelected
-                aria-label="ahead_of_time"
-                classNames={{
-                  wrapper: ["group-data-[selected=true]:bg-blue-900"],
-                }}
-              />
-              <p className="text-xs w-[50px] text-center">Ahead of time</p>
+            </div>
+            <div className="flex mt-5 flex-col">
+              <p className="text-[#4D4D4D] text-sm font-medium">
+                Limite de stage
+              </p>
+              <div className="flex mt-3 justify-between items-center">
+                <p className="text-xs">Nº de caixas</p>
+                <input
+                  type="text"
+                  placeholder="0"
+                  value={additionalData.flow}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+
+                    setAdditionalData({
+                      ...additionalData,
+                      flow: Number(e.target.value),
+                    });
+                  }}
+                  min={0}
+                  className="w-20 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                />
+              </div>
             </div>
           </CardBody>
           <button
@@ -589,23 +458,53 @@ const Planning = ({
             } text-sm font-medium mt-2`}
             onClick={() => (buttonDisabled ? () => {} : handleSimulate())}
           >
-            Simular
+            Reprogramar
           </button>
         </Card>
+        <Card className="p-4 overflow-y-scroll max-h-[800px] h-full">
+          <Subtitle>Produção turno</Subtitle>
+          <DashboardWorkers workers={dashWorkers} />
+        </Card>
       </div>
-
-      <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between">
-            <div className="flex flex-col">
-              <Subtitle>Separação de Caixas</Subtitle>
-              <span className="text-xs mt-2 text-gray-400">
-                Range: {getRange(simulation?.simulation || [])}
-              </span>
-            </div>
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">
+        <Card className="p-4 overflow-x-auto">
+          <Subtitle>Caminhões</Subtitle>
+          <div className="flex">
+            {dashDT?.map((dashDT) => (
+              <div
+                key={dashDT.dt}
+                className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
+              >
+                <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
+                  {dashDT.dt}
+                </div>
+                <div className="flex justify-center items-center gap-2">
+                  <Progress
+                    value={dashDT.percentual}
+                    size="md"
+                    color="primary"
+                  />
+                  {dashDT.percentual}%
+                </div>
+                <p className="text-xs whitespace-nowrap">
+                  {transformDate(dashDT.estimated_end_complexity)}
+                </p>
+              </div>
+            ))}
           </div>
+        </Card>
+        <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Separação de Caixas</Subtitle>
+                <span className="text-xs mt-2 text-gray-400">
+                  Range: {getRange(simulation?.hours || [])}
+                </span>
+              </div>
+            </div>
 
-          {/* <div className="flex flex-col">
+            {/* <div className="flex flex-col">
             <div className="flex flex-row gap-1 ">
               <p>Políticas</p>
               <a className="tooltip-politicas">
@@ -625,14 +524,15 @@ const Planning = ({
             </div>
             <PoliticsForm isVisible={isVisible} />
           </div> */}
-          {/* <div className="flex relative w-full"> */}
-          <ProductTable
-            simulation={simulation?.simulation || []}
-            statistics={simulation.statistics}
-            uploadStatus={uploadStatus}
-          />
-        </div>
-      </Card>
+            {/* <div className="flex relative w-full"> */}
+            <ProductTable
+              hours={simulation?.hours || []}
+              statistics={simulation.statistics}
+              uploadStatus={uploadStatus}
+            />
+          </div>
+        </Card>
+      </div>
 
       <Card className="p-4 h-fit w-fit max-w-[300px]">
         <AlertBoard alarms={simulation?.alarms} />

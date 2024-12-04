@@ -16,6 +16,7 @@ interface Alarm {
 }
 
 const AlertBoard = ({ alarms }: { alarms: Alarm }) => {
+  if (!alarms) return null;
   return (
     <div className="flex flex-col gap-2 min-w-[120px] h-[calc(100vh-7.5rem)] overflow-y-auto ">
       <Subtitle>Alertas</Subtitle>

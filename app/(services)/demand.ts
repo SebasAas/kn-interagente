@@ -20,82 +20,80 @@ export type FamilyProps = {
   ];
 };
 
-export interface FamilyDemandSimulationType {
-  shift_1: {
-    user: number;
-    synergy: number;
-  };
-  shift_2: {
-    user: number;
-    synergy: number;
-  };
-  shift_3: {
-    user: number;
-    synergy: number;
-  };
-}
 export interface Families {
-  aero: FamilyDemandSimulationType;
-  hpc: FamilyDemandSimulationType;
-  foods: FamilyDemandSimulationType;
+  aero: {
+    user: number;
+  };
+  hpc: {
+    user: number;
+  };
+  foods: {
+    user: number;
+  };
 }
 
 export interface DemandSimulationType {
-  families: Families[];
-  backlog_priority: boolean;
-  max_storage: number;
+  families: Families;
   simulation_date?: string | undefined;
+}
+
+export interface Picking {
+  hour: string;
+  truck_hour: string;
+  delay: number;
+  boxes: number;
+  remaining: number;
 }
 
 export type SimulationType = {
   [key: string]: {
     aero: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     foods: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     hpc: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
     all: {
       hour: string;
-      boxes: number;
-      visits: number;
-      base_workers: number;
-      workers: number;
-      criticity: string;
+      shift: number;
       backlog: number;
       demand: number;
-      storage: number;
+      boxes: number;
+      visits: number;
+      workers: number;
       is_working_hour: boolean;
+      criticity: string;
+      pickings: Picking[];
     }[];
   };
 };
@@ -106,8 +104,30 @@ export interface UploadStatusType {
   production_status: string;
 }
 
+export interface DashDTTypes {
+  dt: string;
+  estimated_end_complexity: string;
+  percentual: number;
+}
+export interface DashWorkersTypes {
+  families: Record<
+    "aero" | "hpc" | "foods" | "all",
+    {
+      workers: DashWorkersList[];
+      workers_per_shift: number;
+    }
+  >;
+}
+
+export interface DashWorkersList {
+  boxes: number;
+  directed_hours: string;
+  productivity: number;
+  worker_code: string;
+}
+
 export type FamilyPropsResponse = {
-  simulation: SimulationType;
+  hours: SimulationType;
   alarms: {
     [key: string]: {
       day: string;
@@ -188,6 +208,70 @@ export const getSimulation = async () => {
   } catch (error) {
     return {
       detail: "Algo deu errado obtendo graficos, tente novamente! ",
+      error: error,
+    };
+  }
+};
+
+export const getDashDT = async () => {
+  const promise = await fetch(`${BASE_URL}demand/dash_dt`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  if (!promise.ok) {
+    const errorText = await promise.text();
+    console.log("Error fetching dash dt data", errorText);
+
+    return {
+      detail: "Não encontramos dados de caminhões para essa data, ",
+      error: errorText,
+    };
+  }
+
+  // Try parsing the promise as JSON
+  try {
+    const dashboardDTData = await promise.json();
+    return dashboardDTData;
+  } catch (error) {
+    return {
+      detail: "Algo deu errado obtendo dados de caminhões, tente novamente! ",
+      error: error,
+    };
+  }
+};
+
+export const getDashWorkers = async () => {
+  const promise = await fetch(`${BASE_URL}demand/dash_worker`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  if (!promise.ok) {
+    const errorText = await promise.text();
+    console.log("Error fetching simulation data", errorText);
+
+    return {
+      detail: "Não encontramos dados de workers para essa data, ",
+      error: errorText,
+    };
+  }
+
+  // Try parsing the promise as JSON
+  try {
+    const dashboardWorkersData = await promise.json();
+    return dashboardWorkersData;
+  } catch (error) {
+    return {
+      detail: "Algo deu errado obtendo dados de workers, tente novamente! ",
       error: error,
     };
   }
