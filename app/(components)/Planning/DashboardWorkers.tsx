@@ -69,6 +69,10 @@ const DashboardWorkers = ({ workers }: { workers: DashWorkersTypes }) => {
 
     return (
       <div className="flex flex-col w-full gap-3 relative">
+        <div className="sticky -bottom-4 w-full bg-white h-12 py-4 border-t-1 border-gray-700">
+          Total de usuarios:{" "}
+          {workers?.families[selectedFamily]?.workers_per_shift}
+        </div>
         {workers?.families[selectedFamily]?.workers.map((worker, index) => (
           <div
             key={index}
@@ -91,10 +95,6 @@ const DashboardWorkers = ({ workers }: { workers: DashWorkersTypes }) => {
             </div>
           </div>
         ))}
-        <div className="sticky -bottom-4 w-full bg-white h-12 py-4 border-t-1 border-gray-700">
-          Total de usuarios:{" "}
-          {workers?.families[selectedFamily]?.workers_per_shift}
-        </div>
       </div>
     );
   };

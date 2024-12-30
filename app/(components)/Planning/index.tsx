@@ -4,6 +4,8 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Divider,
+  Input,
   Progress,
   Switch,
 } from "@nextui-org/react";
@@ -39,6 +41,8 @@ import {
   getDashWorkers,
 } from "@/app/(helpers)/generateDates";
 import DashboardWorkers from "./DashboardWorkers";
+import ModalComponent from "../Modal";
+import ConfigIcon from "@/app/(assets)/ConfigIcon";
 
 const transformDate = (isoString: string) => {
   const date = new Date(isoString);
@@ -88,9 +92,13 @@ const Planning = ({
   );
   const [additionalData, setAdditionalData] = useState({
     flow: 0,
+    visits_per_hour: 0,
   });
   const [dashDT, setDashDT] = useState(dashDTFetch || []);
   const [dashWorkers, setDashWorkers] = useState(dashWorkersFetch || {});
+  const [hideCompleted, setHideCompleted] = useState(false);
+
+  console.log("dashDT", dashDT);
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
@@ -116,14 +124,22 @@ const Planning = ({
   const [data, setData] = useState({
     aero: {
       user: 0,
+      worker_salary: 0,
+      picking_cost: 0,
     },
     hpc: {
       user: 0,
+      worker_salary: 0,
+      picking_cost: 0,
     },
     foods: {
       user: 0,
+      worker_salary: 0,
+      picking_cost: 0,
     },
   });
+
+  const [temporalData, setTemporalData] = useState(data);
 
   useEffect(() => {
     // @ts-ignore
@@ -206,21 +222,9 @@ const Planning = ({
   };
 
   const handleSimulate = async () => {
-    let formatedData = "";
-    if (simulationDate) {
-      const simulationCopy = new Date(simulationDate.getTime());
-
-      // Subtract 3 hours from the copy
-      simulationCopy.setHours(simulationCopy.getHours() - 3);
-
-      // Convert the modified copy to an ISO string
-      formatedData = simulationCopy.toISOString();
-    }
-
     const dataToSend: DemandSimulationType = {
       families: data,
       ...additionalData,
-      simulation_date: formatedData || "",
     };
 
     setButtonDisabled(true);
@@ -343,27 +347,8 @@ const Planning = ({
         </Card>
         <Card className="p-4 h-fit ">
           <CardBody className="overflow-visible !p-0 !pt-2">
-            {/* <div className="flex justify-between items-center">
-              <p className="text-xs">Backlog Prioritario</p>
-              <Switch
-                isSelected={additionalData.backlog_priority}
-                onValueChange={(value) =>
-                  setAdditionalData({
-                    ...additionalData,
-                    backlog_priority: value,
-                  })
-                }
-                size="sm"
-                defaultSelected
-                aria-label="Backlog Prioritario"
-                classNames={{
-                  wrapper: ["group-data-[selected=true]:bg-blue-900"],
-                }}
-              />
-            </div> */}
-
-            <div className="flex flex-col justify-between items-start mt-3">
-              <p className="text-xs">Data de Simulação</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium">Data de Simulação</p>
               <input
                 type="datetime-local"
                 value={simulationDate ? formatDateForInput(simulationDate) : ""}
@@ -371,10 +356,8 @@ const Planning = ({
                 className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
-            <div className="mt-4 flex flex-col gap-3">
-              <p className="text-[#4D4D4D] text-sm font-medium">
-                Usuario do turno
-              </p>
+            <div className="flex mt-5 flex-col gap-3">
+              <p className="text-sm font-medium">Usuario do turno</p>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <p>HPC</p>
@@ -386,10 +369,13 @@ const Planning = ({
                       if (isNaN(Number(e.target.value))) return;
                       setData({
                         ...data,
-                        hpc: { user: Number(e.target.value) },
+                        hpc: {
+                          ...data.hpc,
+                          user: Number(e.target.value),
+                        },
                       });
                     }}
-                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -402,10 +388,13 @@ const Planning = ({
                       if (isNaN(Number(e.target.value))) return;
                       setData({
                         ...data,
-                        foods: { user: Number(e.target.value) },
+                        foods: {
+                          ...data.foods,
+                          user: Number(e.target.value),
+                        },
                       });
                     }}
-                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -418,18 +407,40 @@ const Planning = ({
                       if (isNaN(Number(e.target.value))) return;
                       setData({
                         ...data,
-                        aero: { user: Number(e.target.value) },
+                        aero: {
+                          ...data.aero,
+                          user: Number(e.target.value),
+                        },
                       });
                     }}
-                    className="w-12 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
                   />
                 </div>
               </div>
             </div>
             <div className="flex mt-5 flex-col">
-              <p className="text-[#4D4D4D] text-sm font-medium">
-                Limite de stage
-              </p>
+              <p className=" text-sm font-medium">Metas</p>
+              <div className="flex mt-3 justify-between items-center">
+                <p className="text-xs">Nº de visitas/hora</p>
+                <input
+                  type="text"
+                  placeholder="0"
+                  value={additionalData.visits_per_hour}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+
+                    setAdditionalData({
+                      ...additionalData,
+                      visits_per_hour: Number(e.target.value),
+                    });
+                  }}
+                  min={0}
+                  className="w-16 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                />
+              </div>
+            </div>
+            <div className="flex mt-5 flex-col">
+              <p className=" text-sm font-medium">Limite de stage</p>
               <div className="flex mt-3 justify-between items-center">
                 <p className="text-xs">Nº de caixas</p>
                 <input
@@ -445,11 +456,32 @@ const Planning = ({
                     });
                   }}
                   min={0}
-                  className="w-20 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+                  className="w-16 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
                 />
               </div>
             </div>
           </CardBody>
+          <div className="mt-4">
+            <button
+              className="text-xs text-gray-500 flex items-center gap-1"
+              onClick={() => {
+                setTemporalData(data);
+                dispatch({
+                  type: "SET_MODAL",
+                  payload: {
+                    open: true,
+                    header: (
+                      <h2 className="w-[250px]">Configurações de custos</h2>
+                    ),
+                    body: "",
+                  },
+                });
+              }}
+            >
+              <ConfigIcon />
+              <span>Configurações avançadas</span>
+            </button>
+          </div>
           <button
             className={`px-2 py-1 mt-4 rounded-md ${
               buttonDisabled
@@ -467,30 +499,49 @@ const Planning = ({
         </Card>
       </div>
       <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">
-        <Card className="p-4 overflow-x-auto">
+        <Card className="pt-4 pb-2 px-4 overflow-x-auto">
           <Subtitle>Caminhões</Subtitle>
+
           <div className="flex">
-            {dashDT?.map((dashDT) => (
-              <div
-                key={dashDT.dt}
-                className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
-              >
-                <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
-                  {dashDT.dt}
+            {dashDT
+              ?.filter((item) => !hideCompleted || item.percentual !== 100)
+              ?.map((dashDT) => (
+                <div
+                  key={dashDT.dt}
+                  className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
+                >
+                  <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
+                    {dashDT.dt}
+                  </div>
+                  <div className="flex justify-center items-center gap-2">
+                    <Progress
+                      value={dashDT.percentual}
+                      size="md"
+                      color="primary"
+                    />
+                    {dashDT.percentual}%
+                  </div>
+                  <p className="text-xs whitespace-nowrap">
+                    {transformDate(dashDT.estimated_end_complexity)}
+                  </p>
+                  <hr />
+                  <div className="flex justify-between">
+                    <p>Perfil</p>
+                    <p>{dashDT.profile_all}</p>
+                  </div>
                 </div>
-                <div className="flex justify-center items-center gap-2">
-                  <Progress
-                    value={dashDT.percentual}
-                    size="md"
-                    color="primary"
-                  />
-                  {dashDT.percentual}%
-                </div>
-                <p className="text-xs whitespace-nowrap">
-                  {transformDate(dashDT.estimated_end_complexity)}
-                </p>
-              </div>
-            ))}
+              ))}
+          </div>
+          <div className="mt-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={hideCompleted}
+                onChange={(e) => setHideCompleted(e.target.checked)}
+                className="accent-blue-700"
+              />
+              Ocultar caminões concluídos
+            </label>
           </div>
         </Card>
         <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
@@ -534,9 +585,204 @@ const Planning = ({
         </Card>
       </div>
 
-      <Card className="p-4 h-fit w-fit max-w-[300px]">
+      <Card className="p-4 h-fit w-fit max-w-[240px]">
         <AlertBoard alarms={simulation?.alarms} />
       </Card>
+
+      <ModalComponent>
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center gap-16">
+            <p className="mt-3">HPC</p>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Funcionário</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  startContent="R$"
+                  placeholder="XXX.XXX"
+                  value={temporalData.hpc.worker_salary?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      hpc: {
+                        ...temporalData.hpc,
+                        worker_salary: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Caixa</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="0"
+                  value={temporalData.hpc.picking_cost?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      hpc: {
+                        ...temporalData.hpc,
+                        picking_cost: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+            </div>
+          </div>
+          <Divider />
+          <div className="flex justify-between items-center gap-16">
+            <p className="mt-3">Aero</p>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Funcionário</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  startContent="R$"
+                  placeholder="XXX.XXX"
+                  value={temporalData.aero.worker_salary?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      aero: {
+                        ...temporalData.aero,
+                        worker_salary: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Caixa</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="0"
+                  value={temporalData.aero.picking_cost?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      aero: {
+                        ...temporalData.aero,
+                        picking_cost: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+            </div>
+          </div>
+          <Divider />
+          <div className="flex justify-between items-center gap-16">
+            <p className="mt-3">Food</p>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Funcionário</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  startContent="R$"
+                  placeholder="XXX.XXX"
+                  value={temporalData.foods.worker_salary?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      foods: {
+                        ...temporalData.foods,
+                        worker_salary: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+              <div className="flex items-center gap-1 flex-col">
+                <p className="text-xs text-gray-500">Caixa</p>
+                <Input
+                  type="number"
+                  variant="bordered"
+                  radius="sm"
+                  classNames={{
+                    input: "w-[70px]",
+                    label: "text-[0.8rem]",
+                    inputWrapper: "h-2 min-h-unit-8",
+                  }}
+                  placeholder="0"
+                  value={temporalData.foods.picking_cost?.toString()}
+                  onChange={(e) => {
+                    setTemporalData({
+                      ...temporalData,
+                      foods: {
+                        ...temporalData.foods,
+                        picking_cost: Number(e.target.value),
+                      },
+                    });
+                  }}
+                  min={0}
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            className={`px-2 py-1 mt-5 mb-4 rounded-md ${
+              buttonDisabled
+                ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                : "bg-blue-900 text-white"
+            } text-sm font-medium`}
+            onClick={
+              buttonDisabled
+                ? () => {}
+                : () => {
+                    setData(temporalData);
+                    dispatch({
+                      type: "SET_MODAL",
+                      payload: { open: false, header: null, body: null },
+                    });
+                  }
+            }
+          >
+            Salvar
+          </button>
+        </div>
+      </ModalComponent>
     </div>
   );
 };

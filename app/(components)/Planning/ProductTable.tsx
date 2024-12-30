@@ -73,7 +73,6 @@ const ProductTable: React.FC<
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
   >("all");
-  const [showFamilyStatistics, setShowFamilyStatistics] = useState(true);
 
   //  renderiza os dados da família selecionada
   const getFamilyData = () => {
@@ -221,64 +220,11 @@ const ProductTable: React.FC<
         </thead>
         <tbody className="relative">
           {getFamilyData()}
-          <tr
-            className={`w-full sticky -bottom-4 ${
-              showFamilyStatistics ? "h-28" : "h-5"
-            } !bg-white `}
-          >
+          <tr className={`w-full sticky -bottom-4 h-8 !bg-white `}>
             <td
               colSpan={8}
               className="border-solid border-b-0 border-x-0  border-t-2 !border-t-[#003369] rounded-t-lg"
             >
-              <button
-                className="absolute top-1 right-2 font-semibold text-xs"
-                onClick={() => setShowFamilyStatistics((prev) => !prev)}
-              >
-                <ArrowRightIcon
-                  className={showFamilyStatistics ? "rotate-90" : "-rotate-90"}
-                />
-              </button>
-              <div
-                className={`grid grid-cols-4 px-5 ${
-                  showFamilyStatistics ? "" : "hidden"
-                }`}
-              >
-                {statistics &&
-                  Object?.values(statistics).length > 0 &&
-                  Object?.values(statistics)?.map((values, index) => (
-                    <div key={index}>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm font-semibold">
-                          {getFormatedNameFamily(values.family)}
-                        </p>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Perfil
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={values.median_profile}
-                            disabled
-                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Média Visita
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={values.median_n_visits_per_hour}
-                            disabled
-                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
               <div className="mt-1 px-5">
                 <span className="text-xs mt-3 text-gray-400">
                   Produtividade atualizada:{" "}

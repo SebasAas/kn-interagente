@@ -108,6 +108,7 @@ export interface DashDTTypes {
   dt: string;
   estimated_end_complexity: string;
   percentual: number;
+  profile_all: number;
 }
 export interface DashWorkersTypes {
   families: Record<
