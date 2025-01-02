@@ -98,8 +98,6 @@ const Planning = ({
   const [dashWorkers, setDashWorkers] = useState(dashWorkersFetch || {});
   const [hideCompleted, setHideCompleted] = useState(false);
 
-  console.log("dashDT", dashDT);
-
   const [simulation, setSimulation] = useState(
     simulationFetch || {
         hours: [],

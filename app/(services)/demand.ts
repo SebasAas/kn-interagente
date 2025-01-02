@@ -118,6 +118,8 @@ export interface DashWorkersTypes {
       workers_per_shift: number;
     }
   >;
+  error?: string;
+  detail?: string;
 }
 
 export interface DashWorkersList {

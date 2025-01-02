@@ -65,7 +65,8 @@ const DashboardWorkers = ({ workers }: { workers: DashWorkersTypes }) => {
   >("all");
 
   const dashboardWorkersList = () => {
-    if (!selectedFamily) return null;
+    if (!selectedFamily || workers?.detail?.includes("Não encontramos dados"))
+      return null;
 
     return (
       <div className="flex flex-col w-full gap-3 relative">
