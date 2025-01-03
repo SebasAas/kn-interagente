@@ -215,14 +215,22 @@ const Planning = ({
     }
   };
 
-  const handleGetInformation = async () => {
-    console.log("handleGetInformation");
-  };
-
   const handleSimulate = async () => {
+    let formatedData = "";
+    if (simulationDate) {
+      const simulationCopy = new Date(simulationDate.getTime());
+
+      // Subtract 3 hours from the copy
+      simulationCopy.setHours(simulationCopy.getHours() - 3);
+
+      // Convert the modified copy to an ISO string
+      formatedData = simulationCopy.toISOString();
+    }
+
     const dataToSend: DemandSimulationType = {
       families: data,
       ...additionalData,
+      simulation_date: formatedData || "",
     };
 
     setButtonDisabled(true);
