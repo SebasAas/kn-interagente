@@ -122,18 +122,18 @@ const Planning = ({
   const [data, setData] = useState({
     aero: {
       user: 0,
-      worker_salary: 0,
-      picking_cost: 0,
+      worker_salary: 1,
+      picking_cost: 1,
     },
     hpc: {
       user: 0,
-      worker_salary: 0,
-      picking_cost: 0,
+      worker_salary: 1,
+      picking_cost: 1,
     },
     foods: {
       user: 0,
-      worker_salary: 0,
-      picking_cost: 0,
+      worker_salary: 1,
+      picking_cost: 1,
     },
   });
 
@@ -351,7 +351,7 @@ const Planning = ({
             </span>
           </span>
         </Card>
-        <Card className="p-4 h-fit ">
+        <Card className="p-4 h-auto">
           <CardBody className="overflow-visible !p-0 !pt-2">
             <div className="flex flex-col gap-1">
               <p className="text-sm font-medium">Data de Simulação</p>
