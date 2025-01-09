@@ -11,7 +11,7 @@ import {
 } from "@/app/(services)/demand";
 import React, { useState } from "react";
 
-const getFormatedNameFamily = (family: string) => {
+export const getFormatedNameFamily = (family: string) => {
   switch (family) {
     case "aero":
       return "Aero";

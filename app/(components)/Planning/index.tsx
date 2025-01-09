@@ -40,7 +40,7 @@ import {
   getDashDT,
   getDashWorkers,
 } from "@/app/(helpers)/generateDates";
-import DashboardWorkers from "./DashboardWorkers";
+import DashboardWorkers, { getFormatedNameFamily } from "./DashboardWorkers";
 import ModalComponent from "../Modal";
 import ConfigIcon from "@/app/(assets)/ConfigIcon";
 
@@ -72,6 +72,14 @@ const transformDate = (isoString: string) => {
   return `${day} ${month} ${hours}:${minutes}`;
 };
 
+type Picking = {
+  hour: string;
+  truck_hour: string;
+  delay: number;
+  boxes: number;
+  remaining: number;
+};
+
 const Planning = ({
   simulationFetch,
   uploadStatusFetch,
@@ -98,6 +106,9 @@ const Planning = ({
   const [dashWorkers, setDashWorkers] = useState(dashWorkersFetch || {});
   const [hideCompleted, setHideCompleted] = useState(false);
 
+  const [modalType, setModalType] = useState("");
+  const [pickingData, setPickingData] = useState<Picking[]>([]);
+
   const [simulation, setSimulation] = useState(
     simulationFetch || {
         hours: [],
@@ -121,17 +132,17 @@ const Planning = ({
 
   const [data, setData] = useState({
     aero: {
-      user: 0,
-      worker_salary: 1,
-      picking_cost: 1,
-    },
-    hpc: {
-      user: 0,
+      user: [4, 4, 4],
       worker_salary: 1,
       picking_cost: 1,
     },
     foods: {
-      user: 0,
+      user: [6, 6, 6],
+      worker_salary: 1,
+      picking_cost: 1,
+    },
+    hpc: {
+      user: [10, 10, 10],
       worker_salary: 1,
       picking_cost: 1,
     },
@@ -311,14 +322,48 @@ const Planning = ({
     setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
   };
 
+  const addShift = () => {
+    setData((prev) => {
+      const updatedData = { ...prev };
+      for (const family in updatedData) {
+        updatedData[family as "aero" | "hpc" | "foods"].user.push(0); // Add a default value (0) for the new shift
+      }
+      return updatedData;
+    });
+  };
+
+  const maxShifts = Math.max(
+    ...Object.values(data).map((family) => family.user.length)
+  );
+
+  const removeShift = (shiftIndex: number) => {
+    setData((prev) => {
+      const updatedData = { ...prev };
+      for (const family in updatedData) {
+        updatedData[family as "aero" | "hpc" | "foods"].user = updatedData[
+          family as "aero" | "hpc" | "foods"
+        ].user.filter((_, index) => index !== shiftIndex);
+      }
+      return updatedData;
+    });
+  };
+
+  const handleSavePickingData = (data: Picking[]) => {
+    if (!data || data.length === 0) return;
+
+    setPickingData(data);
+  };
+
+  console.log("simulation", simulation);
+
   return (
     <div className="flex flex-row gap-4 w-full h-full">
       <div className="flex flex-col gap-6 w-[240px]">
-        <Card className="p-4 h-fit ">
-          <CardHeader className="p-0 pb-2 flex-col items-start">
+        <div className="p-4 h-fit flex flex-col px-4 bg-white border border-transparent shadow-medium rounded-md">
+          <div className="p-0 pb-2 flex-col items-start">
             <Subtitle>Upload</Subtitle>
-          </CardHeader>
-          <CardBody className="overflow-visible !p-0 !pt-2">
+          </div>
+          <div className="overflow-visible !p-0 !pt-2">
             <PlanningDropzone
               file={demandFile}
               maxFiles={2}
@@ -329,7 +374,7 @@ const Planning = ({
               }}
               isDisable={false}
             />
-          </CardBody>
+          </div>
           {/* <button
             className={`px-2 py-1 mt-3 rounded-md ${
               buttonDisabled
@@ -350,9 +395,10 @@ const Planning = ({
                 : "-"}
             </span>
           </span>
-        </Card>
-        <Card className="p-4 h-auto">
-          <CardBody className="overflow-visible !p-0 !pt-2">
+        </div>
+        {/* family as "aero" | "hpc" | "foods" */}
+        <div className="p-4 h-auto flex flex-col px-4 bg-white border border-transparent shadow-medium rounded-md">
+          <div className="overflow-visible !p-0 !pt-2">
             <div className="flex flex-col gap-1">
               <p className="text-sm font-medium">Data de Simulação</p>
               <input
@@ -365,66 +411,83 @@ const Planning = ({
             <div className="flex mt-5 flex-col gap-3">
               <p className="text-sm font-medium">Usuario do turno</p>
               <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <p>HPC</p>
-                  <input
-                    type="text"
-                    placeholder="0"
-                    value={data.hpc.user}
-                    onChange={(e) => {
-                      if (isNaN(Number(e.target.value))) return;
-                      setData({
-                        ...data,
-                        hpc: {
-                          ...data.hpc,
-                          user: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <p>Foods</p>
-                  <input
-                    type="text"
-                    placeholder="0"
-                    value={data.foods.user}
-                    onChange={(e) => {
-                      if (isNaN(Number(e.target.value))) return;
-                      setData({
-                        ...data,
-                        foods: {
-                          ...data.foods,
-                          user: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <p>Aero</p>
-                  <input
-                    type="text"
-                    placeholder="0"
-                    value={data.aero.user}
-                    onChange={(e) => {
-                      if (isNaN(Number(e.target.value))) return;
-                      setData({
-                        ...data,
-                        aero: {
-                          ...data.aero,
-                          user: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    className="w-16 ml-7 text-xs border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                  />
+                <table className="table-auto w-auto border-collapse border border-gray-300 text-center">
+                  <thead>
+                    <tr>
+                      <th className="border border-gray-300 invisible">
+                        Turno
+                      </th>
+                      {Object.keys(data).map((family) => (
+                        <th
+                          key={`header-${family}`}
+                          className="border border-gray-300 text-sm font-normal"
+                        >
+                          {getFormatedNameFamily(family)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from({ length: maxShifts }, (_, shiftIndex) => (
+                      <tr key={`shift-${shiftIndex}`}>
+                        <td className="border border-gray-300 ">
+                          T+{shiftIndex}
+                        </td>
+                        {Object.keys(data).map((family) => (
+                          <td
+                            key={`${family}-${shiftIndex}`}
+                            className="border border-gray-300 "
+                          >
+                            <input
+                              type="number"
+                              value={
+                                data[family as "aero" | "hpc" | "foods"].user[
+                                  shiftIndex
+                                ] || 0
+                              }
+                              onChange={(e) => {
+                                const newValue = Number(e.target.value);
+                                if (isNaN(newValue)) return;
+
+                                setData((prev) => ({
+                                  ...prev,
+                                  [family]: {
+                                    ...prev[family as "aero" | "hpc" | "foods"],
+                                    user: prev[
+                                      family as "aero" | "hpc" | "foods"
+                                    ].user.map((value, index) =>
+                                      index === shiftIndex ? newValue : value
+                                    ),
+                                  },
+                                }));
+                              }}
+                              className="w-12 border-1 border-solid border-gray-300 rounded-md p-1"
+                            />
+                          </td>
+                        ))}
+                        <td className="border border-gray-300 py-2">
+                          <button
+                            className="text-red-500 px-2 py-1 rounded-md text-sm font-semibold"
+                            onClick={() => removeShift(shiftIndex)}
+                          >
+                            x
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="mb-4 flex justify-center mt-2">
+                  <button
+                    className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs"
+                    onClick={addShift}
+                  >
+                    + Adicionar Turno
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="flex mt-5 flex-col">
+            <div className="flex mt-3 flex-col">
               <p className=" text-sm font-medium">Metas</p>
               <div className="flex mt-3 justify-between items-center">
                 <p className="text-xs">Nº de visitas/hora</p>
@@ -466,12 +529,13 @@ const Planning = ({
                 />
               </div>
             </div>
-          </CardBody>
+          </div>
           <div className="mt-4">
             <button
               className="text-xs text-gray-500 flex items-center gap-1"
               onClick={() => {
                 setTemporalData(data);
+                setModalType("config");
                 dispatch({
                   type: "SET_MODAL",
                   payload: {
@@ -498,7 +562,7 @@ const Planning = ({
           >
             Reprogramar
           </button>
-        </Card>
+        </div>
         <Card className="p-4 overflow-y-scroll max-h-[800px] h-full">
           <Subtitle>Produção turno</Subtitle>
           <DashboardWorkers workers={dashWorkers} />
@@ -535,6 +599,10 @@ const Planning = ({
                     <p>Perfil</p>
                     <p>{dashDT.profile_all}</p>
                   </div>
+                  <div className="flex justify-between">
+                    <p>Caixas</p>
+                    <p>{dashDT.boxes || 0}</p>
+                  </div>
                 </div>
               ))}
           </div>
@@ -558,6 +626,34 @@ const Planning = ({
                 <span className="text-xs mt-2 text-gray-400">
                   Range: {getRange(simulation?.hours || [])}
                 </span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex justify-end items-end gap-2">
+                  <p className="text-base">Perfil médio do dock</p>
+                  <span className="text-2xl font-medium bg-[#F5FAFF] p-1 rounded-md px-2">
+                    61
+                  </span>
+                </div>
+                <div className="flex gap-4 justify-between mt-2">
+                  <div className="flex gap-2 items-center">
+                    Aero{" "}
+                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
+                      61
+                    </p>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    Aero{" "}
+                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
+                      61
+                    </p>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    Aero{" "}
+                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
+                      61
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -586,6 +682,8 @@ const Planning = ({
               hours={simulation?.hours || []}
               statistics={simulation.statistics}
               uploadStatus={uploadStatus}
+              setModalType={setModalType}
+              handleSavePickingData={handleSavePickingData}
             />
           </div>
         </Card>
@@ -596,198 +694,265 @@ const Planning = ({
       </Card>
 
       <ModalComponent>
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center gap-16">
-            <p className="mt-3">HPC</p>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Funcionário</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  startContent="R$"
-                  placeholder="XXX.XXX"
-                  value={temporalData.hpc.worker_salary?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      hpc: {
-                        ...temporalData.hpc,
-                        worker_salary: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Caixa</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="0"
-                  value={temporalData.hpc.picking_cost?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      hpc: {
-                        ...temporalData.hpc,
-                        picking_cost: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
-              </div>
-            </div>
-          </div>
-          <Divider />
-          <div className="flex justify-between items-center gap-16">
-            <p className="mt-3">Aero</p>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Funcionário</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  startContent="R$"
-                  placeholder="XXX.XXX"
-                  value={temporalData.aero.worker_salary?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      aero: {
-                        ...temporalData.aero,
-                        worker_salary: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Caixa</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="0"
-                  value={temporalData.aero.picking_cost?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      aero: {
-                        ...temporalData.aero,
-                        picking_cost: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
+        {modalType === "config" && (
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center gap-16">
+              <p className="mt-3">HPC</p>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Funcionário</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    startContent="R$"
+                    placeholder="XXX.XXX"
+                    value={temporalData.hpc.worker_salary?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        hpc: {
+                          ...temporalData.hpc,
+                          worker_salary: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Caixa</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="0"
+                    value={temporalData.hpc.picking_cost?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        hpc: {
+                          ...temporalData.hpc,
+                          picking_cost: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <Divider />
-          <div className="flex justify-between items-center gap-16">
-            <p className="mt-3">Food</p>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Funcionário</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  startContent="R$"
-                  placeholder="XXX.XXX"
-                  value={temporalData.foods.worker_salary?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      foods: {
-                        ...temporalData.foods,
-                        worker_salary: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
-              </div>
-              <div className="flex items-center gap-1 flex-col">
-                <p className="text-xs text-gray-500">Caixa</p>
-                <Input
-                  type="number"
-                  variant="bordered"
-                  radius="sm"
-                  classNames={{
-                    input: "w-[70px]",
-                    label: "text-[0.8rem]",
-                    inputWrapper: "h-2 min-h-unit-8",
-                  }}
-                  placeholder="0"
-                  value={temporalData.foods.picking_cost?.toString()}
-                  onChange={(e) => {
-                    setTemporalData({
-                      ...temporalData,
-                      foods: {
-                        ...temporalData.foods,
-                        picking_cost: Number(e.target.value),
-                      },
-                    });
-                  }}
-                  min={0}
-                />
+            <Divider />
+            <div className="flex justify-between items-center gap-16">
+              <p className="mt-3">Aero</p>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Funcionário</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    startContent="R$"
+                    placeholder="XXX.XXX"
+                    value={temporalData.aero.worker_salary?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        aero: {
+                          ...temporalData.aero,
+                          worker_salary: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Caixa</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="0"
+                    value={temporalData.aero.picking_cost?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        aero: {
+                          ...temporalData.aero,
+                          picking_cost: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
               </div>
             </div>
+            <Divider />
+            <div className="flex justify-between items-center gap-16">
+              <p className="mt-3">Food</p>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Funcionário</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    startContent="R$"
+                    placeholder="XXX.XXX"
+                    value={temporalData.foods.worker_salary?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        foods: {
+                          ...temporalData.foods,
+                          worker_salary: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
+                <div className="flex items-center gap-1 flex-col">
+                  <p className="text-xs text-gray-500">Caixa</p>
+                  <Input
+                    type="number"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      input: "w-[70px]",
+                      label: "text-[0.8rem]",
+                      inputWrapper: "h-2 min-h-unit-8",
+                    }}
+                    placeholder="0"
+                    value={temporalData.foods.picking_cost?.toString()}
+                    onChange={(e) => {
+                      setTemporalData({
+                        ...temporalData,
+                        foods: {
+                          ...temporalData.foods,
+                          picking_cost: Number(e.target.value),
+                        },
+                      });
+                    }}
+                    min={0}
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              className={`px-2 py-1 mt-5 mb-4 rounded-md ${
+                buttonDisabled
+                  ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                  : "bg-blue-900 text-white"
+              } text-sm font-medium`}
+              onClick={
+                buttonDisabled
+                  ? () => {}
+                  : () => {
+                      setData(temporalData);
+                      dispatch({
+                        type: "SET_MODAL",
+                        payload: { open: false, header: null, body: null },
+                      });
+                    }
+              }
+            >
+              Salvar
+            </button>
           </div>
-          <button
-            className={`px-2 py-1 mt-5 mb-4 rounded-md ${
-              buttonDisabled
-                ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
-                : "bg-blue-900 text-white"
-            } text-sm font-medium`}
-            onClick={
-              buttonDisabled
-                ? () => {}
-                : () => {
-                    setData(temporalData);
-                    dispatch({
-                      type: "SET_MODAL",
-                      payload: { open: false, header: null, body: null },
-                    });
-                  }
-            }
-          >
-            Salvar
-          </button>
-        </div>
+        )}
+        {modalType === "picking" && (
+          <div className="pb-6 ">
+            <h2 className="text-lg font-bold mb-4">Demanda 27/08 15:00</h2>
+            <table className="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    DT
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Prazo
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Atraso previsto
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Visitas
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Caixas/Perfil Total
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Caixas/Perfil Aero
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Caixas/Perfil Foods
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Caixas/Perfil HPC
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 font-medium">
+                    Caixas remanescente
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {pickingData.map((row, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {formatDateToHHMM(row.hour)}
+                    </td>
+                    <td
+                      className={`border border-gray-300 px-4 py-2 font-bold ${
+                        row.delay <= 0 ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {row.delay}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.boxes}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.remaining}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </ModalComponent>
     </div>
   );

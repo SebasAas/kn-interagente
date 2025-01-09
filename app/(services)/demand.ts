@@ -22,13 +22,13 @@ export type FamilyProps = {
 
 export interface Families {
   aero: {
-    user: number;
+    user: number[];
   };
   hpc: {
-    user: number;
+    user: number[];
   };
   foods: {
-    user: number;
+    user: number[];
   };
 }
 
@@ -109,6 +109,7 @@ export interface DashDTTypes {
   estimated_end_complexity: string;
   percentual: number;
   profile_all: number;
+  boxes: number;
 }
 export interface DashWorkersTypes {
   families: Record<
