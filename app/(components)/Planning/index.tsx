@@ -107,13 +107,22 @@ const Planning = ({
   const [hideCompleted, setHideCompleted] = useState(false);
 
   const [modalType, setModalType] = useState("");
-  const [pickingData, setPickingData] = useState<Picking[]>([]);
+  const [pickingData, setPickingData] = useState<{
+    code: string;
+    picking: Picking[];
+    date: string;
+  }>({
+    code: "",
+    picking: [],
+    date: "",
+  });
 
   const [simulation, setSimulation] = useState(
     simulationFetch || {
         hours: [],
         alarms: {},
         statistics: {},
+        trucks: [],
       } || {
         detail: "",
         error: "",
@@ -264,6 +273,7 @@ const Planning = ({
           hours: res.hours,
           alarms: res?.alarms,
           statistics: res?.statistics,
+          trucks: res?.trucks,
         });
 
         const uploadDates = await generateDates();
@@ -348,13 +358,23 @@ const Planning = ({
     });
   };
 
-  const handleSavePickingData = (data: Picking[]) => {
-    if (!data || data.length === 0) return;
+  const handleSavePickingData = ({
+    code,
+    pickings,
+    date,
+  }: {
+    code: string;
+    pickings: Picking[];
+    date: string;
+  }) => {
+    if (!pickings || pickings.length === 0) return;
 
-    setPickingData(data);
+    setPickingData({
+      code,
+      picking: pickings,
+      date,
+    });
   };
-
-  console.log("simulation", simulation);
 
   return (
     <div className="flex flex-row gap-4 w-full h-full">
@@ -631,26 +651,26 @@ const Planning = ({
                 <div className="flex justify-end items-end gap-2">
                   <p className="text-base">Perfil médio do dock</p>
                   <span className="text-2xl font-medium bg-[#F5FAFF] p-1 rounded-md px-2">
-                    61
+                    0
                   </span>
                 </div>
                 <div className="flex gap-4 justify-between mt-2">
                   <div className="flex gap-2 items-center">
                     Aero{" "}
                     <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      61
+                      0
                     </p>
                   </div>
                   <div className="flex gap-2 items-center">
                     Aero{" "}
                     <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      61
+                      0
                     </p>
                   </div>
                   <div className="flex gap-2 items-center">
                     Aero{" "}
                     <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      61
+                      0
                     </p>
                   </div>
                 </div>
@@ -680,7 +700,8 @@ const Planning = ({
             {/* <div className="flex relative w-full"> */}
             <ProductTable
               hours={simulation?.hours || []}
-              statistics={simulation.statistics}
+              statistics={simulation?.statistics || {}}
+              trucks={simulation?.trucks || []}
               uploadStatus={uploadStatus}
               setModalType={setModalType}
               handleSavePickingData={handleSavePickingData}
@@ -890,7 +911,9 @@ const Planning = ({
         )}
         {modalType === "picking" && (
           <div className="pb-6 ">
-            <h2 className="text-lg font-bold mb-4">Demanda 27/08 15:00</h2>
+            <h2 className="text-lg font-bold mb-4">
+              Demanda {pickingData.date}
+            </h2>
             <table className="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
               <thead>
                 <tr className="bg-gray-100">
@@ -924,9 +947,11 @@ const Planning = ({
                 </tr>
               </thead>
               <tbody>
-                {pickingData.map((row, index) => (
+                {pickingData?.picking?.map((row, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {pickingData.code}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {formatDateToHHMM(row.hour)}
                     </td>

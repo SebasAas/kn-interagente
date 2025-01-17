@@ -45,6 +45,16 @@ export interface Picking {
   remaining: number;
 }
 
+export type TrucksType = {
+  code: string;
+  hour: string;
+  pickings: {
+    [key: string]: Picking[];
+  };
+  priority: number;
+  products: any;
+};
+
 export type SimulationType = {
   [key: string]: {
     aero: {
@@ -139,6 +149,7 @@ export type FamilyPropsResponse = {
       criticity: string;
     }[];
   };
+  trucks: TrucksType[];
   statistics: {
     [key: string]: {
       family: string;

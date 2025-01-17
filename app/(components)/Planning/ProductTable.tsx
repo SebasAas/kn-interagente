@@ -75,12 +75,21 @@ const ProductTable: React.FC<
     FamilyPropsResponse & {
       uploadStatus: UploadStatusType;
       setModalType: React.Dispatch<React.SetStateAction<string>>;
-      handleSavePickingData: (data: Picking[]) => void;
+      handleSavePickingData: ({
+        code,
+        pickings,
+        date,
+      }: {
+        code: string;
+        pickings: Picking[];
+        date: string;
+      }) => void;
     }
   >
 > = ({
   hours,
   statistics,
+  trucks,
   uploadStatus,
   setModalType,
   handleSavePickingData,
@@ -111,8 +120,14 @@ const ProductTable: React.FC<
                 : ""
             }`}
             onClick={() => {
-              console.log("click");
-              handleSavePickingData && handleSavePickingData(data.pickings);
+              handleSavePickingData &&
+                trucks &&
+                trucks.length > 0 &&
+                handleSavePickingData({
+                  code: trucks[index].code,
+                  pickings: trucks[index]?.pickings[selectedFamily],
+                  date: handleGetDataFormat(data.hour),
+                });
               setModalType && setModalType("picking");
               dispatch({
                 type: "SET_MODAL",
