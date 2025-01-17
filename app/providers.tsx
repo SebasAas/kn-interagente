@@ -24,6 +24,7 @@ const initialState = {
   simulation: {
     alarms: {},
     hours: {},
+    trucks: [],
     statistics: {},
   },
   modal: {
