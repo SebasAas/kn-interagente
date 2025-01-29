@@ -23,13 +23,13 @@ export type FamilyProps = {
 
 export interface Families {
   aero: {
-    user: number;
+    user: number[];
   };
   hpc: {
-    user: number;
+    user: number[];
   };
   foods: {
-    user: number;
+    user: number[];
   };
 }
 
@@ -45,6 +45,16 @@ export interface Picking {
   boxes: number;
   remaining: number;
 }
+
+export type TrucksType = {
+  code: string;
+  hour: string;
+  pickings: {
+    [key: string]: Picking[];
+  };
+  priority: number;
+  products: any;
+};
 
 export type SimulationType = {
   [key: string]: {
@@ -109,6 +119,8 @@ export interface DashDTTypes {
   dt: string;
   estimated_end_complexity: string;
   percentual: number;
+  profile_all: number;
+  boxes: number;
 }
 export interface DashWorkersTypes {
   families: Record<
@@ -118,6 +130,8 @@ export interface DashWorkersTypes {
       workers_per_shift: number;
     }
   >;
+  error?: string;
+  detail?: string;
 }
 
 export interface DashWorkersList {
@@ -136,6 +150,7 @@ export type FamilyPropsResponse = {
       criticity: string;
     }[];
   };
+  trucks: TrucksType[];
   statistics: {
     [key: string]: {
       family: string;
