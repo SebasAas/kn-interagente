@@ -9,6 +9,14 @@ import { isBackgroundLight } from "@/app/(helpers)/textColor";
 import { FamilyPropsResponse, UploadStatusType } from "@/app/(services)/demand";
 import React, { useState } from "react";
 
+type Picking = {
+  hour: string;
+  truck_hour: string;
+  delay: number;
+  boxes: number;
+  remaining: number;
+};
+
 const getFormatedNameFamily = (family: string) => {
   switch (family) {
     case "aero":
@@ -57,29 +65,44 @@ const Swapper = ({ selectFamily }: { selectFamily: any }) => {
   );
 };
 
-const isNoWorkTime = (index: number) => {
-  if (index === 4 || index === 12 || index === 20) return true;
-  return false;
-};
-
 const isEndOfShift = (index: number) => {
   if (index === 7 || index === 15 || index === 23) return true;
   return false;
 };
 
 const ProductTable: React.FC<
-  Partial<FamilyPropsResponse & { uploadStatus: UploadStatusType }>
-> = ({ hours, statistics, uploadStatus }) => {
+  Partial<
+    FamilyPropsResponse & {
+      uploadStatus: UploadStatusType;
+      setModalType: React.Dispatch<React.SetStateAction<string>>;
+      handleSavePickingData: ({
+        code,
+        pickings,
+        date,
+      }: {
+        code: string;
+        pickings: Picking[];
+        date: string;
+      }) => void;
+    }
+  >
+> = ({
+  hours,
+  statistics,
+  trucks,
+  uploadStatus,
+  setModalType,
+  handleSavePickingData,
+}) => {
+  const { dispatch } = useAppContext();
+
   const [selectedFamily, setSelectedFamily] = useState<
     "hpc" | "aero" | "foods" | "all"
   >("all");
-  const [showFamilyStatistics, setShowFamilyStatistics] = useState(true);
 
   //  renderiza os dados da família selecionada
   const getFamilyData = () => {
     if (!selectedFamily) return null;
-
-    console.log("Object.values(simulation!)", Object.values(hours!));
 
     return Object.values(hours!)?.map((data, index) => (
       <>
@@ -96,6 +119,25 @@ const ProductTable: React.FC<
                 ? "border-solid border-0 border-b-1.5 border-black"
                 : ""
             }`}
+            onClick={() => {
+              handleSavePickingData &&
+                trucks &&
+                trucks.length > 0 &&
+                handleSavePickingData({
+                  code: trucks[index].code,
+                  pickings: trucks[index]?.pickings[selectedFamily],
+                  date: handleGetDataFormat(data.hour),
+                });
+              setModalType && setModalType("picking");
+              dispatch({
+                type: "SET_MODAL",
+                payload: {
+                  open: true,
+                  header: "",
+                  body: "",
+                },
+              });
+            }}
           >
             <td>
               <div
@@ -160,6 +202,22 @@ const ProductTable: React.FC<
                 {data.visits}
               </div>
             </td>
+            <td>
+              <div
+                className={
+                  !data.is_working_hour
+                    ? isBackgroundLight(data.criticity)
+                      ? "text-black"
+                      : "text-white"
+                    : ""
+                }
+                style={
+                  !data.is_working_hour ? { backgroundColor: "#003369" } : {}
+                }
+              >
+                {data.pickings?.length || 0}
+              </div>
+            </td>
 
             <td className="py-1 text-center flex justify-center">
               <div
@@ -213,6 +271,9 @@ const ProductTable: React.FC<
               <p className="text-xs font-medium text-[#4D4D4D] py-3">Visitas</p>
             </th>
             <th>
+              <p className="text-xs font-medium text-[#4D4D4D] py-3">Carga</p>
+            </th>
+            <th>
               <p className="text-xs font-medium text-[#4D4D4D] py-3 rounded-t-lg">
                 Estimados
               </p>
@@ -221,64 +282,11 @@ const ProductTable: React.FC<
         </thead>
         <tbody className="relative">
           {getFamilyData()}
-          <tr
-            className={`w-full sticky -bottom-4 ${
-              showFamilyStatistics ? "h-28" : "h-5"
-            } !bg-white `}
-          >
+          <tr className={`w-full sticky -bottom-4 h-8 !bg-white `}>
             <td
               colSpan={8}
               className="border-solid border-b-0 border-x-0  border-t-2 !border-t-[#003369] rounded-t-lg"
             >
-              <button
-                className="absolute top-1 right-2 font-semibold text-xs"
-                onClick={() => setShowFamilyStatistics((prev) => !prev)}
-              >
-                <ArrowRightIcon
-                  className={showFamilyStatistics ? "rotate-90" : "-rotate-90"}
-                />
-              </button>
-              <div
-                className={`grid grid-cols-4 px-5 ${
-                  showFamilyStatistics ? "" : "hidden"
-                }`}
-              >
-                {statistics &&
-                  Object?.values(statistics).length > 0 &&
-                  Object?.values(statistics)?.map((values, index) => (
-                    <div key={index}>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-sm font-semibold">
-                          {getFormatedNameFamily(values.family)}
-                        </p>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Perfil
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={values.median_profile}
-                            disabled
-                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
-                        <div className="flex items-center gap-5">
-                          <p className="text-xs whitespace-nowrap w-4/12">
-                            Média Visita
-                          </p>
-                          <input
-                            type="number"
-                            placeholder="0"
-                            value={values.median_n_visits_per_hour}
-                            disabled
-                            className="w-14 mr-2 text-xs border-1 bg-[#F5FAFF] border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
               <div className="mt-1 px-5">
                 <span className="text-xs mt-3 text-gray-400">
                   Produtividade atualizada:{" "}
@@ -294,82 +302,13 @@ const ProductTable: React.FC<
     );
   };
 
-  const getTotalBox = (shift: number) => {
-    // sum the boxes of all families in three shifts
-    let total = 0;
-    if (!selectedFamily) return null;
-
-    // divide the ammount of elements inside the all families in 3, and depending on the shift, return the correspondent value
-    total = Object.values(hours!)?.reduce((acc, data, index) => {
-      if (shift === 1 && index < 8) {
-        return acc + data["all"][index].boxes;
-      } else if (shift === 2 && index > 7 && index < 16) {
-        return acc + data["all"][index].boxes;
-      } else if (shift === 3 && index > 15) {
-        return acc + data["all"][index].boxes;
-      }
-      return acc;
-    }, 0);
-
-    // Return it as xx.xxx
-    return total?.toLocaleString("pt-BR");
-  };
-
   return (
     <div className="">
       <div className="flex">
-        {/* <div className="">
-          <div className="invisible font-medium text-base mb-2">-</div>
-          {datesTable()}
-        </div>
-        <div className="flex flex-col items-center w-full">
-          <div className="flex w-full justify-center items-center pb-2 ">
-            <p className="font-medium text-base ">Total</p>
-          </div>
-          {totalTable()}
-        </div> */}
         <div className="flex flex-col items-center w-full">
           <Swapper selectFamily={setSelectedFamily} />
           {familyTable()}
         </div>
-        {/* <div className="pt-[70px]">
-          <div className="flex flex-col h-1/3 items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
-            <div className="flex flex-col items-center">
-              <p>Turno</p>
-              <p className="text-xl font-medium">1</p>
-            </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
-              <div className="flex flex-col items-center">
-                <p>Caixas</p>
-                <p className="text-xl font-medium">{getTotalBox(1)}</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="flex flex-col h-[calc(33.3%-7px)] my-[6px] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
-            <div className="flex flex-col items-center">
-              <p>Turno</p>
-              <p className="text-xl font-medium">2</p>
-            </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
-              <div className="flex flex-col items-center">
-                <p>Caixas</p>
-                <p className="text-xl font-medium">{getTotalBox(2)}</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="flex flex-col h-[calc(33.3%-7px)] items-center justify-center bg-[#003369] text-white px-3 rounded gap-2 py-2">
-            <div className="flex flex-col items-center">
-              <p>Turno</p>
-              <p className="text-xl font-medium">3</p>
-            </div>
-            {simulation?.[selectedSimulationDate]?.[selectedFamily] ? (
-              <div className="flex flex-col items-center">
-                <p>Caixas</p>
-                <p className="text-xl font-medium">{getTotalBox(3)}</p>
-              </div>
-            ) : null}
-          </div>
-        </div> */}
       </div>
     </div>
   );
