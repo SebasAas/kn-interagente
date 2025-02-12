@@ -64,6 +64,9 @@ const DashboardWorkers = ({ workers }: { workers: DashWorkersTypes }) => {
     "hpc" | "aero" | "foods" | "all"
   >("all");
 
+  if (workers?.detail?.includes("Não encontramos dados") || "detail" in workers)
+    return null;
+
   const dashboardWorkersList = () => {
     if (!selectedFamily || workers?.detail?.includes("Não encontramos dados"))
       return null;
