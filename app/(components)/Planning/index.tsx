@@ -555,49 +555,6 @@ const Planning = ({
                 />
               </div>
             </div>
-            <div className="flex mt-5 flex-col">
-              <p className=" text-sm font-medium">Limite de stage</p>
-              <div className="flex mt-3 justify-between items-center">
-                <p className="text-xs">Nº de caixas</p>
-                <input
-                  type="text"
-                  placeholder="0"
-                  value={additionalData.flow}
-                  onChange={(e) => {
-                    if (isNaN(Number(e.target.value))) return;
-
-                    setAdditionalData({
-                      ...additionalData,
-                      flow: Number(e.target.value),
-                    });
-                  }}
-                  min={0}
-                  className="w-16 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="mt-4">
-            <button
-              className="text-xs text-gray-500 flex items-center gap-1"
-              onClick={() => {
-                setTemporalData(data);
-                setModalType("config");
-                dispatch({
-                  type: "SET_MODAL",
-                  payload: {
-                    open: true,
-                    header: (
-                      <h2 className="w-[250px]">Configurações de custos</h2>
-                    ),
-                    body: "",
-                  },
-                });
-              }}
-            >
-              <ConfigIcon />
-              <span>Configurações avançadas</span>
-            </button>
           </div>
           <button
             className={`px-2 py-1 mt-4 rounded-md ${
