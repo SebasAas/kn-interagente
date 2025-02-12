@@ -34,7 +34,10 @@ export interface Families {
 
 export interface DemandSimulationType {
   families: Families;
-  simulation_date?: string | undefined;
+  period?: {
+    start: string;
+    end: string;
+  };
 }
 
 export interface Picking {
