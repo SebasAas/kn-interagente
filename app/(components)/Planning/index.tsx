@@ -403,6 +403,8 @@ const Planning = ({
     });
   };
 
+  console.log("dashDT", dashDT);
+
   return (
     <div className="flex flex-row gap-4 w-full h-full">
       <div className="flex flex-col gap-6 w-[240px]">
@@ -618,38 +620,45 @@ const Planning = ({
           <Subtitle>Caminhões</Subtitle>
 
           <div className="flex">
-            {dashDT
-              ?.filter((item) => !hideCompleted || item.percentual !== 100)
-              ?.map((dashDT) => (
-                <div
-                  key={dashDT.dt}
-                  className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
-                >
-                  <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
-                    {dashDT.dt}
+            {dashDT &&
+              dashDT.length > 0 &&
+              dashDT
+                ?.filter((item) => !hideCompleted || item.percentual !== 100)
+                ?.map((dashDT) => (
+                  <div
+                    key={dashDT.dt}
+                    className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
+                  >
+                    <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
+                      {dashDT.dt}
+                    </div>
+                    <div className="flex justify-center items-center gap-2">
+                      <Progress
+                        value={dashDT.percentual}
+                        size="md"
+                        color="primary"
+                      />
+                      {dashDT.percentual}%
+                    </div>
+                    <p className="text-xs whitespace-nowrap">
+                      {transformDate(dashDT.estimated_end_complexity)}
+                    </p>
+                    <hr />
+                    <div className="flex justify-between">
+                      <p>Perfil</p>
+                      <p>{dashDT.profile_all}</p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p>Caixas</p>
+                      <p>{dashDT.boxes || 0}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center gap-2">
-                    <Progress
-                      value={dashDT.percentual}
-                      size="md"
-                      color="primary"
-                    />
-                    {dashDT.percentual}%
-                  </div>
-                  <p className="text-xs whitespace-nowrap">
-                    {transformDate(dashDT.estimated_end_complexity)}
-                  </p>
-                  <hr />
-                  <div className="flex justify-between">
-                    <p>Perfil</p>
-                    <p>{dashDT.profile_all}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Caixas</p>
-                    <p>{dashDT.boxes || 0}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+            {dashDT && "detail" in dashDT && (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-gray-400">{dashDT.detail as any}</p>
+              </div>
+            )}
           </div>
           <div className="mt-2">
             <label className="flex items-center gap-2">
