@@ -95,9 +95,16 @@ const Planning = ({
   const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [simulationDate, setSimulationDate] = useState<Date | undefined>(
-    new Date()
-  );
+  const [simulationDate, setSimulationDate] = useState<
+    | {
+        start: Date | undefined;
+        end: Date | undefined;
+      }
+    | undefined
+  >({
+    start: new Date(),
+    end: new Date(),
+  });
   const [additionalData, setAdditionalData] = useState({
     flow: 0,
     visits_per_hour: 0,
@@ -236,21 +243,26 @@ const Planning = ({
   };
 
   const handleSimulate = async () => {
-    let formatedData = "";
-    if (simulationDate) {
-      const simulationCopy = new Date(simulationDate.getTime());
+    let period = { start: "", end: "" };
+    if (simulationDate?.start && simulationDate?.end) {
+      const simulationCopyStart = new Date(simulationDate.start.getTime());
+      const simulationCopyEnd = new Date(simulationDate.end.getTime());
 
       // Subtract 3 hours from the copy
-      simulationCopy.setHours(simulationCopy.getHours() - 3);
+      simulationCopyStart.setHours(simulationCopyStart.getHours() - 3);
+      simulationCopyEnd.setHours(simulationCopyEnd.getHours() - 3);
 
       // Convert the modified copy to an ISO string
-      formatedData = simulationCopy.toISOString();
+      period = {
+        start: simulationCopyStart.toISOString(),
+        end: simulationCopyEnd.toISOString(),
+      };
     }
 
     const dataToSend: DemandSimulationType = {
       families: data,
       ...additionalData,
-      simulation_date: formatedData || "",
+      period: period || { start: "", end: "" },
     };
 
     setButtonDisabled(true);
@@ -328,8 +340,23 @@ const Planning = ({
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
+  const handleDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "start" | "end"
+  ) => {
+    if (type === "start") {
+      setSimulationDate({
+        ...(simulationDate as { start: Date; end: Date }),
+        start: e.target.value ? new Date(e.target.value) : undefined,
+      });
+    }
+
+    if (type === "end") {
+      setSimulationDate({
+        ...(simulationDate as { start: Date; end: Date }),
+        end: e.target.value ? new Date(e.target.value) : undefined,
+      });
+    }
   };
 
   const addShift = () => {
@@ -423,8 +450,22 @@ const Planning = ({
               <p className="text-sm font-medium">Data de Simulação</p>
               <input
                 type="datetime-local"
-                value={simulationDate ? formatDateForInput(simulationDate) : ""}
-                onChange={handleDateChange}
+                value={
+                  simulationDate && simulationDate.start
+                    ? formatDateForInput(simulationDate.start)
+                    : ""
+                }
+                onChange={(e) => handleDateChange(e, "start")}
+                className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+              />
+              <input
+                type="datetime-local"
+                value={
+                  simulationDate && simulationDate.end
+                    ? formatDateForInput(simulationDate.end)
+                    : ""
+                }
+                onChange={(e) => handleDateChange(e, "end")}
                 className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
@@ -451,7 +492,7 @@ const Planning = ({
                     {Array.from({ length: maxShifts }, (_, shiftIndex) => (
                       <tr key={`shift-${shiftIndex}`}>
                         <td className="border border-gray-300 ">
-                          T+{shiftIndex}
+                          Turno {shiftIndex}
                         </td>
                         {Object.keys(data).map((family) => (
                           <td
@@ -485,26 +526,10 @@ const Planning = ({
                             />
                           </td>
                         ))}
-                        <td className="border border-gray-300 py-2">
-                          <button
-                            className="text-red-500 px-2 py-1 rounded-md text-sm font-semibold"
-                            onClick={() => removeShift(shiftIndex)}
-                          >
-                            x
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <div className="mb-4 flex justify-center mt-2">
-                  <button
-                    className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs"
-                    onClick={addShift}
-                  >
-                    + Adicionar Turno
-                  </button>
-                </div>
               </div>
             </div>
             <div className="flex mt-3 flex-col">
