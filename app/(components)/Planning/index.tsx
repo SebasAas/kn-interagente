@@ -106,7 +106,6 @@ const Planning = ({
     end: new Date(),
   });
   const [additionalData, setAdditionalData] = useState({
-    flow: 0,
     visits_per_hour: 0,
   });
   const [dashDT, setDashDT] = useState(dashDTFetch || []);
@@ -149,18 +148,12 @@ const Planning = ({
   const [data, setData] = useState({
     aero: {
       user: [4, 4, 4],
-      worker_salary: 1,
-      picking_cost: 1,
     },
     foods: {
       user: [6, 6, 6],
-      worker_salary: 1,
-      picking_cost: 1,
     },
     hpc: {
       user: [10, 10, 10],
-      worker_salary: 1,
-      picking_cost: 1,
     },
   });
 
@@ -403,7 +396,7 @@ const Planning = ({
     });
   };
 
-  console.log("dashDT", dashDT);
+  console.log("pickingData", pickingData);
 
   return (
     <div className="flex flex-row gap-4 w-full h-full">
@@ -708,176 +701,6 @@ const Planning = ({
       <ModalComponent>
         {modalType === "config" && (
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">HPC</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.hpc.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        hpc: {
-                          ...temporalData.hpc,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.hpc.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        hpc: {
-                          ...temporalData.hpc,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
-            <Divider />
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">Aero</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.aero.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        aero: {
-                          ...temporalData.aero,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.aero.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        aero: {
-                          ...temporalData.aero,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
-            <Divider />
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">Food</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.foods.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        foods: {
-                          ...temporalData.foods,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.foods.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        foods: {
-                          ...temporalData.foods,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
             <button
               className={`px-2 py-1 mt-5 mb-4 rounded-md ${
                 buttonDisabled
@@ -921,16 +744,7 @@ const Planning = ({
                     Visitas
                   </th>
                   <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Total
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Aero
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Foods
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil HPC
+                    Caixas
                   </th>
                   <th className="border border-gray-300 px-4 py-2 font-medium">
                     Caixas remanescente
@@ -956,12 +770,10 @@ const Planning = ({
                     <td className="border border-gray-300 px-4 py-2">
                       {row.boxes}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+
                     <td className="border border-gray-300 px-4 py-2">{0}</td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {row.remaining}
+                      {row.remaining || 0}
                     </td>
                   </tr>
                 ))}
