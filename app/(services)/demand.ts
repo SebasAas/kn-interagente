@@ -46,6 +46,7 @@ export interface Picking {
   delay: number;
   boxes: number;
   truck: string;
+  visits: string;
   remaining: number;
 }
 

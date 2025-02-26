@@ -14,6 +14,7 @@ type Picking = {
   truck_hour: string;
   delay: number;
   boxes: number;
+  visits: string;
   truck: string;
   remaining: number;
 };

@@ -76,6 +76,7 @@ type Picking = {
   hour: string;
   truck_hour: string;
   truck: string;
+  visits: string;
   delay: number;
   boxes: number;
   remaining: number;
@@ -759,7 +760,7 @@ const Planning = ({
                       {row.truck}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {formatDateToHHMM(row.hour)}
+                      {formatDateToHHMM(row.truck_hour)}
                     </td>
                     <td
                       className={`border border-gray-300 px-4 py-2 font-bold ${
@@ -769,10 +770,12 @@ const Planning = ({
                       {row.delay}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {row.boxes}
+                      {row.visits}
                     </td>
 
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {row.boxes}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {row.remaining || 0}
                     </td>
