@@ -45,6 +45,7 @@ export interface Picking {
   truck_hour: string;
   delay: number;
   boxes: number;
+  truck: string;
   remaining: number;
 }
 

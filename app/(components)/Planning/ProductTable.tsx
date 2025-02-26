@@ -14,6 +14,7 @@ type Picking = {
   truck_hour: string;
   delay: number;
   boxes: number;
+  truck: string;
   remaining: number;
 };
 
@@ -120,12 +121,14 @@ const ProductTable: React.FC<
                 : ""
             }`}
             onClick={() => {
+              trucks && trucks.length > 0 && console.log("datav", data);
+
               handleSavePickingData &&
                 trucks &&
                 trucks.length > 0 &&
                 handleSavePickingData({
                   code: trucks[index].code,
-                  pickings: trucks[index]?.pickings[selectedFamily],
+                  pickings: data.pickings || [],
                   date: handleGetDataFormat(data.hour),
                 });
               setModalType && setModalType("picking");

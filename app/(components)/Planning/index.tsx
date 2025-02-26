@@ -75,6 +75,7 @@ const transformDate = (isoString: string) => {
 type Picking = {
   hour: string;
   truck_hour: string;
+  truck: string;
   delay: number;
   boxes: number;
   remaining: number;
@@ -396,8 +397,6 @@ const Planning = ({
     });
   };
 
-  console.log("pickingData", pickingData);
-
   return (
     <div className="flex flex-row gap-4 w-full h-full">
       <div className="flex flex-col gap-6 w-[240px]">
@@ -565,7 +564,7 @@ const Planning = ({
           <DashboardWorkers workers={dashWorkers} />
         </Card>
       </div>
-      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-31rem)]">
         <Card className="pt-4 pb-2 px-4 overflow-x-auto">
           <Subtitle>Caminhões</Subtitle>
 
@@ -694,9 +693,11 @@ const Planning = ({
         </Card>
       </div>
 
-      <Card className="p-4 h-fit w-fit max-w-[240px]">
-        <AlertBoard alarms={simulation?.alarms} />
-      </Card>
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[250px] w-full">
+        <Card className="pt-4 pb-2 px-4 overflow-x-auto">
+          <AlertBoard alarms={simulation?.alarms} />
+        </Card>
+      </div>
 
       <ModalComponent>
         {modalType === "config" && (
@@ -755,7 +756,7 @@ const Planning = ({
                 {pickingData?.picking?.map((row, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">
-                      {pickingData.code}
+                      {row.truck}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {formatDateToHHMM(row.hour)}
