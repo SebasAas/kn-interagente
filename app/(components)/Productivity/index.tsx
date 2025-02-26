@@ -891,9 +891,15 @@ function Productivity({
               >
                 Buscar
               </button>
+              <span className="text-xs mt-5 text-gray-400">
+                Ultimo processamento:{" "}
+                <span className="text-xs text-black">
+                  {handleGetDataFormat()}
+                </span>
+              </span>
             </CardBody>
           </Card>
-          <DropzoneProductivity
+          {/* <DropzoneProductivity
             setDateInfo={setDateInfo}
             setWSSChartFinished={setWSSChartFinished}
             wssChartFinished={wssChartFinished}
@@ -901,7 +907,7 @@ function Productivity({
             dateRangeChart={dateRangeChart}
             lastUploadFileSummary={lastUploadFileSummary}
             handleGetInfoByData={handleGetInfoByData}
-          />
+          /> */}
         </div>
         <div className="flex flex-1 flex-col gap-6">
           <Card className="p-4 h-full flex-col w-full">
