@@ -487,7 +487,7 @@ const Planning = ({
                     {Array.from({ length: maxShifts }, (_, shiftIndex) => (
                       <tr key={`shift-${shiftIndex}`}>
                         <td className="border border-gray-300 ">
-                          Turno {shiftIndex}
+                          T{shiftIndex + 1}
                         </td>
                         {Object.keys(data).map((family) => (
                           <td
