@@ -35,7 +35,10 @@ export interface Families {
 
 export interface DemandSimulationType {
   families: Families;
-  simulation_date?: string | undefined;
+  period?: {
+    start: string;
+    end: string;
+  };
 }
 
 export interface Picking {
@@ -43,6 +46,8 @@ export interface Picking {
   truck_hour: string;
   delay: number;
   boxes: number;
+  truck: string;
+  visits: string;
   remaining: number;
 }
 

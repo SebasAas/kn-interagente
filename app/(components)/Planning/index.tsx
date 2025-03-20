@@ -75,6 +75,8 @@ const transformDate = (isoString: string) => {
 type Picking = {
   hour: string;
   truck_hour: string;
+  truck: string;
+  visits: string;
   delay: number;
   boxes: number;
   remaining: number;
@@ -95,11 +97,17 @@ const Planning = ({
   const { dispatch } = useAppContext();
   const [demandFile, setDemandFile] = useState<File | File[] | null>(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [simulationDate, setSimulationDate] = useState<Date | undefined>(
-    new Date()
-  );
+  const [simulationDate, setSimulationDate] = useState<
+    | {
+        start: Date | undefined;
+        end: Date | undefined;
+      }
+    | undefined
+  >({
+    start: new Date(),
+    end: new Date(),
+  });
   const [additionalData, setAdditionalData] = useState({
-    flow: 0,
     visits_per_hour: 0,
   });
   const [dashDT, setDashDT] = useState(dashDTFetch || []);
@@ -142,18 +150,12 @@ const Planning = ({
   const [data, setData] = useState({
     aero: {
       user: [4, 4, 4],
-      worker_salary: 1,
-      picking_cost: 1,
     },
     foods: {
       user: [6, 6, 6],
-      worker_salary: 1,
-      picking_cost: 1,
     },
     hpc: {
       user: [10, 10, 10],
-      worker_salary: 1,
-      picking_cost: 1,
     },
   });
 
@@ -236,21 +238,26 @@ const Planning = ({
   };
 
   const handleSimulate = async () => {
-    let formatedData = "";
-    if (simulationDate) {
-      const simulationCopy = new Date(simulationDate.getTime());
+    let period = { start: "", end: "" };
+    if (simulationDate?.start && simulationDate?.end) {
+      const simulationCopyStart = new Date(simulationDate.start.getTime());
+      const simulationCopyEnd = new Date(simulationDate.end.getTime());
 
       // Subtract 3 hours from the copy
-      simulationCopy.setHours(simulationCopy.getHours() - 3);
+      simulationCopyStart.setHours(simulationCopyStart.getHours() - 3);
+      simulationCopyEnd.setHours(simulationCopyEnd.getHours() - 3);
 
       // Convert the modified copy to an ISO string
-      formatedData = simulationCopy.toISOString();
+      period = {
+        start: simulationCopyStart.toISOString(),
+        end: simulationCopyEnd.toISOString(),
+      };
     }
 
     const dataToSend: DemandSimulationType = {
       families: data,
       ...additionalData,
-      simulation_date: formatedData || "",
+      period: period || { start: "", end: "" },
     };
 
     setButtonDisabled(true);
@@ -328,8 +335,23 @@ const Planning = ({
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSimulationDate(e.target.value ? new Date(e.target.value) : undefined);
+  const handleDateChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "start" | "end"
+  ) => {
+    if (type === "start") {
+      setSimulationDate({
+        ...(simulationDate as { start: Date; end: Date }),
+        start: e.target.value ? new Date(e.target.value) : undefined,
+      });
+    }
+
+    if (type === "end") {
+      setSimulationDate({
+        ...(simulationDate as { start: Date; end: Date }),
+        end: e.target.value ? new Date(e.target.value) : undefined,
+      });
+    }
   };
 
   const addShift = () => {
@@ -423,8 +445,22 @@ const Planning = ({
               <p className="text-sm font-medium">Data de Simulação</p>
               <input
                 type="datetime-local"
-                value={simulationDate ? formatDateForInput(simulationDate) : ""}
-                onChange={handleDateChange}
+                value={
+                  simulationDate && simulationDate.start
+                    ? formatDateForInput(simulationDate.start)
+                    : ""
+                }
+                onChange={(e) => handleDateChange(e, "start")}
+                className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
+              />
+              <input
+                type="datetime-local"
+                value={
+                  simulationDate && simulationDate.end
+                    ? formatDateForInput(simulationDate.end)
+                    : ""
+                }
+                onChange={(e) => handleDateChange(e, "end")}
                 className="w-full mt-2 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
               />
             </div>
@@ -451,7 +487,7 @@ const Planning = ({
                     {Array.from({ length: maxShifts }, (_, shiftIndex) => (
                       <tr key={`shift-${shiftIndex}`}>
                         <td className="border border-gray-300 ">
-                          T+{shiftIndex}
+                          T{shiftIndex + 1}
                         </td>
                         {Object.keys(data).map((family) => (
                           <td
@@ -485,26 +521,10 @@ const Planning = ({
                             />
                           </td>
                         ))}
-                        <td className="border border-gray-300 py-2">
-                          <button
-                            className="text-red-500 px-2 py-1 rounded-md text-sm font-semibold"
-                            onClick={() => removeShift(shiftIndex)}
-                          >
-                            x
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <div className="mb-4 flex justify-center mt-2">
-                  <button
-                    className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs"
-                    onClick={addShift}
-                  >
-                    + Adicionar Turno
-                  </button>
-                </div>
               </div>
             </div>
             <div className="flex mt-3 flex-col">
@@ -528,49 +548,6 @@ const Planning = ({
                 />
               </div>
             </div>
-            <div className="flex mt-5 flex-col">
-              <p className=" text-sm font-medium">Limite de stage</p>
-              <div className="flex mt-3 justify-between items-center">
-                <p className="text-xs">Nº de caixas</p>
-                <input
-                  type="text"
-                  placeholder="0"
-                  value={additionalData.flow}
-                  onChange={(e) => {
-                    if (isNaN(Number(e.target.value))) return;
-
-                    setAdditionalData({
-                      ...additionalData,
-                      flow: Number(e.target.value),
-                    });
-                  }}
-                  min={0}
-                  className="w-16 border-1 border-solid border-gray-300 rounded-md p-1 text-center h-6"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="mt-4">
-            <button
-              className="text-xs text-gray-500 flex items-center gap-1"
-              onClick={() => {
-                setTemporalData(data);
-                setModalType("config");
-                dispatch({
-                  type: "SET_MODAL",
-                  payload: {
-                    open: true,
-                    header: (
-                      <h2 className="w-[250px]">Configurações de custos</h2>
-                    ),
-                    body: "",
-                  },
-                });
-              }}
-            >
-              <ConfigIcon />
-              <span>Configurações avançadas</span>
-            </button>
           </div>
           <button
             className={`px-2 py-1 mt-4 rounded-md ${
@@ -588,43 +565,50 @@ const Planning = ({
           <DashboardWorkers workers={dashWorkers} />
         </Card>
       </div>
-      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-19rem)]">
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[calc(100%-31rem)]">
         <Card className="pt-4 pb-2 px-4 overflow-x-auto">
           <Subtitle>Caminhões</Subtitle>
 
           <div className="flex">
-            {dashDT
-              ?.filter((item) => !hideCompleted || item.percentual !== 100)
-              ?.map((dashDT) => (
-                <div
-                  key={dashDT.dt}
-                  className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
-                >
-                  <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
-                    {dashDT.dt}
+            {dashDT &&
+              dashDT.length > 0 &&
+              dashDT
+                ?.filter((item) => !hideCompleted || item.percentual !== 100)
+                ?.map((dashDT) => (
+                  <div
+                    key={dashDT.dt}
+                    className="flex flex-col gap-2 mr-4 border border-neutral-900 rounded-md p-3"
+                  >
+                    <div className="bg-gray-100 text-blue-700 font-medium p-0.5 text-center">
+                      {dashDT.dt}
+                    </div>
+                    <div className="flex justify-center items-center gap-2">
+                      <Progress
+                        value={dashDT.percentual}
+                        size="md"
+                        color="primary"
+                      />
+                      {dashDT.percentual}%
+                    </div>
+                    <p className="text-xs whitespace-nowrap">
+                      {transformDate(dashDT.estimated_end_complexity)}
+                    </p>
+                    <hr />
+                    <div className="flex justify-between">
+                      <p>Perfil</p>
+                      <p>{dashDT.profile_all}</p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p>Caixas</p>
+                      <p>{dashDT.boxes || 0}</p>
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center gap-2">
-                    <Progress
-                      value={dashDT.percentual}
-                      size="md"
-                      color="primary"
-                    />
-                    {dashDT.percentual}%
-                  </div>
-                  <p className="text-xs whitespace-nowrap">
-                    {transformDate(dashDT.estimated_end_complexity)}
-                  </p>
-                  <hr />
-                  <div className="flex justify-between">
-                    <p>Perfil</p>
-                    <p>{dashDT.profile_all}</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>Caixas</p>
-                    <p>{dashDT.boxes || 0}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+            {dashDT && "detail" in dashDT && (
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-gray-400">{dashDT.detail as any}</p>
+              </div>
+            )}
           </div>
           <div className="mt-2">
             <label className="flex items-center gap-2">
@@ -710,183 +694,15 @@ const Planning = ({
         </Card>
       </div>
 
-      <Card className="p-4 h-fit w-fit max-w-[240px]">
-        <AlertBoard alarms={simulation?.alarms} />
-      </Card>
+      <div className="flex flex-col h-full flex-1 gap-6 max-w-[250px] w-full">
+        <Card className="pt-4 pb-2 px-4 overflow-x-auto">
+          <AlertBoard alarms={simulation?.alarms} />
+        </Card>
+      </div>
 
       <ModalComponent>
         {modalType === "config" && (
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">HPC</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.hpc.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        hpc: {
-                          ...temporalData.hpc,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.hpc.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        hpc: {
-                          ...temporalData.hpc,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
-            <Divider />
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">Aero</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.aero.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        aero: {
-                          ...temporalData.aero,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.aero.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        aero: {
-                          ...temporalData.aero,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
-            <Divider />
-            <div className="flex justify-between items-center gap-16">
-              <p className="mt-3">Food</p>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Funcionário</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    startContent="R$"
-                    placeholder="XXX.XXX"
-                    value={temporalData.foods.worker_salary?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        foods: {
-                          ...temporalData.foods,
-                          worker_salary: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-                <div className="flex items-center gap-1 flex-col">
-                  <p className="text-xs text-gray-500">Caixa</p>
-                  <Input
-                    type="number"
-                    variant="bordered"
-                    radius="sm"
-                    classNames={{
-                      input: "w-[70px]",
-                      label: "text-[0.8rem]",
-                      inputWrapper: "h-2 min-h-unit-8",
-                    }}
-                    placeholder="0"
-                    value={temporalData.foods.picking_cost?.toString()}
-                    onChange={(e) => {
-                      setTemporalData({
-                        ...temporalData,
-                        foods: {
-                          ...temporalData.foods,
-                          picking_cost: Number(e.target.value),
-                        },
-                      });
-                    }}
-                    min={0}
-                  />
-                </div>
-              </div>
-            </div>
             <button
               className={`px-2 py-1 mt-5 mb-4 rounded-md ${
                 buttonDisabled
@@ -930,16 +746,7 @@ const Planning = ({
                     Visitas
                   </th>
                   <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Total
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Aero
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil Foods
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 font-medium">
-                    Caixas/Perfil HPC
+                    Caixas
                   </th>
                   <th className="border border-gray-300 px-4 py-2 font-medium">
                     Caixas remanescente
@@ -950,10 +757,10 @@ const Planning = ({
                 {pickingData?.picking?.map((row, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">
-                      {pickingData.code}
+                      {row.truck}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {formatDateToHHMM(row.hour)}
+                      {formatDateToHHMM(row.truck_hour)}
                     </td>
                     <td
                       className={`border border-gray-300 px-4 py-2 font-bold ${
@@ -963,14 +770,14 @@ const Planning = ({
                       {row.delay}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
+                      {row.visits}
+                    </td>
+
+                    <td className="border border-gray-300 px-4 py-2">
                       {row.boxes}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
-                    <td className="border border-gray-300 px-4 py-2">{0}</td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {row.remaining}
+                      {row.remaining || 0}
                     </td>
                   </tr>
                 ))}
