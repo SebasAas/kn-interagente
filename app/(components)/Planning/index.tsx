@@ -550,11 +550,11 @@ const Planning = ({
             </div>
           </div>
           <button
-            className={`px-2 py-1 mt-4 rounded-md ${
+            className={`px-2 py-1 mt-4 text-[13px] rounded-md ${
               buttonDisabled
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
-                : "bg-blue-900 text-white"
-            } text-sm font-medium mt-2`}
+                : "bg-blue-900 text-white hover:bg-blue-800"
+            } text-sm  mt-2`}
             onClick={() => (buttonDisabled ? () => {} : handleSimulate())}
           >
             Reprogramar
@@ -598,10 +598,6 @@ const Planning = ({
                       <p>Perfil</p>
                       <p>{dashDT.profile_all}</p>
                     </div>
-                    <div className="flex justify-between">
-                      <p>Caixas</p>
-                      <p>{dashDT.boxes || 0}</p>
-                    </div>
                   </div>
                 ))}
             {dashDT && "detail" in dashDT && (
@@ -624,40 +620,12 @@ const Planning = ({
         </Card>
         <Card className="p-4 flex-1 h-[calc(100vh-5.5rem)] overflow-y-auto">
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between">
+            <div className="flex justify-start">
               <div className="flex flex-col">
                 <Subtitle>Separação de Caixas</Subtitle>
                 <span className="text-xs mt-2 text-gray-400">
                   Range: {getRange(simulation?.hours || [])}
                 </span>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex justify-end items-end gap-2">
-                  <p className="text-base">Perfil médio do dock</p>
-                  <span className="text-2xl font-medium bg-[#F5FAFF] p-1 rounded-md px-2">
-                    0
-                  </span>
-                </div>
-                <div className="flex gap-4 justify-between mt-2">
-                  <div className="flex gap-2 items-center">
-                    Aero{" "}
-                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      0
-                    </p>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    Aero{" "}
-                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      0
-                    </p>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    Aero{" "}
-                    <p className="bg-[#F5FAFF] p-1 rounded-md px-2 font-medium">
-                      0
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -689,6 +657,7 @@ const Planning = ({
               uploadStatus={uploadStatus}
               setModalType={setModalType}
               handleSavePickingData={handleSavePickingData}
+              buttonDisabled={buttonDisabled}
             />
           </div>
         </Card>
