@@ -92,6 +92,7 @@ const ProductTable: React.FC<
         date: string;
       }) => void;
       buttonDisabled: boolean;
+      simlulationDate: Date | null;
     }
   >
 > = ({
@@ -102,6 +103,7 @@ const ProductTable: React.FC<
   setModalType,
   handleSavePickingData,
   buttonDisabled,
+  simlulationDate,
 }) => {
   const { dispatch } = useAppContext();
 
@@ -252,6 +254,10 @@ const ProductTable: React.FC<
     ));
   };
 
+  const getFormatedDate = (date: Date) => {
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+  };
+
   const handleDownload = () => {
     const toastPromiseGraph = toast.promise(downloadDemandFile(), {
       pending: "Baixando arquivo",
@@ -265,10 +271,15 @@ const ProductTable: React.FC<
         link.href = url;
         // Set the file name for the download with the current date
         const date = new Date();
-        const formattedDate = `${date.getDate()}-${
-          date.getMonth() + 1
-        }-${date.getFullYear()}`;
-        link.setAttribute("download", `programacao_${formattedDate}.xlsx`);
+
+        link.setAttribute(
+          "download",
+          `${
+            simlulationDate
+              ? getFormatedDate(simlulationDate)
+              : getFormatedDate(date)
+          }_programacao.xlsx`
+        );
         document.body.appendChild(link);
         link.click();
         link.remove();

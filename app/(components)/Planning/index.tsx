@@ -658,6 +658,7 @@ const Planning = ({
               setModalType={setModalType}
               handleSavePickingData={handleSavePickingData}
               buttonDisabled={buttonDisabled}
+              simlulationDate={simulationDate?.start || null}
             />
           </div>
         </Card>
