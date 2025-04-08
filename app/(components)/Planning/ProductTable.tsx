@@ -6,8 +6,13 @@ import {
   handleGetDataFormat,
 } from "@/app/(helpers)/dates";
 import { isBackgroundLight } from "@/app/(helpers)/textColor";
-import { FamilyPropsResponse, UploadStatusType } from "@/app/(services)/demand";
+import {
+  downloadDemandFile,
+  FamilyPropsResponse,
+  UploadStatusType,
+} from "@/app/(services)/demand";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 type Picking = {
   hour: string;
@@ -86,6 +91,8 @@ const ProductTable: React.FC<
         pickings: Picking[];
         date: string;
       }) => void;
+      buttonDisabled: boolean;
+      simlulationDate: Date | null;
     }
   >
 > = ({
@@ -95,6 +102,8 @@ const ProductTable: React.FC<
   uploadStatus,
   setModalType,
   handleSavePickingData,
+  buttonDisabled,
+  simlulationDate,
 }) => {
   const { dispatch } = useAppContext();
 
@@ -245,6 +254,41 @@ const ProductTable: React.FC<
     ));
   };
 
+  const getFormatedDate = (date: Date) => {
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+  };
+
+  const handleDownload = () => {
+    const toastPromiseGraph = toast.promise(downloadDemandFile(), {
+      pending: "Baixando arquivo",
+    });
+
+    // The response will be a blob
+    toastPromiseGraph.then((response) => {
+      if (response) {
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement("a");
+        link.href = url;
+        // Set the file name for the download with the current date
+        const date = new Date();
+
+        link.setAttribute(
+          "download",
+          `${
+            simlulationDate
+              ? getFormatedDate(simlulationDate)
+              : getFormatedDate(date)
+          }_programacao.xlsx`
+        );
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        toast.error("Erro ao baixar o arquivo!");
+      }
+    });
+  };
+
   const familyTable = () => {
     return (
       <table
@@ -291,6 +335,32 @@ const ProductTable: React.FC<
               colSpan={8}
               className="border-solid border-b-0 border-x-0  border-t-2 !border-t-[#003369] rounded-t-lg"
             >
+              <div className="mt-1 px-5">
+                <button
+                  className={`px-3 py-2 mt-4 text-[13px] items-center flex gap-2 rounded-md ${
+                    buttonDisabled
+                      ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
+                      : "bg-blue-900 text-white hover:bg-blue-800"
+                  } text-sm  mt-2`}
+                  onClick={() => (buttonDisabled ? () => {} : handleDownload())}
+                >
+                  <p>Download Programação</p>
+                  <svg
+                    width="12"
+                    height="14"
+                    viewBox="0 0 12 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.99992 7V11M5.99992 11L7.99992 9.66667M5.99992 11L3.99992 9.66667M6.66659 1.00058C6.60292 1 6.53144 1 6.44973 1H3.46672C2.71998 1 2.34633 1 2.06112 1.14532C1.81023 1.27316 1.60641 1.47698 1.47858 1.72786C1.33325 2.01308 1.33325 2.38673 1.33325 3.13346V10.8668C1.33325 11.6135 1.33325 11.9867 1.47858 12.2719C1.60641 12.5228 1.81023 12.727 2.06112 12.8548C2.34605 13 2.71925 13 3.46453 13H8.53531C9.28059 13 9.65325 13 9.93818 12.8548C10.1891 12.727 10.3936 12.5228 10.5214 12.2719C10.6666 11.987 10.6666 11.6143 10.6666 10.8691V5.21712C10.6666 5.13531 10.6666 5.06374 10.666 5M6.66659 1.00058C6.85701 1.00231 6.97748 1.00923 7.09248 1.03684C7.22853 1.0695 7.35849 1.12351 7.47778 1.19661C7.6123 1.27904 7.7278 1.39455 7.95825 1.625L10.0419 3.70866C10.2725 3.93926 10.3872 4.05424 10.4696 4.1888C10.5427 4.30809 10.5968 4.43817 10.6295 4.57422C10.6571 4.68917 10.6641 4.80967 10.666 5M6.66659 1.00058V2.86667C6.66659 3.6134 6.66659 3.98651 6.81191 4.27173C6.93974 4.52261 7.14357 4.72699 7.39445 4.85482C7.67939 5 8.05258 5 8.79786 5H10.666M10.666 5H10.6667"
+                      stroke="white"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
               <div className="mt-1 px-5">
                 <span className="text-xs mt-3 text-gray-400">
                   Produtividade atualizada:{" "}

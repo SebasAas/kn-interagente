@@ -297,3 +297,22 @@ export const getDashWorkers = async () => {
     };
   }
 };
+
+// Endpoint to download the demand file, will be a blob the response
+export const downloadDemandFile = async () => {
+  const response = await fetch(`${BASE_URL}demand/simulation_download`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    cache: "no-cache",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const blob = await response.blob();
+  return blob;
+};
