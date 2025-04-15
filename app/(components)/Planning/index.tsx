@@ -182,7 +182,6 @@ const Planning = ({
 
   // Handler for file upload
   const handleFileUpload = async (file: File[] | File) => {
-    console.log("filefile", file);
     let fileToSent = file as File[];
 
     if (file) {
@@ -232,9 +231,9 @@ const Planning = ({
   // Trigger the upload process when the file is selected
   const onFileSelect = (file: File[] | File | null) => {
     setDemandFile(file);
-    if (file) {
-      handleFileUpload(file);
-    }
+    // if (file) {
+    //   handleFileUpload(file);
+    // }
   };
 
   const handleSimulate = async () => {
@@ -417,16 +416,21 @@ const Planning = ({
               isDisable={false}
             />
           </div>
-          {/* <button
+          <button
             className={`px-2 py-1 mt-3 rounded-md ${
-              buttonDisabled
+              buttonDisabled || !demandFile
                 ? "bg-gray-500 text-gray-400 cursor-not-allowed opacity-50"
                 : "bg-blue-900 text-white"
             } text-sm font-medium mt-2`}
-            onClick={() => (buttonDisabled ? () => {} : handleGetInformation())}
+            onClick={() =>
+              buttonDisabled || !demandFile
+                ? () => {}
+                : handleFileUpload(demandFile)
+            }
+            disabled={buttonDisabled || !demandFile}
           >
             Enviar
-          </button> */}
+          </button>
           <span className="text-xs mt-3 text-gray-400">
             Ultimo upload:{" "}
             <span className="text-xs text-black">

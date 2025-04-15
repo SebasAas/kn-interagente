@@ -24,7 +24,13 @@ export default function PlanningDropzone({
   const onDrop = useCallback(
     (acceptedFiles: any) => {
       if (!isDisable) {
-        return setFile(acceptedFiles);
+        // Create a new file object with the same properties as the original file
+        const files = [
+          ...(Array.isArray(file) ? file : file ? [file] : []),
+          ...acceptedFiles,
+        ];
+
+        return setFile(files);
       }
 
       if (
@@ -83,6 +89,15 @@ export default function PlanningDropzone({
                       <p className="text-sm text-gray-800 font-medium">
                         {f.name}
                       </p>
+                      <button
+                        className="text-red-500 hover:text-red-700 font-bold text-xs"
+                        onClick={() => {
+                          const newFiles = file.filter((item) => item !== f);
+                          setFile(newFiles.length > 0 ? newFiles : null);
+                        }}
+                      >
+                        X
+                      </button>
                     </div>
                   ))
                 ) : (

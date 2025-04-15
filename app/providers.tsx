@@ -38,7 +38,7 @@ export const Providers = ({ children }: Props) => {
   return (
     <AppProvider initialState={initialState}>
       <NextUIProvider>
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider refetchInterval={5 * 60}>{children}</SessionProvider>
       </NextUIProvider>
     </AppProvider>
   );
