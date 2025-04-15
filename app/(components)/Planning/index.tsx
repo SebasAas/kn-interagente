@@ -408,7 +408,7 @@ const Planning = ({
           <div className="overflow-visible !p-0 !pt-2">
             <PlanningDropzone
               file={demandFile}
-              maxFiles={2}
+              maxFiles={100}
               setFile={onFileSelect}
               dateRangeChart={{
                 latest_updated_visit: "",
