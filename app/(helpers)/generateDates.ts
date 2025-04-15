@@ -2,7 +2,7 @@ import { DashDTTypes, DashWorkersTypes } from "../(services)/demand";
 
 export async function generateDates() {
   const data = (await (
-  await fetch(
+    await fetch(
       "https://kn-back-planning-emachzhqzq-rj.a.run.app/demand/uploadstatus"
     )
   ).json()) as {
@@ -17,7 +17,7 @@ export async function generateDates() {
 export async function getDashDT() {
   const data = (await (
     await fetch(
-      "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/demand/dash_dt"
+      "https://kn-back-planning-emachzhqzq-rj.a.run.app/demand/dash_dt"
     )
   ).json()) as DashDTTypes[];
 
@@ -27,7 +27,7 @@ export async function getDashDT() {
 export async function getDashWorkers() {
   const data = (await (
     await fetch(
-      "https://kn-back-planning-dev-emachzhqzq-rj.a.run.app/demand/dash_worker"
+      "https://kn-back-plannin-emachzhqzq-rj.a.run.app/demand/dash_worker"
     )
   ).json()) as DashWorkersTypes;
 
